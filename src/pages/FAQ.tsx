@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/accordion";
 import { detectInstallPlatform } from "@/lib/pwa-detection";
 
-const REPO_URL = "https://github.com/RegardsKiki2/neuroverseos";
+const REPO_URL = "https://github.com/NeuroverseOS/HowToSaveTheWorld";
 
 const INSTALL_STEPS: Record<string, { label: string; steps: string[] }> = {
   ios: {
@@ -20,7 +20,7 @@ const INSTALL_STEPS: Record<string, { label: string; steps: string[] }> = {
       "Open howtosavetheworld.info in Safari (not Chrome — Apple only allows installs from Safari).",
       "Tap the Share button (the square with an arrow).",
       'Scroll down and tap "Add to Home Screen", then "Add".',
-      "The NeuroVerse icon appears on your home screen. Open the app from there — not the website.",
+      "The How to Save the World icon appears on your home screen. Open the app from there — not the website.",
     ],
   },
   android: {
@@ -29,7 +29,7 @@ const INSTALL_STEPS: Record<string, { label: string; steps: string[] }> = {
       "Open howtosavetheworld.info in Chrome.",
       'Tap the ⋮ menu in the top-right corner.',
       'Tap "Install app" (or "Add to Home screen").',
-      "The NeuroVerse icon appears with your apps. Open the app from there — not the website.",
+      "The How to Save the World icon appears with your apps. Open the app from there — not the website.",
     ],
   },
   desktop: {
@@ -106,7 +106,7 @@ export default function FAQ() {
                 <p>
                   Because you tapped a link, and links open in browsers. The app and the website
                   share the same address, so the difference is <em>where you launch from</em>: tapping
-                  the NeuroVerse icon on your home screen opens the app; tapping a link in a message
+                  the app icon on your home screen opens the app; tapping a link in a message
                   or search result opens the website. Both are safe — but your training, your
                   reflections, and Echelon live in the app.
                 </p>
@@ -147,12 +147,12 @@ export default function FAQ() {
                 I installed it but can't find the app.
               </AccordionTrigger>
               <AccordionContent className="text-muted-foreground leading-relaxed space-y-2">
-                <p>Look for the NeuroVerse tree icon:</p>
+                <p>Look for the glowing tree icon (named "How to Save the World" — older installs may say "NeuroVerse OS"):</p>
                 <ul className="list-disc ml-5 space-y-1 text-sm">
-                  <li><strong>iPhone/iPad:</strong> on your home screen (swipe through pages, or search "NeuroVerse").</li>
+                  <li><strong>iPhone/iPad:</strong> on your home screen (swipe through pages, or search "Save the World").</li>
                   <li><strong>Android:</strong> in your app drawer and home screen.</li>
-                  <li><strong>Windows:</strong> Start menu → search "NeuroVerse". Pin it to the taskbar.</li>
-                  <li><strong>Mac:</strong> Launchpad, or Spotlight (⌘-space) → "NeuroVerse". Chrome also lists it at chrome://apps.</li>
+                  <li><strong>Windows:</strong> Start menu → search "Save the World". Pin it to the taskbar.</li>
+                  <li><strong>Mac:</strong> Launchpad, or Spotlight (⌘-space) → "Save the World". Chrome also lists it at chrome://apps.</li>
                 </ul>
               </AccordionContent>
             </AccordionItem>

@@ -1,7 +1,7 @@
 export interface AudioSettings {
-  voice: string;        // "onyx", "alloy", "local_default"
+  voice: string;        // "local_default"
   speed: number;        // 0.5 - 1.5 (default: 1.0)
-  pitch: number;        // 0.5 - 1.5 (default: 1.0)  
+  pitch: number;        // 0.5 - 1.5 (default: 1.0)
   volume: number;       // 0 - 1 (default: 1.0)
   enabled: boolean;     // on/off toggle
 }
@@ -9,60 +9,24 @@ export interface AudioSettings {
 export interface VoiceDefinition {
   id: string;
   name: string;
-  provider: "openai" | "browser";
+  provider: "browser";
   description: string;
 }
 
+// Echelon's voice runs entirely on-device via the browser's built-in
+// speech synthesis. There is no cloud TTS: no server key, no spend,
+// no audio leaving the machine. Speed and pitch shape the delivery.
 export const ECHELON_VOICES: Record<string, VoiceDefinition> = {
-  // OpenAI TTS-1 voices (via edge function)
-  onyx: { 
-    id: "onyx", 
-    name: "Onyx", 
-    provider: "openai", 
-    description: "Deep, authoritative — Recommended for Echelon" 
-  },
-  alloy: { 
-    id: "alloy", 
-    name: "Alloy", 
-    provider: "openai", 
-    description: "Neutral, balanced" 
-  },
-  echo: { 
-    id: "echo", 
-    name: "Echo", 
-    provider: "openai", 
-    description: "Warm resonance" 
-  },
-  nova: { 
-    id: "nova", 
-    name: "Nova", 
-    provider: "openai", 
-    description: "Soft, expressive" 
-  },
-  shimmer: { 
-    id: "shimmer", 
-    name: "Shimmer", 
-    provider: "openai", 
-    description: "Clear, energetic" 
-  },
-  fable: { 
-    id: "fable", 
-    name: "Fable", 
-    provider: "openai", 
-    description: "Narrative, storytelling" 
-  },
-  
-  // Browser TTS (offline fallback)
-  local_default: { 
-    id: "local_default", 
-    name: "System Voice", 
-    provider: "browser", 
-    description: "Offline fallback" 
+  local_default: {
+    id: "local_default",
+    name: "System Voice",
+    provider: "browser",
+    description: "Your device's voice — private, offline, free"
   },
 };
 
 export const DEFAULT_AUDIO_SETTINGS: AudioSettings = {
-  voice: "onyx",      // Recommended for Echelon
+  voice: "local_default",
   speed: 1.0,
   pitch: 1.0,
   volume: 1.0,

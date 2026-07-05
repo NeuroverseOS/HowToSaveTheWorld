@@ -82,7 +82,7 @@ If no traits are clearly demonstrated, return an empty array: []`;
           "anthropic-version": "2023-06-01",
         },
         body: JSON.stringify({
-          model: "claude-sonnet-5",
+          model: "claude-sonnet-4-5",
           max_tokens: 1024,
           messages: [
             { role: "user", content: analysisPrompt }
@@ -237,7 +237,7 @@ Return only the Field Guide entry text, nothing else.`;
           "anthropic-version": "2023-06-01",
         },
         body: JSON.stringify({
-          model: "claude-sonnet-5",
+          model: "claude-sonnet-4-5",
           max_tokens: 512,
           messages: [
             { role: "user", content: prompt }

@@ -593,7 +593,7 @@ Example structure: "Protocol re-engaged, [Callsign]. We are in [Stage]. [Next re
             "anthropic-version": "2023-06-01",
           },
           body: JSON.stringify({
-            model: "claude-sonnet-5",
+            model: "claude-sonnet-4-5",
             max_tokens: 4096,
             messages: anthropicMessages,
             system: systemPrompt,

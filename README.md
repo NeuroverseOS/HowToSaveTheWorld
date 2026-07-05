@@ -71,8 +71,8 @@ How to Save the World is built on top of **NeuroVerse OS**, a proprietary cognit
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/RegardsKiki2/neuroverseos.git
-cd neuroverseos
+git clone https://github.com/NeuroverseOS/HowToSaveTheWorld.git
+cd HowToSaveTheWorld
 ```
 
 ### 2. Install dependencies

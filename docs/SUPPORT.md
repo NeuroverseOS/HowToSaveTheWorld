@@ -61,7 +61,7 @@ Please review the documentation first:
 
 For public bug reports, use GitHub Issues:
 
-**https://github.com/RegardsKiki2/neuroverseos/issues**
+**https://github.com/NeuroverseOS/HowToSaveTheWorld/issues**
 
 **Issue Template:**
 
@@ -105,7 +105,7 @@ For security vulnerabilities or sensitive issues, email kb15us@gmail.com directl
 
 For feature requests, use GitHub Discussions:
 
-**https://github.com/RegardsKiki2/neuroverseos/discussions**
+**https://github.com/NeuroverseOS/HowToSaveTheWorld/discussions**
 
 **Discussion Template:**
 

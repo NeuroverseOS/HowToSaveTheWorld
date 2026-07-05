@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ArrowLeft, ArrowRight, FileSpreadsheet, Bot, Shield, Rocket } from "lucide-react";
 
-const REPO_URL = "https://github.com/RegardsKiki2/neuroverseos";
+const REPO_URL = "https://github.com/NeuroverseOS/HowToSaveTheWorld";
 const GOVERNANCE_URL = "https://github.com/NeuroverseOS/Neuroverseos-governance";
 
 const BuildYourOwn = () => {
@@ -127,6 +127,17 @@ const BuildYourOwn = () => {
           <p className="text-xs text-muted-foreground">
             Platform code is MIT licensed. The How to Save the World curriculum and NeuroVerse
             narrative universe remain the work of their authors — bring your own story.
+          </p>
+          <p className="text-sm text-muted-foreground">
+            Want to build more with AI? Explore the NeuroVerse tools at{" "}
+            <a
+              href="https://www.neuroverseos.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-neuro-cyan hover:underline"
+            >
+              neuroverseos.com
+            </a>
           </p>
           <Link to="/" className="block text-xs text-muted-foreground hover:text-primary hover:underline">
             Return to How to Save the World

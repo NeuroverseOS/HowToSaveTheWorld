@@ -133,30 +133,38 @@ async function loadLessons(forceSupabase = false): Promise<Lesson[]> {
     return supabaseData.lessons;
   }
   
-  // 1. Try local JSON FIRST (fastest, most reliable for PWA) - NO VERSION CHECK
+  // 1. Local-first for speed and offline: use whichever local source is
+  // NEWEST — bundled JSON can be served stale by the service worker for
+  // days, so a fresher localStorage cache (synced from Supabase below)
+  // must win over it.
   const local = await loadLocalJSON();
-  if (local && local.lessons.length > 0) {
-    console.log(`[LESSON LOADER] ✅ Local JSON found: ${local.lessons.length} lessons (v${local.version})`);
-    // Cache it for faster subsequent loads
-    cacheToLocalStorage(local.lessons, local.version);
-    
-    // Check version in background (non-blocking) for info only
-    getLatestVersion().then(latestVersion => {
-      if (latestVersion > 0 && latestVersion !== local.version) {
-        console.log(`[LESSON LOADER] ℹ️ Newer version available in Supabase (v${latestVersion}), but using local JSON`);
+  const cached = loadFromCache();
+  const best =
+    local && (!cached || local.version >= cached.version) ? local :
+    cached && cached.lessons.length > 0 ? cached : local;
+
+  if (best && best.lessons.length > 0) {
+    console.log(`[LESSON LOADER] ✅ Using ${best === local ? 'local JSON' : 'cache'}: ${best.lessons.length} lessons (v${best.version})`);
+    if (best === local) cacheToLocalStorage(local.lessons, local.version);
+
+    // Background sync: if Supabase has a newer version, fetch it and
+    // update the cache so the NEXT load serves fresh content instead of
+    // logging about it forever.
+    getLatestVersion().then(async latestVersion => {
+      if (latestVersion > 0 && latestVersion > best.version) {
+        console.log(`[LESSON LOADER] ⬆️ Newer version in Supabase (v${latestVersion}) — syncing in background`);
+        try {
+          const fresh = await fetchFromSupabase();
+          cacheToLocalStorage(fresh.lessons, fresh.version);
+          cachedLessons = fresh.lessons;
+          console.log(`[LESSON LOADER] ✅ Synced to v${fresh.version}; fresh content active`);
+        } catch (e) {
+          console.warn('[LESSON LOADER] Background sync failed:', e);
+        }
       }
     }).catch(() => {});
-    
-    return local.lessons;
-  }
-  
-  console.log('[LESSON LOADER] Local JSON not available, checking cache...');
-  
-  // 2. Try localStorage cache
-  const cached = loadFromCache();
-  if (cached && cached.lessons.length > 0) {
-    console.log(`[LESSON LOADER] ✅ Cache found: ${cached.lessons.length} lessons`);
-    return cached.lessons;
+
+    return best.lessons;
   }
   
   // 3. Last resort: Fetch from Supabase (only if local sources failed)

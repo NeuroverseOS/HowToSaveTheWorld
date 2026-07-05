@@ -46,13 +46,16 @@ export default function MissionList() {
       const currentLessonId = state?.progress.current_lesson_id || 1;
       const completedLessons = state?.progress.lessons_completed || [];
 
-      // Group lessons into sessions and determine status
+      // Group lessons into sessions and determine status.
+      // Progress is tracked by lesson_number (1-96), but older builds
+      // stored database row ids — accept both so no one's history reads
+      // as locked.
       const lessonsWithStatus: LessonWithStatus[] = lessons.map((lesson) => {
         let status: "completed" | "active" | "locked";
-        
-        if (completedLessons.includes(lesson.id)) {
+
+        if (completedLessons.includes(lesson.lesson_number) || completedLessons.includes(lesson.id)) {
           status = "completed";
-        } else if (lesson.id === currentLessonId) {
+        } else if (lesson.lesson_number === currentLessonId || lesson.id === currentLessonId) {
           status = "active";
         } else {
           status = "locked";
@@ -104,7 +107,7 @@ export default function MissionList() {
       setSessions(sessionGroups);
       
       // Auto-open current session (based on lesson_number)
-      const currentLesson = lessonsWithStatus.find(l => l.id === currentLessonId);
+      const currentLesson = lessonsWithStatus.find(l => l.status === "active");
       if (currentLesson) {
         const currentSession = Math.ceil(currentLesson.lesson_number / 15);
         setOpenSessions([currentSession]);

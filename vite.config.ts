@@ -17,9 +17,9 @@ export default defineConfig(({ mode }) => ({
       registerType: "autoUpdate",
       includeAssets: ["favicon.ico"],
       manifest: {
-        name: "NeuroVerse OS",
-        short_name: "NeuroVerse",
-        description: "A cognitive operating system for leadership transformation",
+        name: "How to Save the World",
+        short_name: "SaveTheWorld",
+        description: "The free, open-source leadership academy taught by your own AI",
         theme_color: "#0d1117",
         background_color: "#0d1117",
         display: "standalone",

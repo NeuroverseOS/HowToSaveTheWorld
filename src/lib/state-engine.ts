@@ -242,7 +242,7 @@ export function initializeState(): StateSchema {
         assessment_complete: false,
       },
       audio: {
-        voice: "onyx",
+        voice: "local_default",
         speed: 1.0,
         pitch: 1.0,
         volume: 1.0,
@@ -348,7 +348,7 @@ export function loadState(): StateSchema | null {
       console.log("Migrating state: adding audio settings");
       if (!state.user) state.user = {};
       state.user.audio = {
-        voice: "onyx",
+        voice: "local_default",
         speed: 1.0,
         pitch: 1.0,
         volume: 1.0,

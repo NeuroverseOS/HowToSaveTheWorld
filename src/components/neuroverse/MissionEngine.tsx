@@ -831,12 +831,12 @@ export function MissionEngine({ lesson, userId, state, onLessonComplete, mode = 
               <div className="space-y-4">
                 <div className="animate-fade-in" style={{ animationDelay: '100ms' }}>
                   <div className="text-sm font-bold text-neuro-orange mb-2 font-mono">HEAD</div>
-                  <div className="text-base whitespace-pre-wrap leading-relaxed">{lesson.head}</div>
+                  <div className="text-base whitespace-pre-wrap leading-relaxed">{renderEmphasis(lesson.head)}</div>
                 </div>
                 <div className="h-px bg-neuro-border/30" />
                 <div className="animate-fade-in" style={{ animationDelay: '200ms' }}>
                   <div className="text-sm font-bold text-neuro-orange mb-2 font-mono">PRACTICAL</div>
-                  <div className="text-base whitespace-pre-wrap leading-relaxed">{lesson.practical}</div>
+                  <div className="text-base whitespace-pre-wrap leading-relaxed">{renderEmphasis(lesson.practical)}</div>
                 </div>
               </div>
             </Card>

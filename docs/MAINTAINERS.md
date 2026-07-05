@@ -46,7 +46,7 @@ How to Save the World welcomes contributions from operators, developers, and lea
 
 ### How to Become a Contributor:
 
-1. **Fork the repository** — https://github.com/RegardsKiki2/neuroverseos
+1. **Fork the repository** — https://github.com/NeuroverseOS/HowToSaveTheWorld
 2. **Submit a pull request** — Fix a bug, add a feature, or improve documentation
 3. **Engage in discussions** — Participate in GitHub Issues and Discussions
 4. **Translate content** — Add language support for your region
@@ -103,7 +103,7 @@ Our maintainer structure reflects this philosophy:
 For questions about How to Save the World development, contributions, or governance:
 
 **Email:** kb15us@gmail.com  
-**GitHub Discussions:** https://github.com/RegardsKiki2/neuroverseos/discussions
+**GitHub Discussions:** https://github.com/NeuroverseOS/HowToSaveTheWorld/discussions
 
 ---
 

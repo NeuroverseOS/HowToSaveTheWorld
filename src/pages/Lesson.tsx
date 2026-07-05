@@ -55,18 +55,19 @@ export default function Lesson() {
     // Update state
     const updatedState = { ...userState };
     
-    // Mark as completed
-    if (!updatedState.progress.lessons_completed.includes(lesson.id)) {
-      updatedState.progress.lessons_completed.push(lesson.id);
+    // Mark as completed. Progress is tracked by lesson_number (1-96) —
+    // the Dashboard and Mission Archive both read it that way.
+    if (!updatedState.progress.lessons_completed.includes(lesson.lesson_number)) {
+      updatedState.progress.lessons_completed.push(lesson.lesson_number);
     }
-    
-    // Find next lesson ID from local data
+
+    // Advance to the next lesson by number
     const { getAllLessons } = await import("@/lib/lesson-loader");
     const allLessons = await getAllLessons();
     const nextLesson = allLessons.find(l => l.lesson_number === lesson.lesson_number + 1);
-    
+
     if (nextLesson) {
-      updatedState.progress.current_lesson_id = nextLesson.id;
+      updatedState.progress.current_lesson_id = nextLesson.lesson_number;
     }
     
     // Add comprehensive reflection with all drill responses

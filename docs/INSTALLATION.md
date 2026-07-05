@@ -19,7 +19,7 @@ This guide walks you through installing and deploying How to Save the World.
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/RegardsKiki2/neuroverseos.git
+git clone https://github.com/NeuroverseOS/HowToSaveTheWorld.git
 cd neuroverseos
 ```
 

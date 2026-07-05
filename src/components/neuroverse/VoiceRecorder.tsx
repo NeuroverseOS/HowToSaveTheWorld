@@ -2,131 +2,99 @@ import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Mic, Square } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
-import { getEdgeFunctionUrl, ACTIVE_SUPABASE_PUBLISHABLE_KEY, supabase } from "@/integrations/supabase/client";
 
 interface VoiceRecorderProps {
   onTranscription: (text: string) => void;
   disabled?: boolean;
 }
 
+// Voice input is 100% on-device: the browser's own speech recognition.
+// No audio ever leaves the machine, no server key is spent, no account
+// is needed. On browsers without the Web Speech API (e.g. Firefox) the
+// mic button simply doesn't render — typing always works.
+const SpeechRecognitionImpl =
+  typeof window !== "undefined"
+    ? (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
+    : undefined;
+
 export function VoiceRecorder({ onTranscription, disabled }: VoiceRecorderProps) {
   const [isRecording, setIsRecording] = useState(false);
-  const [isProcessing, setIsProcessing] = useState(false);
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-  const chunksRef = useRef<Blob[]>([]);
+  const recognitionRef = useRef<any>(null);
+  const transcriptRef = useRef<string>("");
 
-  const startRecording = async () => {
+  if (!SpeechRecognitionImpl) return null;
+
+  const startRecording = () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mediaRecorder = new MediaRecorder(stream, {
-        mimeType: 'audio/webm',
-      });
+      const recognition = new SpeechRecognitionImpl();
+      recognition.continuous = true;
+      recognition.interimResults = false;
+      recognition.lang = navigator.language || "en-US";
 
-      chunksRef.current = [];
+      transcriptRef.current = "";
 
-      mediaRecorder.ondataavailable = (event) => {
-        if (event.data.size > 0) {
-          chunksRef.current.push(event.data);
+      recognition.onresult = (event: any) => {
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          if (event.results[i].isFinal) {
+            transcriptRef.current +=
+              (transcriptRef.current ? " " : "") + event.results[i][0].transcript.trim();
+          }
         }
       };
 
-      mediaRecorder.onstop = async () => {
-        setIsProcessing(true);
-        const audioBlob = new Blob(chunksRef.current, { type: 'audio/webm' });
-        
-        // Convert to base64
-        const reader = new FileReader();
-        reader.onloadend = async () => {
-          const base64Audio = (reader.result as string).split(',')[1];
-          
-          try {
-            // Transcription spends the server's OpenAI key, so the edge
-            // function requires a signed-in user. Send the session token when
-            // available; anonymous operators get a 401 and a sign-in prompt.
-            const { data: { session } } = await supabase.auth.getSession();
-            const accessToken = session?.access_token || ACTIVE_SUPABASE_PUBLISHABLE_KEY;
-
-            // Call transcription edge function
-            const response = await fetch(
-              getEdgeFunctionUrl('transcribe-audio'),
-              {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'Authorization': `Bearer ${accessToken}`,
-                },
-                body: JSON.stringify({ audio: base64Audio }),
-              }
-            );
-
-            if (response.status === 401) {
-              toast({
-                title: "Sign In Required",
-                description: "Voice transcription requires a signed-in account. Sign in to use voice features, or type your response instead.",
-                variant: "destructive",
-              });
-              return;
-            }
-
-            if (!response.ok) {
-              throw new Error('Transcription failed');
-            }
-
-            const { text } = await response.json();
-            onTranscription(text);
-            
-            toast({
-              title: "Voice Captured",
-              description: "Your response has been transcribed.",
-            });
-          } catch (error) {
-            console.error('Transcription error:', error);
-            toast({
-              title: "Transcription Failed",
-              description: "Could not process your audio. Please try again.",
-              variant: "destructive",
-            });
-          } finally {
-            setIsProcessing(false);
-          }
-        };
-        reader.readAsDataURL(audioBlob);
-
-        // Clean up
-        stream.getTracks().forEach(track => track.stop());
+      recognition.onerror = (event: any) => {
+        setIsRecording(false);
+        if (event.error === "not-allowed") {
+          toast({
+            title: "Microphone Access Denied",
+            description: "Please allow microphone access to use voice input.",
+            variant: "destructive",
+          });
+        } else if (event.error !== "aborted" && event.error !== "no-speech") {
+          toast({
+            title: "Voice Input Error",
+            description: "Could not capture speech. Please try again or type instead.",
+            variant: "destructive",
+          });
+        }
       };
 
-      mediaRecorderRef.current = mediaRecorder;
-      mediaRecorder.start();
+      recognition.onend = () => {
+        setIsRecording(false);
+        if (transcriptRef.current) {
+          onTranscription(transcriptRef.current);
+          toast({
+            title: "Voice Captured",
+            description: "Transcribed on your device — nothing was uploaded.",
+          });
+        }
+      };
+
+      recognitionRef.current = recognition;
+      recognition.start();
       setIsRecording(true);
     } catch (error) {
-      console.error('Microphone access error:', error);
-      toast({
-        title: "Microphone Access Denied",
-        description: "Please allow microphone access to record audio.",
-        variant: "destructive",
-      });
+      console.error("Speech recognition error:", error);
+      setIsRecording(false);
     }
   };
 
   const stopRecording = () => {
-    if (mediaRecorderRef.current && isRecording) {
-      mediaRecorderRef.current.stop();
-      setIsRecording(false);
-    }
+    recognitionRef.current?.stop();
   };
 
   return (
     <Button
       onClick={isRecording ? stopRecording : startRecording}
-      disabled={disabled || isProcessing}
+      disabled={disabled}
       variant={isRecording ? "destructive" : "outline"}
       size="icon"
       className={`min-h-[44px] min-w-[44px] ${
-        isRecording 
-          ? "bg-red-500 hover:bg-red-600 animate-pulse" 
+        isRecording
+          ? "bg-red-500 hover:bg-red-600 animate-pulse"
           : "border-neuro-cyan/50 text-neuro-cyan hover:bg-neuro-cyan/10"
       }`}
+      title={isRecording ? "Stop recording" : "Speak your response (on-device)"}
     >
       {isRecording ? <Square className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
     </Button>

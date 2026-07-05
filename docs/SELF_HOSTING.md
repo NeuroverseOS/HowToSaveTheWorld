@@ -29,7 +29,7 @@ Both paths share the same backend setup, described below.
 - Node.js v18+ and this repository cloned locally:
 
 ```bash
-git clone https://github.com/RegardsKiki2/neuroverseos.git
+git clone https://github.com/NeuroverseOS/HowToSaveTheWorld.git
 cd neuroverseos
 npm install
 ```

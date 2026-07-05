@@ -13,7 +13,7 @@ import { LessonRunner } from "@/components/neuroverse/LessonRunner";
 import { ArchetypeAssessment } from "@/components/neuroverse/ArchetypeAssessment";
 import { Orientation } from "@/components/neuroverse/Orientation";
 import { saveReflection, type Lesson } from "@/lib/lesson-queries";
-import { getLessonByNumber, forceSupabaseRefresh } from "@/lib/lesson-loader";
+import { getLessonByNumber, getLessonById, forceSupabaseRefresh } from "@/lib/lesson-loader";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/hooks/use-toast";
 import { LogOut, HelpCircle, Shield, List, Settings as SettingsIcon, Cpu, Smartphone, BookOpen, Menu, Anchor, FileText, Radio, Heart, ScrollText, FileCode, Scale, Database } from "lucide-react";
@@ -154,7 +154,18 @@ export default function Dashboard() {
       setIsLoadingLesson(true);
       console.log('[DASHBOARD] Fetching lesson number:', state.progress.current_lesson_id);
       console.log('[DASHBOARD] Current state:', state);
-      const lesson = await getLessonByNumber(state.progress.current_lesson_id);
+      // current_lesson_id holds a lesson_number (1-96), but older builds
+      // stored the database row id — fall back to an id lookup and heal
+      // the stored value so progress keeps working.
+      let lesson = await getLessonByNumber(state.progress.current_lesson_id);
+      if (!lesson) {
+        lesson = await getLessonById(state.progress.current_lesson_id);
+        if (lesson) {
+          const healed = { ...state };
+          healed.progress.current_lesson_id = lesson.lesson_number;
+          saveState(healed);
+        }
+      }
       if (lesson) {
         console.log('[DASHBOARD] Lesson loaded successfully:', lesson.lesson_title);
         setCurrentLesson(lesson);

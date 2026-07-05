@@ -7,12 +7,13 @@ import { Badge } from "@/components/ui/badge";
 import { supabase, getEdgeFunctionUrl, ACTIVE_SUPABASE_PUBLISHABLE_KEY } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { VoiceRecorder } from "@/components/neuroverse/VoiceRecorder";
+import { VideoPlayer } from "@/components/neuroverse/VideoPlayer";
 import ReflectionMode from "@/components/neuroverse/ReflectionMode";
 import { StandardReflection, MicroInsight, ExerciseReflection } from "@/components/neuroverse/reflection";
 import type { Lesson } from "@/lib/lesson-queries";
 import type { StateSchema } from "@/lib/state-engine";
 import { MissionStage } from "@/lib/state-engine";
-import { Loader2, CheckCircle2, RefreshCw, Share2, Download, RotateCcw } from "lucide-react";
+import { Loader2, CheckCircle2, RefreshCw, Share2, Download, RotateCcw, ChevronLeft } from "lucide-react";
 import { clearLessonCache } from "@/lib/echelon-store";
 import {
   AlertDialog,
@@ -225,19 +226,47 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
     rehydrateSession();
   }, [hasOpened, progressLoading, isReplayMode, lesson.id, userId]);
 
+  const getStageFlow = (): MissionStage[] => [
+    MissionStage.BRIEFING,
+    MissionStage.DRILL1,
+    ...(lesson.video_url ? [MissionStage.VIDEO] : []),
+    MissionStage.HP,
+    MissionStage.DRILL2,
+    MissionStage.DEBRIEF,
+    MissionStage.FINAL,
+    MissionStage.REFLECTION,
+    MissionStage.COMPLETE,
+  ];
+
+  // A dossier entry already exists for this stage of this lesson —
+  // don't prompt again when the operator revisits via the Back button.
+  const hasReflectionFor = (stage: string): boolean =>
+    getReflectionEntries(lesson.id).some((e) => e.stage === stage);
+
+  // Step back one stage (view + re-engage; never re-prompts reflections).
+  // Backward is always safe: the operator has already seen that content.
+  // A pending reflection must not trap the operator — going back dismisses
+  // it, and it re-triggers on the next pass since nothing was saved.
+  const goBackStage = () => {
+    if (isStreaming) return;
+    if (pendingReflection) setPendingReflection(null);
+    const stageFlow = getStageFlow();
+    const currentIndex = stageFlow.indexOf(currentStage);
+    if (currentIndex <= 0) return;
+    let prev = stageFlow[currentIndex - 1];
+    if (prev === MissionStage.REFLECTION && currentIndex - 2 >= 0) {
+      prev = stageFlow[currentIndex - 2];
+    }
+    setReadyToAdvance(false);
+    setIsInReflectionMode(false);
+    setCurrentStage(prev);
+    updateThreadActivity(lesson.id, { currentStage: prev });
+    console.log(`Stage step-back: ${currentStage} → ${prev}`);
+  };
+
   // Stage advancement logic: advance to next stage after user response
   const advanceStage = async () => {
-    const stageFlow: MissionStage[] = [
-      MissionStage.BRIEFING,
-      MissionStage.DRILL1,
-      ...(lesson.video_url ? [MissionStage.VIDEO] : []),
-      MissionStage.HP,
-      MissionStage.DRILL2,
-      MissionStage.DEBRIEF,
-      MissionStage.FINAL,
-      MissionStage.REFLECTION,  // NEW: Deep reflection after FINAL
-      MissionStage.COMPLETE,
-    ];
+    const stageFlow: MissionStage[] = getStageFlow();
 
     const currentIndex = stageFlow.indexOf(currentStage);
     if (currentIndex < stageFlow.length - 1) {
@@ -258,7 +287,7 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
       // Reflections trigger when LEAVING a stage (after user response)
       
       // After DRILL1 → Standard Reflection
-      if (currentStage === MissionStage.DRILL1 && lesson.drill1_prompt && !pendingReflection) {
+      if (currentStage === MissionStage.DRILL1 && lesson.drill1_prompt && !pendingReflection && !hasReflectionFor("drill1")) {
         setPendingReflection({
           mode: "standard",
           stage: "drill1",
@@ -268,7 +297,7 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
       }
       
       // After VIDEO → Micro Insight
-      if (currentStage === MissionStage.VIDEO && lesson.video_url && !pendingReflection) {
+      if (currentStage === MissionStage.VIDEO && lesson.video_url && !pendingReflection && !hasReflectionFor("video")) {
         setPendingReflection({
           mode: "micro",
           stage: "video",
@@ -278,7 +307,7 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
       }
       
       // After DRILL2 → Standard Reflection
-      if (currentStage === MissionStage.DRILL2 && lesson.drill2_prompt && !pendingReflection) {
+      if (currentStage === MissionStage.DRILL2 && lesson.drill2_prompt && !pendingReflection && !hasReflectionFor("drill2")) {
         setPendingReflection({
           mode: "standard",
           stage: "drill2",
@@ -288,7 +317,7 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
       }
       
       // After DEBRIEF → Exercise Reflection
-      if (currentStage === MissionStage.DEBRIEF && lesson.debrief && !pendingReflection) {
+      if (currentStage === MissionStage.DEBRIEF && lesson.debrief && !pendingReflection && !hasReflectionFor("debrief")) {
         setPendingReflection({
           mode: "exercise",
           stage: "debrief",
@@ -884,6 +913,29 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
         {!isReplayMode && !isComplete && (
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
+              {!systemLiteracyMode &&
+                !pendingReflection &&
+                getStageFlow().indexOf(currentStage) > 0 && (
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={goBackStage}
+                          disabled={isStreaming}
+                          className="h-7 px-2 text-muted-foreground hover:text-neuro-cyan"
+                        >
+                          <ChevronLeft className="h-4 w-4" />
+                          <span className="text-xs">Back</span>
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p className="text-sm">Return to the previous step</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                )}
               <span className="text-xs text-muted-foreground">Stage:</span>
               {systemLiteracyMode ? (
                 <Badge variant="outline" className="text-xs border-amber-500/50 bg-amber-500/10 text-amber-500">
@@ -990,14 +1042,14 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
             <div className="max-w-[85%] sm:max-w-[75%] p-4 rounded-lg bg-neuro-surface border border-neuro-cyan/20 space-y-4">
               <div>
                 <div className="text-xs font-bold text-neuro-orange mb-2 font-mono uppercase tracking-wider">CONCEPT</div>
-                <p className="text-base text-foreground whitespace-pre-wrap leading-relaxed">{lesson.head}</p>
+                <p className="text-base text-foreground whitespace-pre-wrap leading-relaxed">{renderEmphasis(lesson.head)}</p>
               </div>
               {lesson.practical && (
                 <>
                   <div className="h-px bg-neuro-border/30" />
                   <div>
                     <div className="text-xs font-bold text-neuro-orange mb-2 font-mono uppercase tracking-wider">PRACTICAL</div>
-                    <p className="text-base text-foreground whitespace-pre-wrap leading-relaxed">{lesson.practical}</p>
+                    <p className="text-base text-foreground whitespace-pre-wrap leading-relaxed">{renderEmphasis(lesson.practical)}</p>
                   </div>
                 </>
               )}
@@ -1005,6 +1057,17 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
           </div>
         )}
         
+        {/* Visual Intel: the video itself, right in the conversation */}
+        {!isReplayMode && currentStage === MissionStage.VIDEO && lesson.video_url && (
+          <div className="animate-fade-in">
+            <VideoPlayer
+              videoUrl={lesson.video_url}
+              onComplete={() => advanceStage()}
+              callsign={state.user.vanguard.callsign || "Operator"}
+            />
+          </div>
+        )}
+
         {isStreaming && messages[messages.length - 1]?.content === "" && (
           <div className="flex justify-start">
             <div className="bg-neuro-surface border border-neuro-cyan/20 p-3 rounded-lg">

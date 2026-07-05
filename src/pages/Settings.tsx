@@ -58,7 +58,7 @@ export default function Settings() {
   
   // Audio state
   const [audioEnabled, setAudioEnabled] = useState(false);
-  const [audioVoice, setAudioVoice] = useState("onyx");
+  const [audioVoice, setAudioVoice] = useState("local_default");
   const [audioSpeed, setAudioSpeed] = useState(1.0);
   const [audioVolume, setAudioVolume] = useState(1.0);
   
@@ -1292,51 +1292,26 @@ export default function Settings() {
 
             {/* Voice Selection */}
             <div className="space-y-3">
-              <Label>Voice Model</Label>
-              <div className="space-y-2">
-                {/* OpenAI Voices */}
-                <p className="text-xs text-muted-foreground font-medium">OpenAI TTS (Recommended)</p>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                  {Object.entries(ECHELON_VOICES)
-                    .filter(([_, voice]) => voice.provider === "openai")
-                    .map(([id, voice]) => (
-                      <Button
-                        key={id}
-                        variant={audioVoice === id ? "default" : "outline"}
-                        size="sm"
-                        className={`h-auto py-3 ${
-                          audioVoice === id
-                            ? "bg-neuro-purple hover:bg-neuro-purple/90"
-                            : "border-border hover:border-neuro-purple/50"
-                        }`}
-                        onClick={() => updateAudioSettings({ voice: id })}
-                      >
-                        <div className="text-center w-full">
-                          <div className="font-medium text-sm">{voice.name}</div>
-                          <div className="text-xs opacity-70 mt-0.5">{voice.description}</div>
-                        </div>
-                      </Button>
-                    ))}
+              <Label>Voice</Label>
+              <p className="text-xs text-muted-foreground">
+                Echelon's voice runs entirely on your device — no cloud service, no
+                audio ever leaves your machine. Shape it with speed and pitch below.
+              </p>
+              <Button
+                variant={audioVoice === "local_default" ? "default" : "outline"}
+                size="sm"
+                className={`w-full h-auto py-3 ${
+                  audioVoice === "local_default"
+                    ? "bg-neuro-cyan hover:bg-neuro-cyan/90"
+                    : "border-border hover:border-neuro-cyan/50"
+                }`}
+                onClick={() => updateAudioSettings({ voice: "local_default" })}
+              >
+                <div className="text-center w-full">
+                  <div className="font-medium text-sm">System Voice</div>
+                  <div className="text-xs opacity-70 mt-0.5">Your device's built-in voice — private, offline, free</div>
                 </div>
-
-                {/* Browser Voice */}
-                <p className="text-xs text-muted-foreground font-medium mt-4">Offline Fallback</p>
-                <Button
-                  variant={audioVoice === "local_default" ? "default" : "outline"}
-                  size="sm"
-                  className={`w-full h-auto py-3 ${
-                    audioVoice === "local_default"
-                      ? "bg-neuro-cyan hover:bg-neuro-cyan/90"
-                      : "border-border hover:border-neuro-cyan/50"
-                  }`}
-                  onClick={() => updateAudioSettings({ voice: "local_default" })}
-                >
-                  <div className="text-center w-full">
-                    <div className="font-medium text-sm">System Voice</div>
-                    <div className="text-xs opacity-70 mt-0.5">Uses your device's built-in TTS</div>
-                  </div>
-                </Button>
-              </div>
+              </Button>
             </div>
 
             {/* Speed Control */}
@@ -1561,7 +1536,7 @@ export default function Settings() {
               <p className="text-sm text-muted-foreground">
                 Full walkthrough:{" "}
                 <a
-                  href="https://github.com/RegardsKiki2/neuroverseos/blob/main/docs/SELF_HOSTING.md"
+                  href="https://github.com/NeuroverseOS/HowToSaveTheWorld/blob/main/docs/SELF_HOSTING.md"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-neuro-cyan underline hover:text-neuro-cyan/80"

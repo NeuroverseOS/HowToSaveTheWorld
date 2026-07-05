@@ -811,7 +811,16 @@ const Index = () => {
           </div>
           
           <p className="font-mono text-xs tracking-[0.15em] text-muted-foreground">
-            NeuroVerse OS — A Human-First AI Training Protocol
+            Built on{" "}
+            <a
+              href="https://www.neuroverseos.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-neuro-cyan hover:underline"
+            >
+              NeuroVerse OS
+            </a>{" "}
+            — A Human-First AI Training Protocol
           </p>
           
           <div className="flex flex-wrap items-center justify-center gap-3">
