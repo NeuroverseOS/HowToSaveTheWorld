@@ -1,0 +1,32 @@
+{
+  "id": "how_to_use",
+  "category": "user",
+  "title": "How To Use Echelon & The NeuroVerse",
+  "entries": [
+    {
+      "id": "01_great_questions",
+      "title": "Great Things to Ask",
+      "body": "Ask Echelon to explain systems, breakdown decisions, design frameworks, craft missions, reveal uploads, run simulations, or map out leadership choices."
+    },
+    {
+      "id": "02_activate_uploads",
+      "title": "How to Activate Uploads",
+      "body": "Simply ask: 'Upload: [Name].' Echelon will load the cinematic, lesson, framework, and mission tied to that upload."
+    },
+    {
+      "id": "03_missions",
+      "title": "How to Request Missions",
+      "body": "Ask for a mission anytime you want to practice or apply a concept. Echelon will choose the correct difficulty."
+    },
+    {
+      "id": "04_ui",
+      "title": "How to Navigate the Interface",
+      "body": "Everything runs locally. Your lessons, uploads, Echelon conversations, and Vanguard data live on your device. The PWA works offline with full functionality."
+    },
+    {
+      "id": "05_when_confused",
+      "title": "What to Do When You're Confused",
+      "body": "Say exactly what you're feeling: 'I'm lost,' 'I don't get this,' or 'Explain in simpler terms.' Echelon will shift into System Literacy mode."
+    }
+  ]
+}

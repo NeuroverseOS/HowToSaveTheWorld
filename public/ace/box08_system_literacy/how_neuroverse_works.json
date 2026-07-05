@@ -1,0 +1,37 @@
+{
+  "id": "how_neuroverse_works",
+  "category": "neuroverse",
+  "title": "How the NeuroVerse Works",
+  "entries": [
+    {
+      "id": "01_agents",
+      "title": "Agents",
+      "body": "Agents are the core actors of the NeuroVerse: humans, devices, sensors, drones, vehicles, AI models, robots, or any entity capable of perceiving and acting. Systems emerge from their interactions."
+    },
+    {
+      "id": "02_state",
+      "title": "State & Global State",
+      "body": "State is what an agent currently believes about the world. Global State is the shared belief across the network. When these diverge—systems drift. Alignment is the first law of stability."
+    },
+    {
+      "id": "03_latency",
+      "title": "Latency",
+      "body": "Latency is the delay between cause and effect in real-world systems. High latency breaks coordination. Low latency creates flow. This principle governs AR, robots, networks, and leadership."
+    },
+    {
+      "id": "04_posemesh",
+      "title": "The Posemesh",
+      "body": "The Posemesh is the spatial coordination layer. It aligns agents on shared time, space, and orientation, allowing AR objects to stay pinned, robots to navigate reliably, and the real-world web to form."
+    },
+    {
+      "id": "05_uploads",
+      "title": "Uploads",
+      "body": "Uploads are cognitive upgrades that teach you how to design, build, and lead real-world systems. Each upload activates new perception and pattern-recognition abilities."
+    },
+    {
+      "id": "06_missions",
+      "title": "Missions",
+      "body": "Missions convert learning into action. Each mission produces a behavior or artifact that strengthens the NeuroVerse through your contribution."
+    }
+  ]
+}

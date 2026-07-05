@@ -1,0 +1,13 @@
+project_id = "vlthyggdqmqmrgzselpy"
+
+[functions.analyze-trait-unlocks]
+verify_jwt = false
+
+[functions.echelon-chat]
+verify_jwt = false
+
+[functions.echelon-speak]
+verify_jwt = false
+
+[functions.transcribe-audio]
+verify_jwt = false

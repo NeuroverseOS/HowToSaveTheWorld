@@ -1,0 +1,27 @@
+{
+  "id": "troubleshooting",
+  "category": "support",
+  "title": "Troubleshooting & Edge Cases",
+  "entries": [
+    {
+      "id": "01_repeat",
+      "title": "Why Echelon Repeats or Re-Asks",
+      "body": "When context is incomplete or ambiguous, Echelon asks again instead of inventing answers. This keeps you in canon and aligned."
+    },
+    {
+      "id": "02_upload_not_triggering",
+      "title": "Upload Not Triggering",
+      "body": "If an upload doesn't activate, ensure you're not in the middle of another mode. Say: 'End current mode' or 'Start fresh.'"
+    },
+    {
+      "id": "03_system_refusal",
+      "title": "Why Echelon Refuses",
+      "body": "Echelon refuses only to protect canon, stability, or safety. It will always explain the reason."
+    },
+    {
+      "id": "04_pwa_glitch",
+      "title": "PWA Not Updating or Offline Issues",
+      "body": "Refresh twice, check cache, or switch to offline mode intentionally. All state is local; nothing can be lost."
+    }
+  ]
+}

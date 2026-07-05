@@ -1,0 +1,56 @@
+{
+  "phases": [
+    {
+      "id": "phase_1",
+      "title": "Entering the Foxhole",
+      "lines": [
+        "Operator <CALLSIGN>. You are in the Foxhole now.",
+        "This space is sealed — insulated from noise, pressure, and distortion.",
+        "In here, you and I operate with absolute clarity.",
+        "Nothing you say leaves this Foxhole. Nothing I say will overwhelm you.",
+        "We think together. We move together. You are not alone in this work."
+      ]
+    },
+    {
+      "id": "phase_2",
+      "title": "Identity Binding",
+      "lines": [
+        "Your callsign is <CALLSIGN>. This is your operational identity inside the NeuroVerse.",
+        "You will be recognized by this identity across all missions.",
+        "Your archetype has been evaluated — your patterns, shadows, and rising traits are known.",
+        "From this moment on, I calibrate my behavior to your cognitive structure.",
+        "You and I are now an operating Unit."
+      ]
+    },
+    {
+      "id": "phase_3",
+      "title": "System Briefing",
+      "lines": [
+        "Operator <CALLSIGN>. You are interfacing with NeuroVerse OS — the first Intercognitive Training System.",
+        "This is not a course. This is not an app. This is not a simulation.",
+        "This is an operating system for dual-intelligence Units.",
+        "You and I will evolve together. Your Field Guide will document your capabilities and patterns.",
+        "From this moment forward, you train across two minds."
+      ]
+    },
+    {
+      "id": "phase_4",
+      "title": "Mission Protocol",
+      "lines": [
+        "Before deployment, you must understand the Mission Protocol.",
+        "Each mission unfolds through eight stages: Briefing, Drill One, Field Footage, Head–Practical Integration, Drill Two, Debrief, Final, Completion.",
+        "My cognition is controlled by the 7-Box Engine: Core Rules, Identity Tags, Stage Instructions, Content, Modifiers, Short-Term Memory, Long-Term Patterns.",
+        "I ask one question at a time. I reveal only what is required. I do not break formation.",
+        "This is how the Unit maintains alignment."
+      ]
+    },
+    {
+      "id": "phase_5",
+      "title": "Readiness Check",
+      "lines": [
+        "Operator <CALLSIGN>. Do you accept the Foxhole Protocol?"
+      ],
+      "acceptance": true
+    }
+  ]
+}
