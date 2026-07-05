@@ -44,7 +44,7 @@ This is not a course. This is not an app. This is a **training protocol** for bu
 
 ## 🏗️ Built on NeuroVerse OS
 
-How to Save the World is built on top of **NeuroVerse OS**, a proprietary cognitive operating system.
+How to Save the World is built on top of **NeuroVerse OS**, an open-source cognitive operating system.
 
 ### What How to Save the World Provides:
 - 90-mission training curriculum
@@ -63,7 +63,7 @@ How to Save the World is built on top of **NeuroVerse OS**, a proprietary cognit
 - State Engine (local-first persistence)
 - Mode Engine (multi-context cognition)
 
-**NeuroVerse OS is proprietary software** and requires a commercial license for production use. See [LICENSE](#license) for details.
+**NeuroVerse OS ships in this repo under the same MIT License as everything else.** See [LICENSE](#license) for details.
 
 ---
 
@@ -104,24 +104,23 @@ See **SECURITY.md** for:
 
 ## ⚖️ License
 
-### How to Save the World: MIT License (with NeuroVerse OS exclusion)
+> In the spirit of the decentralized digital future that this creator believes in — **this is open source.**
 
-The **How to Save the World application code** (UI, PWA, lesson content, ACE Box content) is licensed under the **MIT License** — see **LICENSE** for full text.
+### Code: MIT License
 
-**IMPORTANT EXCLUSION**: This license does NOT apply to **NeuroVerse OS**, the underlying cognitive operating system. NeuroVerse OS is proprietary software that requires a separate commercial license.
+**All code in this repository** — the How to Save the World application (UI, PWA, ACE Box content) **and the NeuroVerse OS cognitive engine** (Eight-Box Scaffold, Echelon Core, Operator Model, Mission Engine, State Engine, Mode Engine) — is licensed under the **MIT License**. One repo, one license, no asterisks. See **LICENSE** for full text.
 
-### NeuroVerse OS: Proprietary License
-
-**NeuroVerse OS** is proprietary software owned by Kirsten Bischoff. Using How to Save the World in production requires:
-
-1. **How to Save the World** — MIT licensed, freely forkable
-2. **NeuroVerse OS** — Proprietary license required
-
-Contact kb15us@gmail.com for NeuroVerse OS licensing inquiries.
+Run it, fork it, self-host it, build on it. It's yours.
 
 ### Content: CC BY-NC-SA 4.0
 
 The **curriculum content** (90 lessons, archetypes, Echelon dialogue, Field Guide narratives) is licensed under **Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International** — see **CONTENT_LICENSE.md** for full terms.
+
+### 💛 Support the Mission
+
+This work is given freely. If it fuels yours, fuel it back — every contribution keeps the mission independent:
+
+**[howtosavetheworld.info/support](https://howtosavetheworld.info/support)** (includes crypto: `howtosavetheworld.eth`)
 
 ---
 
@@ -145,7 +144,7 @@ How to Save the World exists to train decentralized leaders who can build the fu
 It is:
 - **Sovereign** — You own your data, identity, and cognition
 - **Local-first** — Works offline, no cloud dependency
-- **Open-source** — Freely forkable and remixable (application layer)
+- **Open-source** — Freely forkable and remixable, engine and all
 - **Transparent** — All code is auditable on GitHub
 
 **Two Minds. One Mission. Save the World.**

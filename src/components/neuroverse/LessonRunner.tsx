@@ -167,6 +167,9 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
         console.log(`[ECHELON REHYDRATE] Found ${cachedMessages.length} cached messages for lesson ${lesson.id}`);
         setMessages(cachedMessages);
         setCurrentStage(existingThread.currentStage);
+        if (existingThread.currentStage === MissionStage.COMPLETE) {
+          setIsComplete(true);
+        }
         setHasOpened(true);
         setIsResumedSession(true);
         
@@ -257,6 +260,9 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
     if (prev === MissionStage.REFLECTION && currentIndex - 2 >= 0) {
       prev = stageFlow[currentIndex - 2];
     }
+    // Stepping back out of a completed mission reopens it for input, so
+    // unanswered questions can be answered without restarting.
+    if (isComplete) setIsComplete(false);
     setReadyToAdvance(false);
     setIsInReflectionMode(false);
     setCurrentStage(prev);
@@ -910,11 +916,10 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
         </div>
         
         {/* Stage Indicator & Re-engage Protocol */}
-        {!isReplayMode && !isComplete && (
+        {!isReplayMode && (
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
               {!systemLiteracyMode &&
-                !pendingReflection &&
                 getStageFlow().indexOf(currentStage) > 0 && (
                   <TooltipProvider>
                     <Tooltip>
@@ -984,7 +989,7 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
                   <Button
                     variant="ghost"
                     size="sm"
-                    disabled={isStreaming || isComplete}
+                    disabled={isStreaming}
                     className="text-muted-foreground hover:text-foreground hover:bg-neuro-surface"
                     title="Restart Mission"
                   >

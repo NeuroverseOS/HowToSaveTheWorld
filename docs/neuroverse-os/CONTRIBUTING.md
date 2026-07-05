@@ -1,6 +1,6 @@
 # NeuroVerse OS — CONTRIBUTING
 
-NeuroVerse OS is **proprietary software** with a private repository. External contributions are not accepted.
+NeuroVerse OS is **open-source software** (MIT License). Engine contributions are accepted through the How to Save the World repository, with maintainer review.
 
 ---
 
@@ -10,7 +10,7 @@ NeuroVerse OS is developed and maintained exclusively by Kirsten Bischoff ("the 
 
 ### Why Private?
 
-- **IP Protection**: NeuroVerse OS is proprietary intellectual property
+- **Stewardship**: NeuroVerse OS has a canonical maintainer; engine changes require approval
 - **Architectural Integrity**: The Eight-Box Scaffold and Echelon Core are trade secrets
 - **Quality Control**: All changes are vetted and implemented by the Creator
 - **Licensing Model**: NeuroVerse OS is licensed commercially, not distributed freely
@@ -72,7 +72,7 @@ However, you **may not**:
 
 ## ⚖️ License Compliance
 
-All uses of NeuroVerse OS must comply with the proprietary license. See [LICENSE.md](./LICENSE.md) for full terms.
+All uses of NeuroVerse OS must comply with the MIT license. See [LICENSE.md](./LICENSE.md) for full terms.
 
 Violations will result in:
 - Immediate license termination
@@ -89,4 +89,4 @@ For licensing inquiries, feature requests, or feedback:
 
 ---
 
-**NeuroVerse OS — Proprietary Cognitive Operating System**
+**NeuroVerse OS — Open-Source Cognitive Operating System**

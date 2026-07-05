@@ -116,7 +116,7 @@ How to Save the World v1.0.0 is the first public release of the decentralized le
 - **Storage**: localStorage + IndexedDB fallback
 - **Optional Backend**: Supabase (Lovable Cloud)
 - **AI Providers**: OpenAI, Anthropic, Google, Ollama
-- **Dependencies**: @neuroverse/os (proprietary)
+- **Dependencies**: @neuroverse/os (open-source, MIT)
 
 ---
 
@@ -132,7 +132,7 @@ How to Save the World v1.0.0 is the first public release of the decentralized le
 - Work Mode entry points
 - Settings and data management
 
-#### Proprietary (NeuroVerse OS):
+#### NeuroVerse OS (open-source, MIT):
 - Eight-Box Scaffold
 - Echelon Core Intelligence
 - Operator Model
@@ -157,7 +157,7 @@ How to Save the World v1.0.0 is the first public release of the decentralized le
 
 - **Application Code**: MIT License
 - **Curriculum Content**: CC BY-NC-SA 4.0
-- **NeuroVerse OS**: Proprietary License (contact kb15us@gmail.com)
+- **NeuroVerse OS**: MIT License
 
 ---
 

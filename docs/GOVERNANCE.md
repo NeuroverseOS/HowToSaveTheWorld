@@ -100,7 +100,7 @@ This is **not yet implemented** but aligns with the project's decentralization p
 
 1. **Respect the MIT License** — Maintain attribution
 2. **Respect Content License** — Follow CC BY-NC-SA 4.0 for curriculum content
-3. **Exclude NeuroVerse OS** — NeuroVerse OS is proprietary and requires separate licensing
+3. **NeuroVerse OS comes with it** — the engine is MIT-licensed like everything else; fork it all
 4. **Rename Your Fork** — Avoid confusion with the canonical How to Save the World
 
 ---
@@ -134,11 +134,11 @@ This is **not yet implemented** but aligns with the project's decentralization p
 - **Curriculum Content**: CC BY-NC-SA 4.0 License
 - **Owned By**: Kirsten Bischoff and contributors
 
-### NeuroVerse OS (Proprietary)
+### NeuroVerse OS (Open-Source)
 
-- **Cognitive Engine**: Proprietary License
-- **Owned By**: Kirsten Bischoff
-- **Commercial Use**: Requires separate licensing
+- **Cognitive Engine**: MIT License
+- **Created By**: Kirsten Bischoff
+- **Commercial Use**: Permitted under MIT terms
 
 See [LICENSE](../LICENSE) and [docs/neuroverse-os/LICENSE.md](./neuroverse-os/LICENSE.md) for full terms.
 
@@ -186,7 +186,7 @@ The following are **non-negotiable** and cannot be altered via community governa
 - **9 Canonical Archetypes** — WATCHTOWER, WEAVER, VEIL, OPERATOR, ENGINE, LUMEN, CIPHER, DRIFT, CHRONICLE
 - **90-Lesson Structure** — 6 sessions, sequential gating
 - **Echelon Personality** — Mythic-tech tone, ICF coaching rules
-- **NeuroVerse OS Integration** — Dependency on proprietary cognitive engine
+- **NeuroVerse OS Integration** — Dependency on open-source cognitive engine
 - **FOXHOLE Protocol** — Canonical bonding protocol (non-configurable)
 
 These are foundational to How to Save the World's identity and effectiveness.

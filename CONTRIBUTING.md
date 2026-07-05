@@ -11,10 +11,9 @@ Thank you for your interest in contributing to How to Save the World — a decen
 Before contributing, please understand the **core principles** that guide How to Save the World:
 
 ### 1. **Built on NeuroVerse OS**
-- How to Save the World is an **open-source application** (MIT License)
-- It runs on **NeuroVerse OS** (proprietary cognitive operating system)
+- How to Save the World is **fully open source** (MIT License) — the application AND the NeuroVerse OS engine it runs on
 - You can contribute to the UI, content, PWA features, and application logic
-- You **cannot** modify NeuroVerse OS core (Eight-Box Engine, Echelon Core, Mission Engine)
+- Changes to NeuroVerse OS core (Eight-Box Engine, Echelon Core, Mission Engine) are welcome but held to a higher review bar — they are the cognitive heart of the system and require maintainer approval
 
 ### 2. **Sovereignty First**
 - All user data, state, and identity remain **on-device** (localStorage/IndexedDB)
@@ -89,8 +88,8 @@ The following **CANNOT** be changed without fundamentally breaking the project:
 ### Content Contributions
 ⚠️ **Curriculum content** (90 training missions, archetypes, Echelon dialogue) is covered by **CC BY-NC-SA 4.0** license (see `CONTENT_LICENSE.md`). Curriculum changes require project maintainer approval to preserve psychological integrity and narrative coherence. FOXHOLE Protocol ceremony text is canonical and cannot be modified.
 
-### What You CANNOT Contribute
-❌ **NeuroVerse OS modifications** — The underlying cognitive operating system (Eight-Box Scaffold, Echelon Core, Mission Engine, ACE Loader architecture) is proprietary and cannot be modified through Foxhole Protocol contributions. See `docs/neuroverse-os/` for OS documentation.
+### Engine Contributions
+⚠️ **NeuroVerse OS modifications** — The underlying cognitive operating system (Eight-Box Scaffold, Echelon Core, Mission Engine, ACE Loader architecture) is open source like everything else, but it is the cognitive heart of the platform: changes here require explicit maintainer approval and a clear rationale. See `docs/neuroverse-os/` for OS documentation.
 
 ---
 
@@ -178,10 +177,9 @@ See `SECURITY.md` for responsible disclosure procedures.
 
 By contributing to How to Save the World, you agree that:
 
-- Your **code contributions** to How to Save the World will be licensed under the **MIT License**
+- Your **code contributions** to How to Save the World (application and NeuroVerse OS engine alike) will be licensed under the **MIT License**
 - Any **curriculum content contributions** will be licensed under **CC BY-NC-SA 4.0** (see `CONTENT_LICENSE.md`)
-- You will **not** submit contributions that modify NeuroVerse OS internals (which remain under proprietary license)
-- Your contributions will maintain proper attribution to NeuroVerse OS as required by the license
+- Your contributions will maintain proper attribution as required by the licenses
 
 ---
 

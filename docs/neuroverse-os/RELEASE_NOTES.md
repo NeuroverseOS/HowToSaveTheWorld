@@ -10,7 +10,7 @@ This document tracks version history and changes for NeuroVerse OS.
 
 ### 🎉 First Public Release
 
-NeuroVerse OS v1.0.0 is the first proprietary release of the world's first intercognitive operating system. This version includes the complete Eight-Box Scaffold, Echelon Core Intelligence, and all foundational systems for building human-AI reasoning partnerships.
+NeuroVerse OS v1.0.0 is the first release of the world's first intercognitive operating system. This version includes the complete Eight-Box Scaffold, Echelon Core Intelligence, and all foundational systems for building human-AI reasoning partnerships.
 
 ---
 
@@ -97,7 +97,7 @@ NeuroVerse OS v1.0.0 is the first proprietary release of the world's first inter
 - **Build System**: npm package distribution
 - **AI Provider Support**: OpenAI, Anthropic, Google, Ollama
 - **Storage**: localStorage, IndexedDB, optional Supabase
-- **Licensing**: Proprietary with Creator Perpetual Rights
+- **Licensing**: MIT (open source)
 - **Package Name**: @neuroverse/os
 - **Minimum Node.js**: v18.0.0
 - **Minimum npm**: v9.0.0
@@ -114,7 +114,7 @@ NeuroVerse OS v1.0.0 is the first proprietary release of the world's first inter
 
 #### Documentation:
 - README.md (OS overview)
-- LICENSE.md (Proprietary license)
+- LICENSE.md (MIT license)
 - ARCHITECTURE.md (Eight-Box Scaffold)
 - DEVELOPER_GUIDE.md (Build on NeuroVerse OS)
 - FOLDER_STRUCTURE.md (Directory layout)
@@ -131,7 +131,7 @@ NeuroVerse OS v1.0.0 is the first proprietary release of the world's first inter
 
 ### 🔒 Security
 
-- All source code is proprietary and never published
+- All source code is open source (MIT) and published
 - Compiled JavaScript is obfuscated and minified
 - License validation enforced on initialization
 - Zero telemetry or operator data collection

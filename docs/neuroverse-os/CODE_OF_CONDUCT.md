@@ -2,7 +2,7 @@
 
 ## Professional Standards for Licensees and Partners
 
-NeuroVerse OS is proprietary software built on principles of sovereignty, integrity, and respect. All licensees, partners, and collaborators are expected to uphold professional standards of conduct.
+NeuroVerse OS is built on principles of sovereignty, integrity, and respect. All licensees, partners, and collaborators are expected to uphold professional standards of conduct.
 
 ---
 
@@ -10,7 +10,7 @@ NeuroVerse OS is proprietary software built on principles of sovereignty, integr
 
 ### We Expect:
 
-- **Respect for intellectual property** — Honor the proprietary nature of NeuroVerse OS
+- **Respect for intellectual property** — Honor the licenses and attribution requirements of NeuroVerse OS
 - **Professional communication** — Engage with the Creator and other licensees respectfully
 - **Transparency** — Be honest about your use case and deployment scale
 - **Compliance** — Adhere to all license terms and conditions
@@ -75,4 +75,4 @@ For questions about this Code of Conduct:
 
 ---
 
-**NeuroVerse OS — Proprietary Cognitive Operating System**
+**NeuroVerse OS — Open-Source Cognitive Operating System**

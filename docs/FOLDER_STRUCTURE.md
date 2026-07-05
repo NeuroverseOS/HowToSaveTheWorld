@@ -277,7 +277,7 @@ Documentation:
 - `/docs/` — Documentation (How to Save the World only)
 - `README.md`, `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`
 
-### ❌ Proprietary (NeuroVerse OS):
+### 🧠 NeuroVerse OS Engine (open-source, MIT):
 
 - `@neuroverse/os` package (imported via npm)
 - `/docs/neuroverse-os/` — NeuroVerse OS documentation

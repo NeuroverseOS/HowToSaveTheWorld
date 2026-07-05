@@ -1,8 +1,8 @@
 # NeuroVerse OS — SECURITY
 
-### Proprietary Cognitive Architecture Security Policy
+### Cognitive Architecture Security Policy
 
-NeuroVerse OS is built on a sovereignty-first security model for proprietary software. This document explains how the system protects intellectual property, operator identity, and cognitive architecture.
+NeuroVerse OS is built on a sovereignty-first security model. This document explains how the system protects operator identity and cognitive architecture.
 
 ---
 
@@ -20,7 +20,7 @@ NeuroVerse OS is built on a sovereignty-first security model for proprietary sof
 
 ## 🔐 2. Protected Components
 
-### The following components are proprietary and protected:
+### The following components form the protected core:
 
 #### Eight-Box Scaffold
 - Prompt assembly logic (src/core/prompt-assembly.ts)
@@ -60,7 +60,7 @@ NeuroVerse OS is built on a sovereignty-first security model for proprietary sof
 
 ### What Is NOT Published:
 
-- **Source code** (src/) — Proprietary, never distributed
+- **Source code** (src/) — Open source (MIT), published in the How to Save the World repository
 - **Implementation details** — Hidden behind compiled code
 - **Algorithm logic** — Protected trade secrets
 
@@ -197,4 +197,4 @@ For security questions, vulnerability reports, or license violations:
 
 ---
 
-**NeuroVerse OS — Proprietary Cognitive Operating System**
+**NeuroVerse OS — Open-Source Cognitive Operating System**

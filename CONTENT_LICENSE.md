@@ -1,9 +1,10 @@
 # How to Save the World Content License
 
 ## Code License: MIT
-The **software code** of How to Save the World (React components, TypeScript logic, configuration files, build scripts) is licensed under the **MIT License**. See `LICENSE` for full terms.
 
-**IMPORTANT EXCLUSION**: The MIT License does NOT apply to **NeuroVerse OS**, the underlying cognitive operating system. NeuroVerse OS is proprietary software that requires a separate commercial license. See [LICENSE](./LICENSE) for details.
+**All software code** in this repository — the How to Save the World application (React components, TypeScript logic, configuration files, build scripts) **and the NeuroVerse OS cognitive engine** (Eight-Box Scaffold, Echelon Core Intelligence, Operator Model, Mission Engine, State Engine, Mode Engine, ACE Loader, Archetype System) — is licensed under the **MIT License**. See `LICENSE` for full terms.
+
+In the spirit of the decentralized digital future that this creator believes in — this is open source. All of it.
 
 **Note:** FOXHOLE Protocol is a canonical bonding protocol inside the NeuroVerse, not the name of this platform. This PWA implements the FOXHOLE bonding moment as part of onboarding; the full protocol definition lives in the NeuroVerse Canon repository.
 
@@ -40,7 +41,7 @@ https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
 
 How to Save the World separates **infrastructure** (code) from **intelligence** (content):
 
-- **MIT License (code)** ensures the application remains open-source, forkable, and sovereign — anyone can run, modify, and deploy the application infrastructure.
+- **MIT License (code)** ensures the entire platform — application and cognitive engine alike — remains open-source, forkable, and sovereign. Anyone can run, modify, and deploy it.
 
 - **CC BY-NC-SA 4.0 (content)** protects the psychological curriculum and narrative design from commercial exploitation while allowing educational, research, and non-profit use.
 
@@ -48,28 +49,24 @@ This dual-licensing model preserves **user sovereignty** (you own your instance)
 
 ---
 
-## NeuroVerse OS (Proprietary)
+## Support the Mission
 
-**NeuroVerse OS** — the cognitive operating system that powers How to Save the World — is proprietary software and is NOT covered by the MIT License or CC BY-NC-SA 4.0.
+This work is given freely. If it fuels yours, fuel it back:
 
-Using How to Save the World in production requires:
-1. **How to Save the World** — MIT licensed (application code) + CC BY-NC-SA 4.0 (curriculum content)
-2. **NeuroVerse OS** — Proprietary license required (contact kb15us@gmail.com)
-
-See [LICENSE](./LICENSE) for full NeuroVerse OS exclusion clause.
+**https://howtosavetheworld.info/support**
 
 ---
 
 ## GitHub Repository
 
 Full source code and documentation:  
-https://github.com/RegardsKiki2/neuroverseos
+https://github.com/NeuroverseOS/HowToSaveTheWorld
 
 ---
 
 ## Commercial Use Inquiries
 
-Interested in commercial licensing for the How to Save the World curriculum content or NeuroVerse OS?  
+Interested in commercial licensing for the How to Save the World curriculum content?  
 Contact: kb15us@gmail.com
 
 ---

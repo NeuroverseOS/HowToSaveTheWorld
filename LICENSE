@@ -1,6 +1,20 @@
+In the spirit of the decentralized digital future that this creator
+believes in — this is open source.
+
+All of it: the How to Save the World application AND the NeuroVerse OS
+cognitive engine beneath it (Eight-Box Scaffold, Echelon Core
+Intelligence, Operator Model, Mission Engine, State Engine, Mode
+Engine, ACE Loader, Archetype System). One repo, one license, no
+asterisks.
+
+If this work fuels yours, fuel it back:
+https://howtosavetheworld.info/support
+
+---------------------------------------------------------------------
+
 MIT License
 
-Copyright (c) 2025 How to Save the World Contributors
+Copyright (c) 2025-2026 Kirsten Bischoff and the How to Save the World Contributors
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -20,44 +34,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
----
+---------------------------------------------------------------------
 
-## IMPORTANT: NeuroVerse OS Exclusion
-
-This MIT License applies ONLY to the How to Save the World application code, including:
-- User interface components (src/components/, src/pages/)
-- PWA infrastructure (vite.config.ts, manifest, service worker)
-- Lesson content (public/lessons.json)
-- ACE Box content (public/ace/)
-- Application styling (src/index.css, tailwind.config.ts)
-- Documentation (docs/, README.md, CONTRIBUTING.md)
-
-This license does NOT apply to:
-- **NeuroVerse OS** (the underlying cognitive operating system)
-- Eight-Box Scaffold architecture
-- Echelon Core Intelligence
-- Operator Model and memory systems
-- Mission Engine orchestration
-- State Engine persistence
-- Mode Engine cognition
-- ACE Loader architecture
-- Archetype System algorithms
-
-## NeuroVerse OS Proprietary License
-
-**NeuroVerse OS** is proprietary software owned by Kirsten Bischoff and distributed under a separate commercial license.
-
-Using How to Save the World in production requires:
-1. Compliance with this MIT License (for How to Save the World application code)
-2. A valid commercial license for NeuroVerse OS (contact kb15us@gmail.com)
-
-For NeuroVerse OS licensing inquiries, contact: kb15us@gmail.com
-
----
-
-## Summary
-
-✅ How to Save the World application code: MIT License (open-source)
-❌ NeuroVerse OS cognitive engine: Proprietary License (commercial)
-
-You are free to fork, modify, and distribute How to Save the World, but you cannot use it in production without a NeuroVerse OS license.
+The curriculum content (lesson narratives, Echelon dialogue, archetype
+descriptions, and ceremony text) is licensed separately under
+CC BY-NC-SA 4.0 — see CONTENT_LICENSE.md.

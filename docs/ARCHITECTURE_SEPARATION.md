@@ -2,7 +2,7 @@
 
 **Version:** 1.0.0  
 **Last Updated:** 2025-01-26  
-**Purpose:** Define clear architectural boundaries between NeuroVerse OS (proprietary cognitive engine) and Foxhole Protocol (open-source application)
+**Purpose:** Define clear architectural boundaries between NeuroVerse OS (open-source cognitive engine) and Foxhole Protocol (open-source application)
 
 ---
 
@@ -10,12 +10,12 @@
 
 This document establishes the canonical separation between two distinct products that currently exist in a single codebase:
 
-1. **NeuroVerse OS** — Proprietary cognitive operating system (the engine)
+1. **NeuroVerse OS** — Open-source cognitive operating system (the engine)
 2. **Foxhole Protocol** — Open-source leadership training application (the app)
 
 This separation enables:
 - ✅ Foxhole Protocol to be fully open-source and Web3-aligned
-- ✅ NeuroVerse OS to remain proprietary intellectual property
+- ✅ NeuroVerse OS released as open source (MIT), with Kirsten Bischoff as canonical maintainer
 - ✅ Clean licensing model for both products
 - ✅ Future extensibility for additional apps built on the OS
 - ✅ Enterprise licensing opportunities for the OS platform
@@ -24,7 +24,7 @@ This separation enables:
 
 ## Product Definitions
 
-### NeuroVerse OS (Proprietary Platform)
+### NeuroVerse OS (Open-Source Platform)
 
 **What it is:**
 A cognitive operating system that structures human-AI reasoning through a deterministic seven-box scaffold, identity continuity, mode-based constraints, and governed memory.
@@ -42,7 +42,7 @@ A cognitive operating system that structures human-AI reasoning through a determ
 Ensures AI behaves consistently, maintains identity continuity, and adapts to the operator's cognitive structure — not just for Foxhole, but for any application.
 
 **License:**
-Commercial license (proprietary). Licensed to Kirsten Bischoff for use in all her products. Available for enterprise licensing.
+MIT License. Open source and free for all uses; Kirsten Bischoff remains the canonical maintainer.
 
 ---
 
@@ -465,7 +465,7 @@ foxhole-protocol/
 - OS is content-agnostic and reusable
 
 ### 3. Licensing Clarity
-- OS = proprietary (commercial licensing model)
+- OS = open source (MIT)
 - Foxhole = open-source (Web3-aligned transparency)
 - No license conflicts or confusion
 
@@ -493,19 +493,19 @@ foxhole-protocol/
 **A:** Yes, through commercial licensing. Organizations can license the OS to build their own cognitive training programs, leadership platforms, or custom applications. They cannot fork or open-source the OS itself.
 
 ### Q: Can DAOs fork Foxhole Protocol?
-**A:** Yes! Foxhole Protocol is fully open-source and forkable. Web3 communities can remix, customize, and redistribute it freely. The OS underneath is licensed to those forks as well, but remains proprietary.
+**A:** Yes! Foxhole Protocol is fully open-source and forkable. Web3 communities can remix, customize, and redistribute it freely. The OS underneath is MIT-licensed too — forks get everything.
 
 ### Q: What happens to existing users?
 **A:** Nothing changes for users. The PWA continues to work exactly as before. The separation is internal infrastructure, not user-facing functionality.
 
 ### Q: How is this different from other platforms?
-**A:** Most platforms are either fully open-source (no moat) or fully proprietary (no transparency). NeuroVerse + Foxhole achieves both: a proprietary cognitive engine with an open, transparent application layer. This is the same model Unity, Unreal, and Posemesh use.
+**A:** Many platforms are proprietary black boxes. NeuroVerse + Foxhole is fully open: an open-source cognitive engine with an open, transparent application layer, released in the spirit of the decentralized digital future.
 
 ---
 
 ## Conclusion
 
-This document establishes the canonical architecture for separating NeuroVerse OS (proprietary cognitive engine) from Foxhole Protocol (open-source training application). The separation enables:
+This document establishes the canonical architecture for separating NeuroVerse OS (open-source cognitive engine) from Foxhole Protocol (open-source training application). The separation enables:
 
 - ✅ Foxhole to be fully transparent and Web3-aligned
 - ✅ NeuroVerse OS to be commercially licensed

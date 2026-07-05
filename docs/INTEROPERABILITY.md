@@ -8,7 +8,7 @@ This document explains how How to Save the World integrates with NeuroVerse OS a
 
 ## 🧩 Architecture Overview
 
-Foxhole Protocol is **built on top of** NeuroVerse OS, the proprietary cognitive operating system.
+Foxhole Protocol is **built on top of** NeuroVerse OS, the open-source cognitive operating system.
 
 ```
 ┌─────────────────────────────────────────────────────────┐
@@ -21,7 +21,7 @@ Foxhole Protocol is **built on top of** NeuroVerse OS, the proprietary cognitive
 ┌─────────────────────────────────────────────────────────┐
 │  NeuroVerse OS (Cognitive Engine)                       │
 │  - Provides: Eight-Box Scaffold, Echelon Core, engines  │
-│  - License: Proprietary (commercial)                     │
+│  - License: MIT (open-source)                     │
 └─────────────────────────────────────────────────────────┘
 ```
 
@@ -210,7 +210,7 @@ NeuroVerse OS:
 
 ## 🔒 What Foxhole Cannot Access
 
-The following NeuroVerse OS internals are **proprietary and hidden**:
+The following NeuroVerse OS internals are **encapsulated behind the OS boundary**:
 
 - Eight-Box Scaffold prompt assembly logic
 - Echelon Core personality system prompts

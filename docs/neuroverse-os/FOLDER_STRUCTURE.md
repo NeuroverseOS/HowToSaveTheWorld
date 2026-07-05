@@ -68,7 +68,7 @@ neuroverse-os/
 │
 ├── docs/
 │   ├── README.md                   # OS overview
-│   ├── LICENSE.md                  # Proprietary license
+│   ├── LICENSE.md                  # MIT license
 │   ├── ARCHITECTURE.md             # Eight-Box architecture
 │   ├── DEVELOPER_GUIDE.md          # How to build on OS
 │   ├── FOLDER_STRUCTURE.md         # This file
@@ -204,7 +204,7 @@ TTS voice models and their characteristics.
 All documentation lives in `/docs/`:
 
 - **README.md** — OS overview and npm package info
-- **LICENSE.md** — Proprietary license with Creator Perpetual Rights
+- **LICENSE.md** — MIT license
 - **ARCHITECTURE.md** — Eight-Box Scaffold, Echelon Core, engines
 - **DEVELOPER_GUIDE.md** — How to build applications on NeuroVerse OS
 - **FOLDER_STRUCTURE.md** — This file
@@ -239,7 +239,7 @@ When published to npm, the package includes:
 ├── types/                  # TypeScript declarations
 ├── data/                   # JSON data files
 ├── README.md               # Package README
-└── LICENSE.md              # Proprietary license
+└── LICENSE.md              # MIT license
 ```
 
 Excluded from npm package:
@@ -251,7 +251,7 @@ Excluded from npm package:
 
 ## 🔒 Protected Components
 
-The following directories contain **proprietary code** and are never published:
+The following directories contain the **engine core**, published under MIT:
 
 - `/src/core/` — Eight-Box Scaffold and Echelon Core
 - `/src/engines/` — Mission, State, Field Guide engines

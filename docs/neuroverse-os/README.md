@@ -1,7 +1,7 @@
 # NeuroVerse OS
 ### The First Intercognitive Operating System
 
-NeuroVerse OS is a proprietary cognitive operating system that powers human-AI reasoning partnerships. It provides the Eight-Box Scaffold, Echelon Core Intelligence, and the foundational architecture for building intercognitive applications.
+NeuroVerse OS is a open-source cognitive operating system that powers human-AI reasoning partnerships. It provides the Eight-Box Scaffold, Echelon Core Intelligence, and the foundational architecture for building intercognitive applications.
 
 ---
 
@@ -95,7 +95,7 @@ const response = await echelon.chat('What is my mission?');
 
 ## ⚖️ License
 
-NeuroVerse OS is proprietary software. See [LICENSE.md](./LICENSE.md) for full terms.
+NeuroVerse OS is open-source software (MIT License). See [LICENSE.md](./LICENSE.md) for full terms.
 
 **Creator Perpetual Rights**: Kirsten Bischoff retains full ownership and can use NeuroVerse OS in any project, commercial or otherwise, without restriction.
 

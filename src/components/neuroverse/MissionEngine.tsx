@@ -29,6 +29,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { HelpModal } from './HelpModal';
 import { useUnlockAnimationContext } from './UnlockAnimationProvider';
+import { renderEmphasis } from '@/lib/render-emphasis';
 
 interface Message {
   role: 'user' | 'assistant';

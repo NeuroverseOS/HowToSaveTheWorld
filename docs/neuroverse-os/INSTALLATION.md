@@ -14,7 +14,7 @@ This guide walks you through installing NeuroVerse OS for development and produc
 
 ## 🔑 Step 1: Obtain a License
 
-NeuroVerse OS is proprietary software. You must obtain a commercial license before using it in production.
+NeuroVerse OS is open-source software (MIT License). No license purchase is required for any use, including production.
 
 ### License Types:
 

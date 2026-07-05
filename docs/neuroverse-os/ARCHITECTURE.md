@@ -243,11 +243,11 @@ Each mode reuses the same Eight-Box Scaffold but with different Box 1 rules:
 | Server data leak | None | No data stored server-side |
 | Man-in-the-middle | Low | HTTPS enforced end-to-end |
 | AI key theft | Low | Keys stored only in browser |
-| Supply chain | Medium | Proprietary license + build verification |
+| Supply chain | Medium | Open code review + build verification |
 
 ### Protected Components
 
-The following components are **proprietary and cannot be extracted**:
+The following components are **internal and encapsulated**:
 
 - Eight-Box Scaffold prompt assembly logic
 - Echelon Core personality system prompts

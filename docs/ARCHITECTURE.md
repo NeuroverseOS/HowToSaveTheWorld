@@ -11,7 +11,7 @@ This document explains what How to Save the World provides versus what NeuroVers
 How to Save the World is built on a **two-layer architecture**:
 
 1. **How to Save the World** (this repository) — Open-source application layer
-2. **NeuroVerse OS** (proprietary dependency) — Cognitive operating system
+2. **NeuroVerse OS** (open-source dependency) — Cognitive operating system
 
 ```
 ┌─────────────────────────────────────────────────────────┐
@@ -27,7 +27,7 @@ How to Save the World is built on a **two-layer architecture**:
                      │ imports @neuroverse/os
                      ▼
 ┌─────────────────────────────────────────────────────────┐
-│  NeuroVerse OS (Proprietary Cognitive Engine)           │
+│  NeuroVerse OS (Open-Source Cognitive Engine)           │
 │  - Eight-Box Scaffold (prompt assembly)                  │
 │  - Echelon Core Intelligence (AI personality)            │
 │  - Operator Model (identity and memory)                  │
@@ -258,7 +258,7 @@ const response = await echelon.chat({
 - **Onboarding Flow** — Add/remove steps, change ceremony text
 - **Field Guide Templates** — Customize insight compilation
 
-### ❌ You Cannot Modify (Proprietary):
+### ⚠️ Modify With Care (NeuroVerse OS Core):
 
 - **Eight-Box Scaffold** — Prompt assembly logic
 - **Echelon Core** — AI personality system prompts
@@ -276,7 +276,7 @@ const response = await echelon.chat({
 ```json
 {
   "dependencies": {
-    "@neuroverse/os": "^1.0.0"  // Proprietary dependency
+    "@neuroverse/os": "^1.0.0"  // The cognitive engine (MIT)
   }
 }
 ```

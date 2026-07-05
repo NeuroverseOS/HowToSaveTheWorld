@@ -135,7 +135,7 @@ We aim to respond to all inquiries within **48 hours**.
 
 ## 📚 Community Resources
 
-NeuroVerse OS does not have a public community forum or Discord server, as it is proprietary software with a limited licensee base.
+NeuroVerse OS does not have a public community forum or Discord server yet — community channels will grow with the open-source community.
 
 Licensees may:
 - Email kb15us@gmail.com for support
