@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { SecretInput } from "@/components/ui/secret-input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -897,9 +898,9 @@ export default function Settings() {
               <div className="space-y-2">
                 <Label htmlFor="openai-key">OpenAI API Key</Label>
                 <div className="relative">
-                  <Input
+                  <SecretInput
                     id="openai-key"
-                    type={showApiKey ? "text" : "password"}
+                    reveal={showApiKey}
                     placeholder="sk-..."
                     value={currentProvider === "openai" ? apiKey : ""}
                     onChange={(e) => setApiKey(e.target.value)}
@@ -990,9 +991,9 @@ export default function Settings() {
               <div className="space-y-2">
                 <Label htmlFor="anthropic-key">Anthropic API Key</Label>
                 <div className="relative">
-                  <Input
+                  <SecretInput
                     id="anthropic-key"
-                    type={showApiKey ? "text" : "password"}
+                    reveal={showApiKey}
                     placeholder="sk-ant-..."
                     value={currentProvider === "anthropic" ? apiKey : ""}
                     onChange={(e) => setApiKey(e.target.value)}
@@ -1083,9 +1084,9 @@ export default function Settings() {
               <div className="space-y-2">
                 <Label htmlFor="google-key">Google AI API Key</Label>
                 <div className="relative">
-                  <Input
+                  <SecretInput
                     id="google-key"
-                    type={showApiKey ? "text" : "password"}
+                    reveal={showApiKey}
                     placeholder="AIza..."
                     value={currentProvider === "google" ? apiKey : ""}
                     onChange={(e) => setApiKey(e.target.value)}
@@ -1522,9 +1523,8 @@ export default function Settings() {
 
             <div className="space-y-2">
               <Label htmlFor="supabase-key">Your Supabase Public API Key</Label>
-              <Input
+              <SecretInput
                 id="supabase-key"
-                type="password"
                 placeholder="eyJhbGci..."
                 value={supabaseKey}
                 onChange={(e) => setSupabaseKey(e.target.value)}
@@ -1656,9 +1656,9 @@ export default function Settings() {
             <div className="space-y-2">
               <Label htmlFor="sovereign-key">Anon / Publishable Key</Label>
               <div className="relative">
-                <Input
+                <SecretInput
                   id="sovereign-key"
-                  type={showSovereignKey ? "text" : "password"}
+                  reveal={showSovereignKey}
                   placeholder="eyJhbGci... or sb_publishable_..."
                   value={sovereignAnonKey}
                   onChange={(e) => setSovereignAnonKey(e.target.value)}

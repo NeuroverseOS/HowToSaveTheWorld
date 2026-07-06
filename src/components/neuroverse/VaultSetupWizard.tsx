@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { SecretInput } from "@/components/ui/secret-input";
 import { Label } from "@/components/ui/label";
 import { CheckCircle2, Copy, ExternalLink, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -178,9 +179,8 @@ export function VaultSetupWizard({ open, onOpenChange, onLinked }: VaultSetupWiz
             </div>
             <div className="space-y-2">
               <Label htmlFor="vault-key">anon / public API key</Label>
-              <Input
+              <SecretInput
                 id="vault-key"
-                type="password"
                 placeholder="eyJhbGci... or sb_publishable_..."
                 value={anonKey}
                 onChange={(e) => setAnonKey(e.target.value)}

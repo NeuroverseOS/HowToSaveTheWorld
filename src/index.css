@@ -571,3 +571,9 @@ All colors MUST be HSL.
     );
   }
 }
+
+/* Masked secret fields (AI/API keys): dots via CSS, not type="password",
+   so browser password managers never offer to save them as logins. */
+.secret-mask {
+  -webkit-text-security: disc;
+}

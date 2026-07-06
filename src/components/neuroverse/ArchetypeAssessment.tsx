@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { calculateArchetypes } from "@/lib/archetype-scoring";
 
 interface ArchetypeAssessmentProps {
@@ -175,6 +175,15 @@ export function ArchetypeAssessment({ callsign, onComplete }: ArchetypeAssessmen
     setIsTransitioning(false);
   }, [currentScenario]);
 
+  // A misclick must never be permanent: step back one scenario, drop the
+  // recorded choice, and let the operator answer it again.
+  const handlePrevious = () => {
+    if (currentScenario === 0 || isTransitioning) return;
+    setIsTransitioning(true);
+    setChoices((prev) => prev.slice(0, -1));
+    setTimeout(() => setCurrentScenario((s) => s - 1), 200);
+  };
+
   const handleChoice = (originalIndex: number) => {
     setIsTransitioning(true);
     const newChoices = [...choices, originalIndex];
@@ -209,9 +218,23 @@ export function ArchetypeAssessment({ callsign, onComplete }: ArchetypeAssessmen
                 {callsign}, you will now face 12 scenarios. There are no right answers. Your responses will map your cognitive signature.
               </p>
             )}
-            <p className="text-xs sm:text-sm text-muted-foreground">
-              Scenario {currentScenario + 1} of {scenarios.length}
-            </p>
+            <div className="flex items-center justify-between gap-2">
+              <p className="text-xs sm:text-sm text-muted-foreground">
+                Scenario {currentScenario + 1} of {scenarios.length}
+              </p>
+              {currentScenario > 0 && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handlePrevious}
+                  disabled={isTransitioning}
+                  className="h-7 px-2 text-muted-foreground hover:text-neuro-cyan"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                  <span className="text-xs">Previous scenario</span>
+                </Button>
+              )}
+            </div>
             <Progress value={progress} className="h-2" />
           </div>
 

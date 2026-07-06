@@ -12,6 +12,7 @@ import { ViewportDebugPanel } from "@/components/debug/ViewportDebugPanel";
 import { LessonRunner } from "@/components/neuroverse/LessonRunner";
 import { WorldStatePanel } from "@/components/neuroverse/WorldStatePanel";
 import { BackupGuard } from "@/components/neuroverse/BackupGuard";
+import { InstallNudge } from "@/components/neuroverse/InstallNudge";
 import { ArchetypeAssessment } from "@/components/neuroverse/ArchetypeAssessment";
 import { Orientation } from "@/components/neuroverse/Orientation";
 import { saveReflection, type Lesson } from "@/lib/lesson-queries";
@@ -624,6 +625,9 @@ export default function Dashboard() {
               <Progress value={progressPercent} className="h-2 w-full" />
             </div>
           </Card>
+
+          {/* Working in a tab? Keep encouraging the installed app */}
+          <InstallNudge />
 
           {/* Sovereignty's sharp edge: warn while there's still time to export */}
           <BackupGuard state={state} />

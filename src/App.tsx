@@ -42,6 +42,10 @@ import OperatorDoctrine from "./pages/OperatorDoctrine";
 import SystemInfo from "./pages/SystemInfo";
 import FAQ from "./pages/FAQ";
 
+import { initInstallPromptCapture } from "@/lib/install-prompt";
+// Capture the browser install prompt as early as possible (one-tap install)
+initInstallPromptCapture();
+
 const queryClient = new QueryClient();
 
 const App = () => {

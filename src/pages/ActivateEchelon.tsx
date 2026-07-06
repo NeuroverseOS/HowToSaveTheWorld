@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { SecretInput } from "@/components/ui/secret-input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -461,9 +462,9 @@ export default function ActivateEchelon() {
             <div className="space-y-2">
               <Label htmlFor="openai-key">OpenAI API Key</Label>
               <div className="relative">
-                <Input
+                <SecretInput
                   id="openai-key"
-                  type={showApiKey ? "text" : "password"}
+                  reveal={showApiKey}
                   value={apiKey}
                   onChange={(e) => setApiKey(e.target.value)}
                   placeholder="sk-..."
@@ -577,9 +578,9 @@ export default function ActivateEchelon() {
             <div className="space-y-2">
               <Label htmlFor="anthropic-key">Anthropic API Key</Label>
               <div className="relative">
-                <Input
+                <SecretInput
                   id="anthropic-key"
-                  type={showApiKey ? "text" : "password"}
+                  reveal={showApiKey}
                   value={apiKey}
                   onChange={(e) => setApiKey(e.target.value)}
                   placeholder="sk-ant-..."
@@ -710,9 +711,9 @@ export default function ActivateEchelon() {
             <div className="space-y-2">
               <Label htmlFor="google-key">Google API Key</Label>
               <div className="relative">
-                <Input
+                <SecretInput
                   id="google-key"
-                  type={showApiKey ? "text" : "password"}
+                  reveal={showApiKey}
                   value={apiKey}
                   onChange={(e) => setApiKey(e.target.value)}
                   placeholder="AIza..."

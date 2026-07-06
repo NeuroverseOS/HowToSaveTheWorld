@@ -176,7 +176,21 @@ export default function Lesson() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-5xl mx-auto px-4 py-6">
+      <div className="max-w-5xl mx-auto px-4 py-6 space-y-3">
+        <div className="flex items-center gap-4 text-sm">
+          <button
+            onClick={() => navigate("/missions")}
+            className="text-muted-foreground hover:text-neuro-cyan transition-colors"
+          >
+            ← Mission Archive
+          </button>
+          <button
+            onClick={() => navigate("/dashboard")}
+            className="text-muted-foreground hover:text-neuro-cyan transition-colors"
+          >
+            Dashboard
+          </button>
+        </div>
         <LessonRunner
           lesson={lesson}
           userId={userState.user.id}
