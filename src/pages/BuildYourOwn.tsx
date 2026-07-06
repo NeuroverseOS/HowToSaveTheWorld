@@ -60,6 +60,19 @@ const BuildYourOwn = () => {
             >
               Download the curriculum template <ArrowRight className="h-3 w-3" />
             </a>
+            <p className="text-sm text-muted-foreground">
+              Want to see the columns filled in? The complete How to Save the
+              World course lives in the repo as{" "}
+              <a
+                href={`${REPO_URL}/tree/main/docs/example-curriculum`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-neuro-cyan hover:underline"
+              >
+                a worked example
+              </a>{" "}
+              — all 96 missions, one spreadsheet.
+            </p>
           </Card>
 
           <Card className="p-6 md:p-8 space-y-3 bg-card/60 border-border/60">

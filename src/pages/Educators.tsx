@@ -165,6 +165,20 @@ const Educators = () => {
               missions: briefings, drills, reflections, and a story woven
               through every lesson, in a voice you choose.
             </p>
+            <p className="text-muted-foreground leading-relaxed">
+              Not sure what "done" looks like? The entire How to Save the
+              World course lives in the repo as{" "}
+              <a
+                href={`${REPO_URL}/tree/main/docs/example-curriculum`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-neuro-cyan hover:underline"
+              >
+                a worked example
+              </a>{" "}
+              — 96 finished missions in one spreadsheet. Study a row, not the
+              schema.
+            </p>
           </Card>
 
           <Card className="p-6 md:p-8 space-y-3 bg-card/60 border-border/60">
