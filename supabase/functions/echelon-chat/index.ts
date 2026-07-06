@@ -14,6 +14,7 @@ import {
   assembleEchelonPrompt,
   buildSystemLiteracyPrompt,
   buildReengagePrompt,
+  withAnthropicCaching,
 } from "../_shared/prompt-kernel.ts";
 
 const corsHeaders = {
@@ -331,6 +332,10 @@ Deno.serve(async (req) => {
           });
         }
         
+        // Prompt caching — same helper as the direct path, so the operator's
+        // input cost drops identically whether they reach us or fall back here.
+        const cachedAnthropic = withAnthropicCaching(systemPrompt, anthropicMessages);
+
         response = await fetch("https://api.anthropic.com/v1/messages", {
           method: "POST",
           headers: {
@@ -341,8 +346,8 @@ Deno.serve(async (req) => {
           body: JSON.stringify({
             model: "claude-sonnet-4-5",
             max_tokens: 4096,
-            messages: anthropicMessages,
-            system: systemPrompt,
+            messages: cachedAnthropic.messages,
+            system: cachedAnthropic.system,
             stream: true,
           }),
         });

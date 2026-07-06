@@ -22,6 +22,7 @@ import {
   assembleEchelonPrompt,
   buildSystemLiteracyPrompt,
   buildReengagePrompt,
+  withAnthropicCaching,
 } from "../../supabase/functions/_shared/prompt-kernel.ts";
 import { supabase } from "@/integrations/supabase/client";
 import { loadOperatorAIConfig, type OperatorAIConfig } from "./operator-ai";
@@ -197,6 +198,11 @@ export async function streamEchelonDirect(
         anthropicMessages.push({ role: "user", content: "Begin orientation protocol." });
       }
 
+      // Prompt caching: the Eight-Box system prompt and the conversation
+      // prefix are re-read from cache on turns 2+ within a stage, cutting the
+      // operator's own input cost roughly in half on multi-turn missions.
+      const cached = withAnthropicCaching(systemPrompt, anthropicMessages);
+
       return fetch("https://api.anthropic.com/v1/messages", {
         method: "POST",
         headers: {
@@ -210,8 +216,8 @@ export async function streamEchelonDirect(
         body: JSON.stringify({
           model: "claude-sonnet-4-5",
           max_tokens: 4096,
-          messages: anthropicMessages,
-          system: systemPrompt,
+          messages: cached.messages,
+          system: cached.system,
           stream: true,
         }),
       });

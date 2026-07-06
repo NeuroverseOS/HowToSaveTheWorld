@@ -370,3 +370,43 @@ Respond with a SHORT re-engagement message (2-3 sentences max) that:
 
 Example structure: "Protocol re-engaged, [Callsign]. We are in [Stage]. [Next required action]."`;
 }
+
+// ============================================================================
+// ANTHROPIC PROMPT CACHING — pay for the Eight-Box prompt once per stage,
+// not once per turn. The system prompt is identical across every turn within
+// a mission stage, and the conversation prefix only grows; marking both lets
+// Anthropic re-read cached tokens (at ~10% of the input price) instead of
+// re-billing the operator's own key every message. Shared by both transports
+// so caching behaves identically on the direct path and the relay.
+// ============================================================================
+
+type CacheControl = { type: "ephemeral" };
+type CachedTextBlock = { type: "text"; text: string; cache_control?: CacheControl };
+type CachedMessage = { role: string; content: string | CachedTextBlock[] };
+
+export function withAnthropicCaching(
+  systemPrompt: string,
+  messages: { role: string; content: string }[]
+): { system: CachedTextBlock[]; messages: CachedMessage[] } {
+  // Breakpoint 1: the stable system prefix (identical every turn in a stage).
+  const system: CachedTextBlock[] = [
+    { type: "text", text: systemPrompt, cache_control: { type: "ephemeral" } },
+  ];
+
+  // Breakpoint 2: the final message. Marking it writes a cache entry covering
+  // the whole prefix this turn; next turn re-reads it. As the thread grows
+  // past Anthropic's minimum cacheable length, the rolling hit widens.
+  const lastIndex = messages.length - 1;
+  const cachedMessages: CachedMessage[] = messages.map((m, i) =>
+    i === lastIndex
+      ? {
+          role: m.role,
+          content: [
+            { type: "text", text: m.content, cache_control: { type: "ephemeral" } } as CachedTextBlock,
+          ],
+        }
+      : { role: m.role, content: m.content }
+  );
+
+  return { system, messages: cachedMessages };
+}
