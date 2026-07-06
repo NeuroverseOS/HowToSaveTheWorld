@@ -237,6 +237,31 @@ export default function Settings() {
     setHasCredentials(true);
     setAutoSyncEnabled(true);
     setAutoSync(true);
+
+    // Returning operator: if this vault already holds a record, the first
+    // sync direction is THEIR call. Blindly uploading here would overwrite
+    // the saved record with this device's fresh state — destroying exactly
+    // what they came back for.
+    const existing = await downloadStateFromUserSupabase().catch(() => null);
+    if (existing) {
+      const restore = window.confirm(
+        "This vault already holds a training record.\n\n" +
+          "OK — RESTORE the vault's record to this device (choose this if you're returning).\n" +
+          "Cancel — keep THIS device's current state and overwrite the vault's backup."
+      );
+      if (restore) {
+        saveState(existing);
+        toast({
+          title: "Vault Restored",
+          description: "Your record is back. Reloading...",
+        });
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+        return;
+      }
+    }
+
     await uploadStateToUserSupabase();
     await fetchSyncTimestamp();
     toast({
@@ -1415,6 +1440,32 @@ export default function Settings() {
           </div>
         </Card>
 
+        {/* Owning your data — the two levels, in plain human */}
+        <Card className="p-6 bg-card/50 backdrop-blur-sm border-neuro-border space-y-3">
+          <h2 className="text-xl font-semibold text-foreground">
+            Owning your data — there are two levels
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            📓 <strong className="text-foreground">Level 1 — keep a safe copy of YOUR work.</strong>{" "}
+            Everything you write in your missions can be backed up to a small
+            database that belongs to you (the Cloud Vault, right below). Five
+            minutes, free, and you can walk away and come back years later.
+            Most people want this one.
+          </p>
+          <p className="text-sm text-muted-foreground">
+            🏫 <strong className="text-foreground">Level 2 — run the whole school yourself.</strong>{" "}
+            The lessons and the AI wiring normally run on our server. If you
+            want zero dependence on us — or you're running your own course —
+            you can host all of it yourself (Data Sovereignty, at the bottom
+            of this page). That's the advanced path: it needs its own,
+            separate Supabase project and about an hour.
+          </p>
+          <p className="text-xs text-muted-foreground">
+            They are two different jobs and two different Supabase projects.
+            Doing Level 1 never requires Level 2.
+          </p>
+        </Card>
+
         {/* SECTION C: Multi-Device Sync */}
         <Card id="cloud-vault" className="p-6 bg-card/50 backdrop-blur-sm border-neuro-border space-y-6">
           <div className="flex items-start gap-4">
@@ -1423,15 +1474,17 @@ export default function Settings() {
             </div>
             <div className="flex-1">
               <h2 className="text-xl font-semibold text-foreground mb-2">
-                Optional: Multi-Device Sync
+                Your Cloud Vault — a backup of your work, in a database you own
               </h2>
               <p className="text-sm text-muted-foreground mb-1">
-                Your OS runs locally. Cloud sync is only needed if you want
-                cross-device access.
+                The app already saves everything on this device. The vault
+                gives your training record a second home that belongs to
+                you — so you can switch devices, or leave and come back later
+                and pick up exactly where you were.
               </p>
               <p className="text-sm text-muted-foreground">
-                You must use your own Supabase project and API key. Nothing is ever
-                stored on NeuroVerse servers.
+                It lives in your own free Supabase project. We never see it,
+                never store it, and can't reach it.
               </p>
             </div>
           </div>
@@ -1585,6 +1638,18 @@ export default function Settings() {
                 The hub deployment stays canonical—but your backend can be sovereign.
                 Point this app at your own Supabase project, the same way you brought
                 your own AI key.
+              </p>
+              <p className="text-sm text-muted-foreground mb-1">
+                This is <strong className="text-foreground">Level 2: running the whole
+                school yourself</strong> — the lessons, the AI wiring, everything that
+                normally runs on our server moves to a project you control. For forks,
+                institutions, and anyone who wants zero dependence on us.
+              </p>
+              <p className="text-sm text-muted-foreground mb-1">
+                <strong className="text-foreground">Just want your own work backed up?</strong>{" "}
+                That's the Cloud Vault above — five minutes, done. And note: this
+                section needs its own, <em>separate</em> Supabase project — don't
+                point it at your vault.
               </p>
               <p className="text-sm text-muted-foreground">
                 Full walkthrough:{" "}

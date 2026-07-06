@@ -207,6 +207,9 @@ export interface StateSchema {
   world: {
     slide: number;                       // 0-100 centralization index; entropy pulls it up
     signal: number;                      // 0-100 operator resource; never zero-sum
+    // The section the operator last completed a mission in — lets the next
+    // briefing detect a section transition and re-orient the campaign.
+    section?: { id: number; name: string } | null;
     slide_history: {
       lesson_id: number;
       slide: number;
@@ -318,6 +321,7 @@ export function initializeState(): StateSchema {
     world: {
       slide: 62, // campaign opening state: deep in the third band, drifting
       signal: 100,
+      section: null,
       slide_history: [],
       decisions: [],
     },
@@ -443,9 +447,14 @@ export function loadState(): StateSchema | null {
       state.world = {
         slide: 62,
         signal: 100,
+        section: null,
         slide_history: [],
         decisions: [],
       };
+    }
+    // Section tracking joined later — presence migration, no version bump
+    if (state.world.section === undefined) {
+      state.world.section = null;
     }
 
     // Ensure user.id exists

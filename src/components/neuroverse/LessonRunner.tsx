@@ -52,6 +52,7 @@ import { AnomalyEventCard } from "./AnomalyEventCard";
 import { downloadFullBackup } from "@/lib/full-backup";
 import { maybeAutoSync } from "@/lib/auto-sync";
 import { generateReflectionQuestion, generateVideoBridge, fetchVideoMeta, type VideoBridge } from "@/lib/reflection-question";
+import { hasOperatorAIKey } from "@/lib/operator-ai";
 import { cn } from "@/lib/utils";
 import { 
   loadThread, 
@@ -537,6 +538,24 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
   };
 
   const deliverOpening = async () => {
+    // With an AI connected, the briefing is delivered LIVE: Echelon opens
+    // with the full mission frame — what the concept is, how it serves the
+    // campaign, why this operator was recruited, what the mission will ask,
+    // ending on the readiness check (Box 3). The canned text below is only
+    // the no-AI fallback — without it, the enriched briefing never reaches
+    // the operator, because nothing else calls Echelon at mission start.
+    if (hasOperatorAIKey()) {
+      setIsStreaming(true);
+      try {
+        await streamEchelonResponse("[STAGE_CONTENT: briefing]");
+        return;
+      } catch (error) {
+        console.warn("[BRIEFING] Live delivery failed — canned opening fallback:", error);
+      } finally {
+        setIsStreaming(false);
+      }
+    }
+
     setIsStreaming(true);
     
     // Use canonical echelon_opening text
@@ -641,7 +660,7 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
           },
         },
         currentStage: currentStage,
-        world: buildWorldPromptContext(),
+        world: buildWorldPromptContext({ section_id: lesson.section_id, section_name: lesson.section_name }),
         ...(operatorRequest && { operatorRequest }),
         ...(mode && { mode }),
         ...(systemLiteracyContext && { system_literacy_context: systemLiteracyContext }),
@@ -833,7 +852,7 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
     setIsStreaming(true);
 
     // THE SLIDE: completion pushes the world back against entropy
-    applyMissionCompletion(lesson.id, getReflectionEntries(lesson.id).length > 0);
+    applyMissionCompletion(lesson.id, getReflectionEntries(lesson.id).length > 0, { id: lesson.section_id, name: lesson.section_name });
 
     // Linked vault: back up the full record in the background
     maybeAutoSync(`mission ${lesson.lesson_number} complete`);

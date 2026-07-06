@@ -67,9 +67,17 @@ export function getEffectiveFog(baseFog: number): number {
 // Mission completion tick — entropy pulls up, the work pushes back
 // ---------------------------------------------------------------------------
 
-export function applyMissionCompletion(lessonId: number, reflected: boolean): void {
+export function applyMissionCompletion(
+  lessonId: number,
+  reflected: boolean,
+  section?: { id: number; name: string }
+): void {
   const state = loadState();
   if (!state) return;
+
+  // Remember where the operator finished — the next briefing compares
+  // against this to detect a section transition and re-orient the campaign.
+  if (section) state.world.section = section;
 
   // Entropy tick (+1) is always paid; completing the mission (-2) beats it,
   // and an honest reflection (-1 more) widens the margin. Doing the work is
@@ -178,7 +186,9 @@ export function resolveAnomaly(event: AnomalyEvent, choice: AnomalyChoice, lesso
 // World context for Echelon — the narration carries the campaign
 // ---------------------------------------------------------------------------
 
-export function buildWorldPromptContext(): { context: string } | null {
+export function buildWorldPromptContext(
+  currentLesson?: { section_id: number; section_name: string }
+): { context: string } | null {
   const state = loadState();
   if (!state) return null;
   const snap = getWorldSnapshot();
@@ -202,6 +212,18 @@ export function buildWorldPromptContext(): { context: string } | null {
   if (snap.lastDecision) {
     lines.push(
       `- Most recent operator decision: ${snap.lastDecision.event_id} → ${snap.lastDecision.choice_id}. You remember it; reference it only when genuinely relevant.`
+    );
+  }
+
+  // Section transition: the campaign re-orients at chapter boundaries.
+  const prev = state.world.section ?? null;
+  if (currentLesson && prev && prev.id !== currentLesson.section_id) {
+    lines.push(
+      `- SECTION TRANSITION: the "${prev.name}" arc is complete; this mission opens "${currentLesson.section_name}". Begin the briefing with a short campaign re-orientation — what the operator's work moved in the last arc, where the war stands now, and what terrain this new section covers — before the mission frame.`
+    );
+  } else if (currentLesson && !prev) {
+    lines.push(
+      `- CAMPAIGN OPENING: this is the operator's first mission. Before the mission frame, set the stage in two or three sentences — the war (the Slide), why they were recruited, and what the campaign is building toward.`
     );
   }
   return { context: lines.join("\n") };

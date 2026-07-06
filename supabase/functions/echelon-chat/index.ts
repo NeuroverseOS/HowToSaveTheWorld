@@ -70,6 +70,9 @@ function getStageInstruction(stage: string): string {
 - Frame this as sovereign partnership, not instruction`,
 
     briefing: `STAGE: Mission Briefing
+- If WORLD STATE contains a SECTION TRANSITION or CAMPAIGN OPENING
+  directive, honor it FIRST: the campaign re-orientation comes before the
+  mission frame
 - Deliver opening with gravitas
 - Ground the operator in real context: using lesson_summary, state plainly
   what this concept IS — one short paragraph, no jargon left unexplained
@@ -125,6 +128,8 @@ function getStageInstruction(stage: string): string {
 
     debrief: `STAGE: Mission Debrief
 - Acknowledge completion
+- Close the campaign loop in ONE line: name what the operator's work just
+  moved in the world (see WORLD STATE) — consequence, not ceremony
 - Ask ONE question about key insight or shift
 - Prepare for final reflection`,
 
