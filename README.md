@@ -1,6 +1,12 @@
+<p align="center">
+  <img src="public/logo-dark.png" alt="How to Save the World — a brain-tree rooted in circuitry through a DNA-helix trunk" width="420" />
+</p>
+
 # How to Save the World
 ### A Decentralized Leadership Training Program
 **Two Minds. One Mission. Save the World.**
+
+Created by **[Kirsten Bischoff](https://howtosavetheworld.info)** — architect of **[NeuroVerse OS](https://neuroverseos.com)**, the cognitive operating system this platform runs on. Open-sourced in the spirit of the decentralized digital future she believes in.
 
 How to Save the World is an open-source, local-first PWA that trains operators in systems thinking, strategic reasoning, and leadership through 90 immersive missions guided by Echelon, an AI training intelligence.
 
@@ -39,6 +45,20 @@ How to Save the World is a **decentralized leadership training program** that co
 - **Vanguard Identity** — Operational callsign and bonded AI partnership
 
 This is not a course. This is not an app. This is a **training protocol** for building leaders who can navigate complexity.
+
+---
+
+## 🛤️ The Origin Story: Oregon Trail for the Decentralized Age
+
+Before there were learning management systems, there was a wagon on a trail.
+
+**The Oregon Trail** taught a generation of Gen X kids systems thinking without ever using the words: scarce resources, irreversible decisions, risk under uncertainty, and the occasional case of dysentery. You didn't read about pioneering — you *were* the pioneer. That's why it worked, and that's why nobody who played it ever forgot it.
+
+How to Save the World is built on the same conviction: **people learn complex systems by living inside an adventure, not by clicking through slides.** Here, the trail is the transition from a centralized digital world to a decentralized one. The wagon is the Foxhole you share with Echelon, your AI training intelligence. The terrain is real: distributed ledger technology, DAOs, sovereign data, human–AI partnership. The destination is a generation of leaders fluent enough in decentralized systems to build a better future with them.
+
+There's a lot of noise right now claiming AI diminishes our ability to think. We believe that's what happens when centralized institutions control the tools. Put a decentralized, transparent, user-owned AI in someone's hands — your keys, your data, your cognition — and the opposite happens: people discover how creative they can actually be with it.
+
+Somewhere out there is a learner who will feel about the Foxhole the way a grammar-school kid once felt about their wagon party — that this is *their* adventure, and the world at the end of the trail is theirs to build. This platform exists for them.
 
 ---
 
