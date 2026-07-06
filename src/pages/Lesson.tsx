@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { MissionEngine } from "@/components/neuroverse/MissionEngine";
-import type { MissionReflections } from "@/components/neuroverse/MissionEngine";
+import { LessonRunner } from "@/components/neuroverse/LessonRunner";
 import { loadState, saveState } from "@/lib/state-engine";
 import { toast } from "@/hooks/use-toast";
 import { getLessonById } from "@/lib/lesson-loader";
@@ -49,7 +48,7 @@ export default function Lesson() {
     }
   };
 
-  const handleLessonComplete = async (reflections: MissionReflections) => {
+  const handleLessonComplete = async (reflection: string) => {
     if (!lesson || !userState || mode === "replay") return;
 
     // Update state
@@ -70,17 +69,8 @@ export default function Lesson() {
       updatedState.progress.current_lesson_id = nextLesson.lesson_number;
     }
     
-    // Add comprehensive reflection with all drill responses
-    const fullReflection = `
-DRILL 1 RESPONSE:
-${reflections.drill1_response}
-
-DRILL 2 RESPONSE:
-${reflections.drill2_response}
-
-FINAL ANCHOR RESPONSE:
-${reflections.final_response}
-    `.trim();
+    // The runner hands back the operator's combined reflections
+    const fullReflection = reflection.trim();
 
     updatedState.reflections.push({
       lesson_id: lesson.id,
@@ -187,7 +177,7 @@ ${reflections.final_response}
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-5xl mx-auto px-4 py-6">
-        <MissionEngine
+        <LessonRunner
           lesson={lesson}
           userId={userState.user.id}
           state={userState}

@@ -25,10 +25,14 @@ const REFLECTION_KEY = "neuroverse_reflections_v2";
  */
 export function saveReflectionEntry(entry: ReflectionEntry): void {
   try {
-    const existing = getReflectionEntries();
+    // One entry per lesson+stage: re-answering after going back
+    // overwrites the old answer instead of stacking duplicates.
+    const existing = getReflectionEntries().filter(
+      (e) => !(e.lessonId === entry.lessonId && e.stage === entry.stage)
+    );
     existing.push(entry);
     localStorage.setItem(REFLECTION_KEY, JSON.stringify(existing));
-    console.log(`[REFLECTION] Saved entry for lesson ${entry.lessonId}`);
+    console.log(`[REFLECTION] Saved entry for lesson ${entry.lessonId} (${entry.stage})`);
   } catch (error) {
     console.error("[REFLECTION] Failed to save entry:", error);
   }

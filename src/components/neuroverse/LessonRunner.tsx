@@ -87,6 +87,7 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
   const [isResumedSession, setIsResumedSession] = useState(false);
   const [showRestartDialog, setShowRestartDialog] = useState(false);
   const [activeAnomaly, setActiveAnomaly] = useState<AnomalyEvent | null>(null); // THE SLIDE: pending world event
+  const [redoStages, setRedoStages] = useState<Set<MissionStage>>(new Set()); // stages re-entered via back/dot navigation — their reflections re-prompt and overwrite
   const [isInReflectionMode, setIsInReflectionMode] = useState(false);
   const [systemLiteracyMode, setSystemLiteracyMode] = useState(false);
   const [savedMissionState, setSavedMissionState] = useState<{ lessonId: number; stage: MissionStage } | null>(null);
@@ -256,13 +257,44 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
   const hasReflectionFor = (stage: string): boolean =>
     getReflectionEntries(lesson.id).some((e) => e.stage === stage);
 
-  // Step back one stage (view + re-engage; never re-prompts reflections).
+  // Jump backward to any earlier stage (Back button and dot navigation).
   // Backward is always safe: the operator has already seen that content.
-  // A pending reflection must not trap the operator — going back dismisses
-  // it, and it re-triggers on the next pass since nothing was saved.
-  const goBackStage = () => {
+  // Forward stays locked — content never leaks ahead of the mission.
+  // Every stage from the target onward becomes re-answerable: fresh answers
+  // overwrite the old ones in the dossier (reflection storage replaces
+  // same-lesson same-stage entries).
+  const jumpToStage = (target: MissionStage) => {
     if (isStreaming) return;
+    const stageFlow = getStageFlow();
+    const targetIndex = stageFlow.indexOf(target);
+    const currentIndex = stageFlow.indexOf(currentStage);
+    if (targetIndex < 0 || targetIndex >= currentIndex) return;
+    // A pending reflection must not trap the operator — going back dismisses
+    // it; it re-triggers on the next pass.
     if (pendingReflection) setPendingReflection(null);
+    // Jumping back out of a completed mission reopens it for input, so
+    // unanswered questions can be answered without restarting.
+    if (isComplete) setIsComplete(false);
+    setRedoStages((prev) => {
+      const next = new Set(prev);
+      for (const s of stageFlow.slice(targetIndex, currentIndex)) next.add(s);
+      return next;
+    });
+    setReadyToAdvance(false);
+    setIsInReflectionMode(false);
+    setCurrentStage(target);
+    updateThreadActivity(lesson.id, { currentStage: target });
+    setMessages((prev) => [
+      ...prev,
+      {
+        role: "assistant",
+        content: `Returning to ${getStageLabel(target)}, Operator. Your previous work stands until you replace it.`,
+      },
+    ]);
+    console.log(`Stage jump: ${currentStage} → ${target}`);
+  };
+
+  const goBackStage = () => {
     const stageFlow = getStageFlow();
     const currentIndex = stageFlow.indexOf(currentStage);
     if (currentIndex <= 0) return;
@@ -270,15 +302,20 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
     if (prev === MissionStage.REFLECTION && currentIndex - 2 >= 0) {
       prev = stageFlow[currentIndex - 2];
     }
-    // Stepping back out of a completed mission reopens it for input, so
-    // unanswered questions can be answered without restarting.
-    if (isComplete) setIsComplete(false);
-    setReadyToAdvance(false);
-    setIsInReflectionMode(false);
-    setCurrentStage(prev);
-    updateThreadActivity(lesson.id, { currentStage: prev });
-    console.log(`Stage step-back: ${currentStage} → ${prev}`);
+    jumpToStage(prev);
   };
+
+  // A stage re-entered via back navigation re-prompts its reflection once,
+  // and the fresh answer overwrites the old entry.
+  const shouldPromptReflection = (stage: MissionStage, stageKey: string): boolean =>
+    redoStages.has(stage) || !hasReflectionFor(stageKey);
+
+  const clearRedo = (stage: MissionStage) =>
+    setRedoStages((prev) => {
+      const next = new Set(prev);
+      next.delete(stage);
+      return next;
+    });
 
   // Stage advancement logic: advance to next stage after user response
   const advanceStage = async () => {
@@ -308,7 +345,8 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
       // Reflections trigger when LEAVING a stage (after user response)
       
       // After DRILL1 → Standard Reflection
-      if (currentStage === MissionStage.DRILL1 && lesson.drill1_prompt && !pendingReflection && !hasReflectionFor("drill1")) {
+      if (currentStage === MissionStage.DRILL1 && lesson.drill1_prompt && !pendingReflection && shouldPromptReflection(MissionStage.DRILL1, "drill1")) {
+        clearRedo(MissionStage.DRILL1);
         setPendingReflection({
           mode: "standard",
           stage: "drill1",
@@ -318,7 +356,8 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
       }
       
       // After VIDEO → Micro Insight
-      if (currentStage === MissionStage.VIDEO && lesson.video_url && !pendingReflection && !hasReflectionFor("video")) {
+      if (currentStage === MissionStage.VIDEO && lesson.video_url && !pendingReflection && shouldPromptReflection(MissionStage.VIDEO, "video")) {
+        clearRedo(MissionStage.VIDEO);
         setPendingReflection({
           mode: "micro",
           stage: "video",
@@ -328,7 +367,8 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
       }
       
       // After DRILL2 → Standard Reflection
-      if (currentStage === MissionStage.DRILL2 && lesson.drill2_prompt && !pendingReflection && !hasReflectionFor("drill2")) {
+      if (currentStage === MissionStage.DRILL2 && lesson.drill2_prompt && !pendingReflection && shouldPromptReflection(MissionStage.DRILL2, "drill2")) {
+        clearRedo(MissionStage.DRILL2);
         setPendingReflection({
           mode: "standard",
           stage: "drill2",
@@ -338,7 +378,8 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
       }
       
       // After DEBRIEF → Exercise Reflection
-      if (currentStage === MissionStage.DEBRIEF && lesson.debrief && !pendingReflection && !hasReflectionFor("debrief")) {
+      if (currentStage === MissionStage.DEBRIEF && lesson.debrief && !pendingReflection && shouldPromptReflection(MissionStage.DEBRIEF, "debrief")) {
+        clearRedo(MissionStage.DEBRIEF);
         setPendingReflection({
           mode: "exercise",
           stage: "debrief",
@@ -951,6 +992,7 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
         
         {/* Stage Indicator & Re-engage Protocol */}
         {!isReplayMode && (
+          <>
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
               {!systemLiteracyMode &&
@@ -1051,6 +1093,38 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
               </AlertDialog>
             </div>
           </div>
+
+          {/* Stage dots — tap a completed dot to return there; forward stays locked */}
+          {!systemLiteracyMode && (
+            <div className="flex items-center gap-1.5 mt-2 flex-wrap" aria-label="Mission stages">
+              {getStageFlow()
+                .filter((s) => s !== MissionStage.REFLECTION)
+                .map((s) => {
+                  const flow = getStageFlow();
+                  const done = flow.indexOf(s) < flow.indexOf(currentStage);
+                  const isCur = s === currentStage;
+                  return (
+                    <button
+                      key={s}
+                      type="button"
+                      onClick={() => done && jumpToStage(s)}
+                      disabled={!done || isStreaming}
+                      title={done ? `Return to ${getStageLabel(s)}` : getStageLabel(s)}
+                      aria-label={done ? `Return to ${getStageLabel(s)}` : getStageLabel(s)}
+                      className={cn(
+                        "h-2.5 rounded-full transition-all duration-300",
+                        isCur
+                          ? "w-6 bg-neuro-cyan"
+                          : done
+                          ? "w-2.5 bg-neuro-orange hover:scale-125 cursor-pointer"
+                          : "w-2.5 bg-muted/40 cursor-default"
+                      )}
+                    />
+                  );
+                })}
+            </div>
+          )}
+          </>
         )}
       </div>
 
