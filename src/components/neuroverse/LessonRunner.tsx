@@ -39,6 +39,15 @@ import { useMissionProgress } from "@/hooks/useMissionProgress";
 import { analyzeAndUnlockTraits, generateFieldGuideEntry } from "@/lib/trait-unlock-engine";
 import { compileMissionLog } from "@/lib/field-guide-engine";
 import { getReflectionEntries } from "@/lib/reflection-storage";
+import {
+  rollAnomalyEvent,
+  resolveAnomaly,
+  applyMissionCompletion,
+  buildWorldPromptContext,
+  type AnomalyEvent,
+  type AnomalyChoice,
+} from "@/lib/campaign-engine";
+import { AnomalyEventCard } from "./AnomalyEventCard";
 import { cn } from "@/lib/utils";
 import { 
   loadThread, 
@@ -77,6 +86,7 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
   const [showExportReminder, setShowExportReminder] = useState(false);
   const [isResumedSession, setIsResumedSession] = useState(false);
   const [showRestartDialog, setShowRestartDialog] = useState(false);
+  const [activeAnomaly, setActiveAnomaly] = useState<AnomalyEvent | null>(null); // THE SLIDE: pending world event
   const [isInReflectionMode, setIsInReflectionMode] = useState(false);
   const [systemLiteracyMode, setSystemLiteracyMode] = useState(false);
   const [savedMissionState, setSavedMissionState] = useState<{ lessonId: number; stage: MissionStage } | null>(null);
@@ -288,6 +298,11 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
       updateThreadActivity(lesson.id, { currentStage: nextStage });
       
       console.log(`Stage advancement: ${currentStage} → ${nextStage}`);
+
+      // THE SLIDE: the world can interrupt at a stage transition
+      rollAnomalyEvent(lesson.id, lesson.lesson_number).then((ev) => {
+        if (ev) setActiveAnomaly(ev);
+      });
       
       // Check if reflection should trigger AFTER current stage completion
       // Reflections trigger when LEAVING a stage (after user response)
@@ -515,6 +530,7 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
           },
         },
         currentStage: currentStage,
+        world: buildWorldPromptContext(),
         ...(operatorRequest && { operatorRequest }),
         ...(mode && { mode }),
         ...(systemLiteracyContext && { system_literacy_context: systemLiteracyContext }),
@@ -617,8 +633,22 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
     }
   };
 
+  const handleAnomalyResolve = (choice: AnomalyChoice) => {
+    if (!activeAnomaly) return;
+    const resolved = activeAnomaly;
+    const snap = resolveAnomaly(resolved, choice, lesson.id);
+    setActiveAnomaly(null);
+    setMessages((prev) => [...prev, { role: "assistant", content: choice.echo }]);
+    toast({
+      title: `${resolved.antagonist} — decision recorded`,
+      description: snap
+        ? `The Slide: ${snap.slide} (${snap.band.name}) · Signal: ${snap.signal}/100`
+        : undefined,
+    });
+  };
+
   const handleSend = async () => {
-    if (!input.trim() || isStreaming || isComplete) return;
+    if (!input.trim() || isStreaming || isComplete || activeAnomaly) return;
 
     const userMessage = input.trim();
     
@@ -666,6 +696,7 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
   };
 
   const handleAdvanceStage = () => {
+    if (activeAnomaly) return; // the world is waiting on a decision
     advanceStage();
   };
 
@@ -689,6 +720,9 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
   const handleComplete = async () => {
     setIsComplete(true);
     setIsStreaming(true);
+
+    // THE SLIDE: completion pushes the world back against entropy
+    applyMissionCompletion(lesson.id, getReflectionEntries(lesson.id).length > 0);
 
     // Deliver closing message
     const closingText = lesson.echelon_closing || "Mission complete, Operator. Integration in progress.";
@@ -1137,8 +1171,12 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
           </div>
         ) : !isComplete ? (
           <>
+            {/* THE SLIDE: an antagonist is waiting on a decision */}
+            {activeAnomaly && (
+              <AnomalyEventCard event={activeAnomaly} onResolve={handleAnomalyResolve} />
+            )}
             {/* Show input for response stages */}
-            {shouldShowSendButton() && (
+            {!activeAnomaly && shouldShowSendButton() && (
               <div className="flex gap-2">
                 <Textarea
                   value={input}

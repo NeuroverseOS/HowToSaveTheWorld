@@ -10,6 +10,7 @@ import { getPhaseForCapstoneLesson, getPendingCeremonyPhase, isPhaseAssessmentSe
 import { Progress } from "@/components/ui/progress";
 import { ViewportDebugPanel } from "@/components/debug/ViewportDebugPanel";
 import { LessonRunner } from "@/components/neuroverse/LessonRunner";
+import { WorldStatePanel } from "@/components/neuroverse/WorldStatePanel";
 import { ArchetypeAssessment } from "@/components/neuroverse/ArchetypeAssessment";
 import { Orientation } from "@/components/neuroverse/Orientation";
 import { saveReflection, type Lesson } from "@/lib/lesson-queries";
@@ -622,6 +623,9 @@ export default function Dashboard() {
               <Progress value={progressPercent} className="h-2 w-full" />
             </div>
           </Card>
+
+          {/* THE SLIDE — campaign world state and the living map */}
+          <WorldStatePanel state={state} />
 
           {/* Lesson Runner - Conversational Experience */}
           {isLoadingLesson ? (

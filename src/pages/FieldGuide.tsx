@@ -69,6 +69,7 @@ import {
 } from "@/components/ui/select";
 import { getMissionLogs, MissionLogEntry } from "@/lib/mission-log";
 import { downloadVaultZip } from "@/lib/markdown-vault-export";
+import { getVanguardRole } from "@/lib/vanguard-roles";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 type DbOperatorTrait = Database["public"]["Tables"]["operator_traits"]["Row"];
@@ -107,6 +108,7 @@ export default function FieldGuide() {
   const [primaryArchetype, setPrimaryArchetype] = useState<string>("");
   const [shadowArchetype, setShadowArchetype] = useState<string>("");
   const [risingArchetype, setRisingArchetype] = useState<string>("");
+  const vanguardRole = getVanguardRole(primaryArchetype || null);
   
   // Mission Insights filter states
   const [searchText, setSearchText] = useState<string>("");
@@ -537,6 +539,13 @@ export default function FieldGuide() {
               <p className="text-lg text-muted-foreground">
                 {t.operatorDossier.replace("Operator", `Operator`)} <span className="text-neuro-cyan font-mono">{callsign}</span>
               </p>
+              {vanguardRole && (
+                <p className="text-sm text-muted-foreground mt-1">
+                  Vanguard assignment:{" "}
+                  <span className="text-neuro-orange font-mono">{vanguardRole.role}</span>
+                  <span className="hidden sm:inline"> · {vanguardRole.lens}</span>
+                </p>
+              )}
             </div>
             <div className="flex gap-4 text-center">
               <div>

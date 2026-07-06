@@ -260,7 +260,7 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { messages, lesson, userData, currentStage, orientationPhase, operatorRequest, mode, workContext, system_literacy_context, paused_mission } = await req.json();
+    const { messages, lesson, userData, currentStage, orientationPhase, operatorRequest, mode, workContext, system_literacy_context, paused_mission, world } = await req.json();
 
     console.log("Echelon chat request:", {
       lessonId: lesson?.id,
@@ -530,6 +530,12 @@ Example structure: "Protocol re-engaged, [Callsign]. We are in [Stage]. [Next re
         longTermNote,     // Box 7: Long-term pattern
         language: userData?.language,  // Language preference
       });
+    }
+
+    // THE SLIDE: campaign world context — narration continuity, never a lecture.
+    // Client-supplied and size-capped; it only colors Echelon's voice.
+    if (world && typeof world.context === "string" && world.context.length > 0 && world.context.length <= 1200) {
+      systemPrompt += `\n\n${world.context}`;
     }
 
     // Token compression metrics

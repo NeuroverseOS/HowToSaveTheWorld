@@ -200,6 +200,25 @@ export interface StateSchema {
       timestamp: string;
     }[];
   };
+
+  // CAMPAIGN WORLD STATE (THE SLIDE — see docs/WORLD_DESIGN.md)
+  world: {
+    slide: number;                       // 0-100 centralization index; entropy pulls it up
+    signal: number;                      // 0-100 operator resource; never zero-sum
+    slide_history: {
+      lesson_id: number;
+      slide: number;
+      reason: string;
+      at: string;
+    }[];
+    decisions: {
+      event_id: string;
+      choice_id: string;
+      lesson_id: number;
+      at: string;
+      effects: { signal: number; slide: number };
+    }[];
+  };
   metadata: {
     version: string;
     created_at: string;
@@ -293,6 +312,12 @@ export function initializeState(): StateSchema {
     drift: {
       current_score: 0,
       history: [],
+    },
+    world: {
+      slide: 62, // campaign opening state: deep in the third band, drifting
+      signal: 100,
+      slide_history: [],
+      decisions: [],
     },
     metadata: {
       version: "1.0.0",
@@ -408,6 +433,17 @@ export function loadState(): StateSchema | null {
     if (!state.phase_assessments) {
       console.log("Migrating state: adding phase assessments");
       state.phase_assessments = [];
+    }
+
+    // Migrate campaign world state if missing (THE SLIDE)
+    if (!state.world) {
+      console.log("Migrating state: adding campaign world state");
+      state.world = {
+        slide: 62,
+        signal: 100,
+        slide_history: [],
+        decisions: [],
+      };
     }
 
     // Ensure user.id exists
