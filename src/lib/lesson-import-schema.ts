@@ -17,6 +17,12 @@ export const LessonImportSchema = z.object({
   echelon_opening: z.string().optional().nullable(),
   echelon_closing: z.string().optional().nullable(),
   fog_level: z.number().int().min(0).max(5).default(0),
+  // Optional canonical reflection question — overrides Echelon's generated
+  // one for lessons where the exact wording matters.
+  reflection_prompt: z.string().optional().nullable(),
+  // Optional authored Visual Intel briefing — overrides the generated
+  // "why this footage" bridge shown above the video.
+  video_intro: z.string().optional().nullable(),
   story_beat: z.string().optional().nullable(),
   mission_badge_description: z.string().optional().nullable(),
   field_guide_prompt: z.string().optional().nullable(),

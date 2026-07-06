@@ -9,6 +9,8 @@ interface StandardReflectionProps {
   stage: "drill1" | "drill2";
   prompt: string;
   streamEchelonResponse: (systemMessage: string, operatorMessage?: string) => Promise<void>;
+  /** Reads Echelon's latest streamed reply so the card can show and save it. */
+  getLatestEchelon?: () => string | null;
   onComplete: () => void;
 }
 
@@ -19,6 +21,7 @@ export default function StandardReflection({
   stage,
   prompt,
   streamEchelonResponse,
+  getLatestEchelon,
   onComplete,
 }: StandardReflectionProps) {
   const [phase, setPhase] = useState<ReflectionPhase>("input");
@@ -42,8 +45,7 @@ export default function StandardReflection({
       mirrorPrompt
     );
 
-    // Store mirror response (would need to capture from streamEchelonResponse)
-    // For now, move to followup phase
+    setEchelonMirror(getLatestEchelon?.() ?? "");
     setPhase("followup");
   };
 
@@ -58,7 +60,10 @@ export default function StandardReflection({
       closePrompt
     );
 
-    // Save reflection entry
+    const close = getLatestEchelon?.() ?? "";
+    setEchelonClose(close);
+
+    // Save reflection entry — Echelon's actual words, not empty strings
     saveReflectionEntry({
       lessonId,
       stage,
@@ -68,7 +73,7 @@ export default function StandardReflection({
       operatorFollowup: followupResponse || null,
       echelonMirror,
       echelonFollowup,
-      echelonClose,
+      echelonClose: close,
       timestamp: Date.now(),
     });
 
@@ -122,9 +127,13 @@ export default function StandardReflection({
               <div className="text-xs font-mono uppercase tracking-wider text-neuro-cyan">
                 Echelon Response
               </div>
-              <div className="text-sm text-muted-foreground italic">
-                [Echelon's mirror and follow-up question will appear here]
-              </div>
+              {echelonMirror ? (
+                <p className="text-sm text-foreground/90 leading-relaxed whitespace-pre-wrap">{echelonMirror}</p>
+              ) : (
+                <div className="text-sm text-muted-foreground italic">
+                  Echelon has responded in the mission thread above.
+                </div>
+              )}
             </div>
 
             <Textarea
@@ -165,9 +174,13 @@ export default function StandardReflection({
               <div className="text-xs font-mono uppercase tracking-wider text-neuro-cyan">
                 Integration
               </div>
-              <div className="text-sm text-muted-foreground italic">
-                [Echelon's closing statement will appear here]
-              </div>
+              {echelonClose ? (
+                <p className="text-sm text-foreground/90 leading-relaxed whitespace-pre-wrap">{echelonClose}</p>
+              ) : (
+                <div className="text-sm text-muted-foreground italic">
+                  Echelon has closed the reflection in the mission thread above.
+                </div>
+              )}
             </div>
 
             <Button

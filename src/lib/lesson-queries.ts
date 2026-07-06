@@ -18,6 +18,8 @@ export interface Lesson {
   echelon_opening?: string;
   echelon_closing?: string;
   fog_level?: number;
+  reflection_prompt?: string | null;
+  video_intro?: string | null;
   story_beat?: string;
   mission_badge_description?: string;
   field_guide_prompt?: string;

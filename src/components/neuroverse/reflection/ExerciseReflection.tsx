@@ -9,6 +9,8 @@ interface ExerciseReflectionProps {
   stage: "debrief";
   exerciseText: string;
   streamEchelonResponse: (systemMessage: string, operatorMessage?: string) => Promise<void>;
+  /** Reads Echelon's latest streamed reply so the card can show and save it. */
+  getLatestEchelon?: () => string | null;
   onComplete: () => void;
 }
 
@@ -17,11 +19,13 @@ export default function ExerciseReflection({
   stage,
   exerciseText,
   streamEchelonResponse,
+  getLatestEchelon,
   onComplete,
 }: ExerciseReflectionProps) {
   const [prompt, setPrompt] = useState("");
   const [reflection, setReflection] = useState("");
   const [phase, setPhase] = useState<"input" | "mirror">("input");
+  const [echelonMirror, setEchelonMirror] = useState("");
 
   const MAX_CHARS = 600;
 
@@ -43,7 +47,10 @@ export default function ExerciseReflection({
       mirrorPrompt
     );
 
-    // Save exercise reflection
+    const mirror = getLatestEchelon?.() ?? "";
+    setEchelonMirror(mirror);
+
+    // Save exercise reflection — with Echelon's actual acknowledgment
     saveReflectionEntry({
       lessonId,
       stage,
@@ -51,7 +58,7 @@ export default function ExerciseReflection({
       prompt,
       operatorPrimary: reflection,
       operatorFollowup: null,
-      echelonMirror: "", // Would be captured from stream
+      echelonMirror: mirror,
       echelonFollowup: null,
       echelonClose: "",
       timestamp: Date.now(),
@@ -107,9 +114,13 @@ export default function ExerciseReflection({
               <div className="text-xs font-mono uppercase tracking-wider text-neuro-cyan">
                 Integration
               </div>
-              <div className="text-sm text-muted-foreground italic">
-                [Echelon's acknowledgment will appear here]
-              </div>
+              {echelonMirror ? (
+                <p className="text-sm text-foreground/90 leading-relaxed whitespace-pre-wrap">{echelonMirror}</p>
+              ) : (
+                <div className="text-sm text-muted-foreground italic">
+                  Echelon has acknowledged your reflection in the mission thread above.
+                </div>
+              )}
             </div>
 
             <Button

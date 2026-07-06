@@ -50,6 +50,7 @@ import {
 import { AnomalyEventCard } from "./AnomalyEventCard";
 import { downloadFullBackup } from "@/lib/full-backup";
 import { maybeAutoSync } from "@/lib/auto-sync";
+import { generateReflectionQuestion, generateVideoBridge, type VideoBridge } from "@/lib/reflection-question";
 import { cn } from "@/lib/utils";
 import { 
   loadThread, 
@@ -90,6 +91,7 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
   const [showRestartDialog, setShowRestartDialog] = useState(false);
   const [activeAnomaly, setActiveAnomaly] = useState<AnomalyEvent | null>(null); // THE SLIDE: pending world event
   const [redoStages, setRedoStages] = useState<Set<MissionStage>>(new Set()); // stages re-entered via back/dot navigation — their reflections re-prompt and overwrite
+  const [videoBridge, setVideoBridge] = useState<(VideoBridge & { lessonId: number }) | null>(null); // Echelon's "why this footage" + post-watch question
   const [isInReflectionMode, setIsInReflectionMode] = useState(false);
   const [systemLiteracyMode, setSystemLiteracyMode] = useState(false);
   const [savedMissionState, setSavedMissionState] = useState<{ lessonId: number; stage: MissionStage } | null>(null);
@@ -307,6 +309,37 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
     jumpToStage(prev);
   };
 
+  // Specificity source for Echelon-generated reflection questions: the
+  // operator's most recent message is the drill answer they just gave.
+  const lastOperatorMessage = (): string | null =>
+    [...messages].reverse().find((m) => m.role === "user")?.content ?? null;
+
+  // Reflection cards capture Echelon's streamed reply after their await
+  // resolves — by then the parent has re-rendered, so they need a live ref,
+  // not a stale closure over `messages`.
+  const messagesRef = useRef<Message[]>([]);
+  messagesRef.current = messages;
+  const latestEchelonMessage = (): string | null =>
+    [...messagesRef.current].reverse().find((m) => m.role === "assistant")?.content ?? null;
+
+  // Visual Intel bridge: when the video stage arrives, Echelon explains why
+  // this footage was selected and prepares the post-watch question.
+  useEffect(() => {
+    if (currentStage !== MissionStage.VIDEO || !lesson.video_url) return;
+    if (videoBridge?.lessonId === lesson.id) return;
+    const concept = [lesson.head, lesson.lesson_summary, lesson.briefing]
+      .filter(Boolean)
+      .join("\n\n");
+    generateVideoBridge({
+      lessonTitle: lesson.lesson_title,
+      concept,
+      authoredIntro: lesson.video_intro,
+      fallbackIntro:
+        "Field footage incoming, Operator. This is the mission concept running live in the real world — watch how the practitioners handle it.",
+      fallbackQuestion: "What stood out to you from this video?",
+    }).then((bridge) => setVideoBridge({ ...bridge, lessonId: lesson.id }));
+  }, [currentStage, lesson.id, lesson.video_url]);
+
   // A stage re-entered via back navigation re-prompts its reflection once,
   // and the fresh answer overwrites the old entry.
   const shouldPromptReflection = (stage: MissionStage, stageKey: string): boolean =>
@@ -349,10 +382,16 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
       // After DRILL1 → Standard Reflection
       if (currentStage === MissionStage.DRILL1 && lesson.drill1_prompt && !pendingReflection && shouldPromptReflection(MissionStage.DRILL1, "drill1")) {
         clearRedo(MissionStage.DRILL1);
+        const prompt = await generateReflectionQuestion({
+          drillPrompt: lesson.drill1_prompt,
+          operatorResponse: lastOperatorMessage(),
+          fallback: "What insight emerged from this drill?",
+          authored: lesson.reflection_prompt,
+        });
         setPendingReflection({
           mode: "standard",
           stage: "drill1",
-          prompt: "What insight emerged from this drill?"
+          prompt,
         });
         return; // Don't advance yet
       }
@@ -363,7 +402,9 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
         setPendingReflection({
           mode: "micro",
           stage: "video",
-          prompt: "What stood out to you from this video?"
+          prompt:
+            (videoBridge?.lessonId === lesson.id && videoBridge.question) ||
+            "What stood out to you from this video?",
         });
         return;
       }
@@ -371,10 +412,16 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
       // After DRILL2 → Standard Reflection
       if (currentStage === MissionStage.DRILL2 && lesson.drill2_prompt && !pendingReflection && shouldPromptReflection(MissionStage.DRILL2, "drill2")) {
         clearRedo(MissionStage.DRILL2);
+        const prompt = await generateReflectionQuestion({
+          drillPrompt: lesson.drill2_prompt,
+          operatorResponse: lastOperatorMessage(),
+          fallback: "What pattern or realization surfaced during this drill?",
+          authored: lesson.reflection_prompt,
+        });
         setPendingReflection({
           mode: "standard",
           stage: "drill2",
-          prompt: "What pattern or realization surfaced during this drill?"
+          prompt,
         });
         return;
       }
@@ -1168,7 +1215,17 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
         
         {/* Visual Intel: the video itself, right in the conversation */}
         {!isReplayMode && currentStage === MissionStage.VIDEO && lesson.video_url && (
-          <div className="animate-fade-in">
+          <div className="animate-fade-in space-y-3">
+            {videoBridge?.lessonId === lesson.id && (
+              <div className="border-l-2 border-neuro-cyan/60 pl-3 py-1">
+                <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-neuro-cyan mb-1">
+                  Echelon · Why this footage
+                </p>
+                <p className="text-sm text-foreground/90 leading-relaxed whitespace-pre-wrap">
+                  {videoBridge.intro}
+                </p>
+              </div>
+            )}
             <VideoPlayer
               videoUrl={lesson.video_url}
               onComplete={() => advanceStage()}
@@ -1197,6 +1254,7 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
           <div className="space-y-1">
             {pendingReflection.mode === "standard" && (
               <StandardReflection
+                getLatestEchelon={latestEchelonMessage}
                 lessonId={lesson.id}
                 stage={pendingReflection.stage as "drill1" | "drill2"}
                 prompt={pendingReflection.prompt!}
@@ -1209,6 +1267,7 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
             )}
             {pendingReflection.mode === "micro" && (
               <MicroInsight
+                getLatestEchelon={latestEchelonMessage}
                 lessonId={lesson.id}
                 stage="video"
                 prompt={pendingReflection.prompt!}
@@ -1221,6 +1280,7 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
             )}
             {pendingReflection.mode === "exercise" && (
               <ExerciseReflection
+                getLatestEchelon={latestEchelonMessage}
                 lessonId={lesson.id}
                 stage="debrief"
                 exerciseText={pendingReflection.exerciseText!}
