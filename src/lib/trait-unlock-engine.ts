@@ -1,5 +1,23 @@
 import { supabase } from "@/integrations/supabase/client";
 import { TRAIT_MAP } from "./identity-system";
+import { callOperatorAI, hasOperatorAIKey } from "./operator-ai";
+
+// All analysis runs on the operator's own BYOK provider via the shared
+// operator-ai router — the platform provides no AI service of its own.
+
+/** Model output may arrive fenced or chatty; recover the first JSON array. */
+function parseTraitArray(raw: string | null): string[] {
+  if (!raw) return [];
+  const match = raw.match(/\[[\s\S]*?\]/);
+  if (!match) return [];
+  try {
+    const parsed = JSON.parse(match[0]);
+    return Array.isArray(parsed) ? parsed.filter((t) => typeof t === "string") : [];
+  } catch {
+    console.error("Failed to parse trait analysis response");
+    return [];
+  }
+}
 
 // Trait unlocking logic based on Field Guide insights
 export async function analyzeAndUnlockTraits(
@@ -8,12 +26,8 @@ export async function analyzeAndUnlockTraits(
   userReflection: string
 ): Promise<string[]> {
   try {
-    // Get AI provider config
-    const provider = localStorage.getItem("neuroverse_ai_provider") || "openai";
-    const apiKey = localStorage.getItem("neuroverse_api_key") || "";
-    
-    if (!apiKey) {
-      console.error("No API key available for trait analysis");
+    if (!hasOperatorAIKey()) {
+      console.error("No AI provider available for trait analysis");
       return [];
     }
 
@@ -43,96 +57,16 @@ Return ONLY a JSON array of trait tags that are clearly demonstrated (max 2). Ex
 
 If no traits are clearly demonstrated, return an empty array: []`;
 
-    // Call AI for analysis
-    let detectedTraits: string[] = [];
-
-    if (provider === "openai") {
-      const response = await fetch("https://api.openai.com/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${apiKey}`,
-        },
-        body: JSON.stringify({
-          model: "gpt-4o-mini",
-          messages: [
-            { role: "system", content: "You are a trait analysis engine. Return only valid JSON arrays of trait tags." },
-            { role: "user", content: analysisPrompt }
-          ],
-          temperature: 0.3,
-        }),
-      });
-
-      const data = await response.json();
-      const content = data.choices?.[0]?.message?.content || "[]";
-      
-      try {
-        detectedTraits = JSON.parse(content.trim());
-      } catch {
-        console.error("Failed to parse trait analysis response");
-        return [];
-      }
-    } else if (provider === "anthropic") {
-      const response = await fetch("https://api.anthropic.com/v1/messages", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-api-key": apiKey,
-          "anthropic-dangerous-direct-browser-access": "true",
-          "anthropic-version": "2023-06-01",
-        },
-        body: JSON.stringify({
-          model: "claude-sonnet-4-5",
-          max_tokens: 1024,
-          messages: [
-            { role: "user", content: analysisPrompt }
-          ],
-          system: "You are a trait analysis engine. Return only valid JSON arrays of trait tags.",
-        }),
-      });
-
-      const data = await response.json();
-      const content = data.content?.[0]?.text || "[]";
-      
-      try {
-        detectedTraits = JSON.parse(content.trim());
-      } catch {
-        console.error("Failed to parse trait analysis response");
-        return [];
-      }
-    } else if (provider === "google") {
-      const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            contents: [
-              {
-                role: "user",
-                parts: [{ text: analysisPrompt }],
-              },
-            ],
-            systemInstruction: {
-              parts: [{ text: "You are a trait analysis engine. Return only valid JSON arrays of trait tags." }],
-            },
-          }),
-        }
-      );
-
-      const data = await response.json();
-      const content = data.candidates?.[0]?.content?.parts?.[0]?.text || "[]";
-      
-      try {
-        detectedTraits = JSON.parse(content.trim());
-      } catch {
-        console.error("Failed to parse trait analysis response");
-        return [];
-      }
-    }
+    const raw = await callOperatorAI({
+      system: "You are a trait analysis engine. Return only valid JSON arrays of trait tags.",
+      prompt: analysisPrompt,
+      temperature: 0.3,
+      maxTokens: 1024,
+    });
+    const detectedTraits = parseTraitArray(raw);
 
     // Validate and unlock traits
-    const validTraits = detectedTraits.filter(tag => 
+    const validTraits = detectedTraits.filter(tag =>
       availableTraits.includes(tag) && TRAIT_MAP[tag]
     );
 
@@ -180,11 +114,8 @@ export async function generateFieldGuideEntry(
   conversationHistory: Array<{ role: string; content: string }>
 ): Promise<string | null> {
   try {
-    const provider = localStorage.getItem("neuroverse_ai_provider") || "openai";
-    const apiKey = localStorage.getItem("neuroverse_api_key") || "";
-    
-    if (!apiKey) {
-      console.error("No API key available for Field Guide generation");
+    if (!hasOperatorAIKey()) {
+      console.error("No AI provider available for Field Guide generation");
       return null;
     }
 
@@ -206,71 +137,12 @@ Generate a concise Field Guide entry (2-3 sentences) that:
 
 Return only the Field Guide entry text, nothing else.`;
 
-    let fieldGuideEntry = "";
-
-    if (provider === "openai") {
-      const response = await fetch("https://api.openai.com/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${apiKey}`,
-        },
-        body: JSON.stringify({
-          model: "gpt-4o-mini",
-          messages: [
-            { role: "system", content: "You are the Field Guide generator for the NeuroVerse OS. Write precise, mythic-tech insights." },
-            { role: "user", content: prompt }
-          ],
-          temperature: 0.7,
-        }),
-      });
-
-      const data = await response.json();
-      fieldGuideEntry = data.choices?.[0]?.message?.content?.trim() || "";
-    } else if (provider === "anthropic") {
-      const response = await fetch("https://api.anthropic.com/v1/messages", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-api-key": apiKey,
-          "anthropic-dangerous-direct-browser-access": "true",
-          "anthropic-version": "2023-06-01",
-        },
-        body: JSON.stringify({
-          model: "claude-sonnet-4-5",
-          max_tokens: 512,
-          messages: [
-            { role: "user", content: prompt }
-          ],
-          system: "You are the Field Guide generator for the NeuroVerse OS. Write precise, mythic-tech insights.",
-        }),
-      });
-
-      const data = await response.json();
-      fieldGuideEntry = data.content?.[0]?.text?.trim() || "";
-    } else if (provider === "google") {
-      const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            contents: [
-              {
-                role: "user",
-                parts: [{ text: prompt }],
-              },
-            ],
-            systemInstruction: {
-              parts: [{ text: "You are the Field Guide generator for the NeuroVerse OS. Write precise, mythic-tech insights." }],
-            },
-          }),
-        }
-      );
-
-      const data = await response.json();
-      fieldGuideEntry = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || "";
-    }
+    const fieldGuideEntry = (await callOperatorAI({
+      system: "You are the Field Guide generator for the NeuroVerse OS. Write precise, mythic-tech insights.",
+      prompt,
+      temperature: 0.7,
+      maxTokens: 512,
+    }))?.trim() ?? "";
 
     if (!fieldGuideEntry) {
       return null;
