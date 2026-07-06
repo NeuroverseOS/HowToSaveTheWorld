@@ -29,8 +29,8 @@ import {
   uploadStateToUserSupabase,
   downloadStateFromUserSupabase,
   getUserSyncTimestamp,
-  clearState,
 } from "@/lib/state-engine";
+import { resetMissionProgress, resetEverything } from "@/lib/reset-state";
 import { toast } from "@/hooks/use-toast";
 import { SUPPORTED_LANGUAGES, getLanguageNativeName } from "@/lib/language-utils";
 import { ECHELON_VOICES } from "@/data/voices";
@@ -491,41 +491,20 @@ export default function Settings() {
 
   const handleFullSystemReset = () => {
     const confirmed = window.confirm(
-      "Full system reset? This will clear your Vanguard callsign, archetype, and orientation. Your lesson progress will be preserved. You will need to reactivate Echelon."
+      "Full system reset? This clears EVERYTHING — identity, archetype, missions, threads, reflections, and world state. Device settings (AI key, vault link, theme) are kept. You will start the experience from the beginning. This cannot be undone — export a backup first if you want one."
     );
     if (!confirmed) return;
 
-    // Clear Vanguard + archetype
-    const state = loadState();
-    if (state) {
-      state.user.vanguard = {
-        designation: "Vanguard",
-        callsign: null,
-        full_identity: null,
-        assigned_at: null,
-        activation_complete: false,
-        is_graduated: false,
-        graduation_timestamp: null,
-        post_foxhole_objective: null,
-      };
-      state.user.archetype = {
-        primary: null,
-        shadow: null,
-        rising: null,
-        assessment_complete: false
-      };
-      saveState(state);
-    }
-    localStorage.removeItem("neuroverse_orientation_complete");
-    localStorage.removeItem("neuroverse_archetype_funding_shown");
-    
+    resetEverything();
+
     toast({
       title: "System Reset Complete",
-      description: "Redirecting to activation...",
+      description: "Returning to the beginning...",
     });
-    
+
+    // Hard redirect: land at the true start with no in-memory state surviving
     setTimeout(() => {
-      navigate("/activate-echelon");
+      window.location.href = "/";
     }, 1000);
   };
 
@@ -1905,13 +1884,13 @@ export default function Settings() {
                   variant="outline"
                   onClick={() => {
                     const confirmed = window.confirm(
-                      "Reset progress to Lesson 1? This will clear all completed lessons but preserve your identity."
+                      "Reset progress to Mission 1? Completed missions, mission threads, and reflections will be cleared — your callsign, archetype, and settings are kept."
                     );
                     if (confirmed) {
-                      clearState();
+                      resetMissionProgress();
                       toast({
                         title: "Progress Reset",
-                        description: "Returning to Lesson 1...",
+                        description: "Returning to Mission 1...",
                       });
                       setTimeout(() => window.location.href = "/dashboard", 1000);
                     }
@@ -1919,7 +1898,7 @@ export default function Settings() {
                   className="text-amber-500 border-amber-500/30 hover:bg-amber-500/10"
                 >
                   <RotateCcw className="h-4 w-4 mr-2" />
-                  Reset to Lesson 1
+                  Reset to Mission 1
                 </Button>
                 
                 <Button

@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "@/hooks/use-toast";
 import { Shield, Users, BookOpen, RotateCcw, ArrowLeft } from "lucide-react";
+import { resetEverything } from "@/lib/reset-state";
 
 export default function Admin() {
   const navigate = useNavigate();
@@ -33,14 +34,13 @@ export default function Admin() {
   };
 
   const handleResetOwnProgress = () => {
-    if (confirm("Are you sure you want to reset your own progress? This will clear your assessment and orientation.")) {
-      localStorage.removeItem("neuroverse_state");
-      localStorage.removeItem("neuroverse_orientation_complete");
+    if (confirm("Reset your own progress? This clears identity, missions, threads, and reflections on this device — you will restart from the beginning.")) {
+      resetEverything();
       toast({
         title: "Progress Reset",
-        description: "Your progress has been reset. Redirecting...",
+        description: "Returning to the beginning...",
       });
-      setTimeout(() => navigate("/dashboard"), 1500);
+      setTimeout(() => { window.location.href = "/"; }, 1000);
     }
   };
 

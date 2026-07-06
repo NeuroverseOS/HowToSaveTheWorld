@@ -6,7 +6,8 @@ import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Code2, Trash2, Download, Upload, RefreshCw, Box } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { loadState, clearState, hasState } from "@/lib/state-engine";
+import { loadState, hasState } from "@/lib/state-engine";
+import { resetEverything } from "@/lib/reset-state";
 import { getActiveBoxesForStage, getVisibilityFromBoxes, BOX_STAGE_MAP } from "@/lib/box-stage-map";
 
 export function DevToolsPanel() {
@@ -33,24 +34,29 @@ export function DevToolsPanel() {
     );
     if (!confirmed) return;
     localStorage.clear();
-    setRefreshKey(prev => prev + 1);
     toast({
       title: "Storage Cleared",
-      description: "All localStorage has been cleared. Refresh to restart onboarding.",
+      description: "Returning to the beginning...",
     });
+    setTimeout(() => {
+      window.location.href = "/";
+    }, 800);
   };
 
   const handleClearState = () => {
     const confirmed = window.confirm(
-      "Reset your journey state? Mission progress and identity will be cleared on this device (your stored AI key is kept). This cannot be undone."
+      "Reset your journey state? Mission progress, identity, threads, and reflections will be cleared on this device (your stored AI key is kept). You will restart from the beginning. This cannot be undone."
     );
     if (!confirmed) return;
-    clearState();
-    setRefreshKey(prev => prev + 1);
+    resetEverything();
     toast({
       title: "State Cleared",
-      description: "NeuroVerse state has been cleared.",
+      description: "Returning to the beginning...",
     });
+    // Hard redirect to the true start \u2014 no in-memory state survives
+    setTimeout(() => {
+      window.location.href = "/";
+    }, 800);
   };
 
   const handleExportState = () => {
