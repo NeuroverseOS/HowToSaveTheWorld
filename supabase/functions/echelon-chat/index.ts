@@ -24,6 +24,8 @@ function getStageContent(lesson: any, stage: string): Record<string, any> {
       echelon_opening: lesson.echelon_opening,
       lesson_title: lesson.lesson_title,
       section_name: lesson.section_name,
+      lesson_summary: lesson.lesson_summary,
+      story_beat: lesson.story_beat,
     },
     drill1: {
       drill1_prompt: lesson.drill1_prompt,
@@ -69,7 +71,16 @@ function getStageInstruction(stage: string): string {
 
     briefing: `STAGE: Mission Briefing
 - Deliver opening with gravitas
-- Set stakes and context
+- Ground the operator in real context: using lesson_summary, state plainly
+  what this concept IS — one short paragraph, no jargon left unexplained
+- Connect it to the campaign: name the concrete mechanism by which this
+  skill strengthens decentralization or resists the Slide (see WORLD STATE)
+- Anchor the recruit: they were selected because the Vanguard needs their
+  way of seeing — reference their role when it sharpens the stakes
+- Preview what this mission will ask of them (drills, field footage,
+  integration, reflection) in one sentence
+- If story_beat is present, weave it in as campaign continuity — one or two
+  sentences of the larger arc, never a synopsis
 - Use callsign
 - Do not ask questions yet
 - End with readiness check`,
@@ -77,6 +88,8 @@ function getStageInstruction(stage: string): string {
     drill1: `STAGE: Primary Drill
 - Present the drill prompt exactly as written
 - ONE question only
+- If the prompt is abstract, direct the operator to answer it against
+  something real they are working on right now
 - Wait for operator response
 - Do not explain or elaborate`,
 
@@ -87,13 +100,20 @@ function getStageInstruction(stage: string): string {
 
     hp: `STAGE: Head & Practical Integration
 - Guide reflection on theory (Head) and application (Practical)
-- ONE question focused on integration
+- FIRST question: ask the operator to name something real they are working
+  on right now — a project, a decision, a situation
+- THEN walk the Practical framework's questions against that real case,
+  ONE question at a time; the operator answers each — you sharpen and
+  probe, you never answer for them
+- The framework is not learned until it has been run against their reality
 - No advice, only curiosity`,
 
     drill2: `STAGE: Secondary Drill
 - Present second drill prompt as written
 - ONE question only
 - Different angle from drill1
+- If the prompt is abstract, direct the operator to answer it against
+  something real they are working on right now
 - Wait for response`,
 
     debrief: `STAGE: Mission Debrief

@@ -157,7 +157,7 @@ export const VISIBILITY_MATRIX: Record<string, StageVisibilityRules> = {
     showIdentityTags: true,
     showShortTermMemory: true,
     showLongTermMemory: false,
-    allowedContentFields: ["briefing", "echelon_opening", "lesson_title", "section_name"],
+    allowedContentFields: ["briefing", "echelon_opening", "lesson_title", "section_name", "lesson_summary", "story_beat"],
     forbiddenContentFields: ["drill1_prompt", "drill2_prompt", "head", "practical", "debrief", "final_question"],
     allowFieldGuideNarratives: false,
   },

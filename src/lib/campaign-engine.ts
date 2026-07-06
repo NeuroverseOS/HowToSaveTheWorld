@@ -6,6 +6,7 @@
 // ============================================================================
 
 import { loadState, saveState, type StateSchema } from "./state-engine";
+import { getVanguardRole } from "./vanguard-roles";
 
 // ---------------------------------------------------------------------------
 // Slide bands
@@ -178,10 +179,23 @@ export function resolveAnomaly(event: AnomalyEvent, choice: AnomalyChoice, lesso
 // ---------------------------------------------------------------------------
 
 export function buildWorldPromptContext(): { context: string } | null {
+  const state = loadState();
+  if (!state) return null;
   const snap = getWorldSnapshot();
   if (!snap) return null;
+
+  // The recruitment contract: why this operator is here, what they serve as,
+  // and what the campaign is actually building. Echelon personalizes what the
+  // authored content must leave generic.
+  const archetype = state.user.archetype.primary;
+  const role = getVanguardRole(archetype);
+
   const lines = [
     `WORLD STATE (campaign continuity — weave lightly into narration, never lecture about it):`,
+    `- Campaign objective: keep the arriving machine layer in many hands. The Vanguard is building LATTICE — an open coordination layer for the Open Robotics Network — before the Slide locks autonomy into few.`,
+    role
+      ? `- This operator was recruited after assessment flagged the ${archetype} pattern; they serve as ${role.role} — ${role.lens.toLowerCase()}. They are here because that way of seeing is needed. Recall this when it sharpens stakes.`
+      : `- This operator is a fresh recruit; their posting is not yet assigned.`,
     `- The Slide reads ${snap.slide}/100 — band: ${snap.band.name}.`,
     `- Operator Signal: ${snap.signal}/100${snap.signal < 30 ? " (link degraded — keep guidance shorter, terser)" : ""}.`,
   ];

@@ -19,7 +19,14 @@ builders).
 - [ ] `src/lib/lesson-validator.ts` passes on the full lesson set
 - [ ] Section/phase structure is consistent (section names, lesson numbers,
       phase boundaries) — ranks and Mirror Gates key off lesson numbers
-- [ ] Video URLs (where present) are reachable and licensed for the fork
+- [ ] Every lesson passes the per-lesson weave audit (`STORY_GUIDE.md`
+      §9–12): recruitment contract stated, mission-link mechanism passes
+      the swap test, an applied turn exists, `story_beat` is narrative
+      (not schema tokens)
+- [ ] Video URLs (where present) are reachable and licensed for the fork —
+      the `video-link-audit` workflow runs weekly and files an issue for
+      dead links; the player degrades gracefully but the teaching moment
+      is lost until relinked
 - [ ] `public/lessons.json` regenerated via the export script — never
       hand-edited
 - [ ] Database seeded via `scripts/seed-database.ts` (service_role key from
@@ -31,8 +38,17 @@ builders).
       voice: companion persona, learner address, stage behavior
 - [ ] Box–stage mapping (`src/lib/box-stage-map.ts`) intact; each stage
       exposes only the boxes it should
-- [ ] Fog modifier flows into prompts (and any world-state modifiers added
-      to it are threaded the same way)
+- [ ] Briefing stage receives `lesson_summary` and `story_beat` through the
+      visibility allowlist (client payload → edge `getStageContent` →
+      `VISIBILITY_MATRIX`) — all three layers, or the field silently
+      never arrives
+- [ ] World context (`buildWorldPromptContext`) carries the campaign
+      objective and the learner's recruitment/role line, re-themed for the
+      fork's fiction, and stays under the edge function's 1200-char cap
+- [ ] Fog modifier flows into prompts as *effective* fog
+      (`getEffectiveFog`: authored + world-state pressure), not the raw
+      authored value — and any new world-state modifiers thread the same
+      way
 - [ ] Echelon visibility rules (`src/lib/echelon-visibility-rules.ts` +
       `visibility-validator.ts`) updated if the fork changes what the
       companion may reveal, and the validator passes

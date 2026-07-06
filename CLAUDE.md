@@ -20,7 +20,13 @@ done:
    adversaries, the companion, the stakes, the consequences, the reports,
    the destination), your first job is to interview them until they can.
    Generating 90 lessons for a world with no winter produces a reading
-   list, not a campaign.
+   list, not a campaign. Then audit every generated lesson against the
+   guide's per-lesson weave rules (§9–12): the recruitment contract is
+   stated, the briefing names a mission-link mechanism that survives the
+   swap test, the learner runs each framework against their own real
+   work, and the story beat is narrative. A rich world bible over generic
+   lessons is the most common failure on this engine — the story must
+   reach the learner's hands, not stay on the box art.
 
 2. **The Kernel Audit** — `docs/KERNEL_CHECKLIST.md`
    Every engine subsystem the new world touches, checked item by item:

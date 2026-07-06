@@ -44,6 +44,7 @@ import {
   resolveAnomaly,
   applyMissionCompletion,
   buildWorldPromptContext,
+  getEffectiveFog,
   type AnomalyEvent,
   type AnomalyChoice,
 } from "@/lib/campaign-engine";
@@ -592,6 +593,10 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
         lesson: {
           id: lesson.id,
           lesson_number: lesson.lesson_number,
+          lesson_title: lesson.lesson_title,
+          section_name: lesson.section_name,
+          lesson_summary: lesson.lesson_summary,
+          story_beat: lesson.story_beat,
           briefing: lesson.briefing,
           echelon_opening: lesson.echelon_opening,
           drill1_prompt: lesson.drill1_prompt,
@@ -603,7 +608,8 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
           echelon_closing: lesson.echelon_closing,
           video_url: lesson.video_url,
           tone: lesson.tone,
-          fog_level: lesson.fog_level,
+          // The world presses on the mission: authored fog + Slide band + degraded link
+          fog_level: getEffectiveFog(lesson.fog_level ?? 0),
           phase: lesson.phase,
         },
         userData: {

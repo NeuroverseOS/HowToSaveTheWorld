@@ -113,6 +113,88 @@ Multiple endings give the campaign weight from the first act.
 
 ---
 
+---
+
+# Part Two — Weaving the Story Into Every Lesson
+
+The eight questions build the world. This part is where most worlds still
+fail: the bible is rich, the lessons stay generic. A learner can complete
+five missions in a well-designed world and never once be told why *they*
+are there or what the concept in front of them has to do with the war.
+These four rules prevent that. Audit every generated lesson against them.
+
+## 9. The Recruitment Contract — say it, don't imply it
+
+The learner must be told, in-fiction and early, three things: **how they
+were recruited**, **why them** (what aptitude the assessment saw, and what
+role that earns them in the effort), and **what end the work serves**. This
+is not a one-time cutscene — briefings restate it whenever it sharpens the
+stakes. On this engine, the personalized role lives in the world context
+the companion receives every message (see `campaign-engine.ts`
+`buildWorldPromptContext`); authored lesson text stays role-agnostic and
+the companion personalizes at delivery.
+
+- *HTSTW:* "Your assessment flagged the Watchtower pattern. You serve as
+  Risk & Security Analyst. The Vanguard is building LATTICE before the
+  Slide locks autonomy into few hands."
+- **Test:** could a learner three missions in answer "why were you
+  recruited, and for what?" in one sentence? If not, the contract was
+  implied, not stated.
+
+## 10. The Mission Link — mechanism, not sentiment
+
+Every lesson's briefing must name the **concrete causal mechanism** by
+which this concept serves the campaign — never "this matters to the
+mission." For latency: *systems that sense and respond locally don't wait
+on a distant controller; every second of lag is an argument someone will
+use for handing control to whoever owns the fastest pipe.*
+
+- **Test (the swap test):** replace the concept's name in the mission-link
+  sentence with a different concept. If the sentence still reads fine, it
+  was decoration — rewrite until only *this* concept fits.
+
+## 11. The Applied Turn — the learner thinks about something real
+
+A framework is not learned until it has been run against the learner's own
+reality. Every framework the lessons teach must be *walked*, not shown:
+the companion first asks the learner to name something real they are
+working on, then asks the framework's questions against that case one at a
+time — the learner answers each, the companion sharpens and probes, and
+never answers for them. On this engine this is enforced in the stage
+instructions (HP and drill stages, `echelon-chat`), but authored drill
+prompts should invite it too.
+
+- *HTSTW:* the Monkey's Paw Rule isn't recited — the operator names a
+  live project and answers "what might this solve / break / harm?" about
+  *it*, with Echelon pressing on each answer.
+- **Test:** count the questions in a mission the learner can answer
+  without referencing their own life or work. If they can pass the whole
+  mission in the abstract, it teaches trivia.
+
+## 12. The Beat — every lesson carries one thread of the arc
+
+Each lesson gets a `story_beat`: one or two sentences of campaign
+continuity — what moved in the world since last mission, what this mission
+touches. The companion weaves it into the briefing (never as a synopsis).
+Beats are narrative, not schema tokens; a beat that reads like
+`boundary_map; system_scope_principle` is corrupted data, not story.
+
+- **Test:** read five consecutive beats aloud. They should feel like one
+  campaign advancing, not five taglines.
+
+### The briefing anatomy (the shape that passed review)
+
+Two short paragraphs of authored text, which the companion delivers and
+personalizes:
+
+1. **TEACH** — what the concept *is*, plainly, no unexplained jargon, plus
+   the mission-link mechanism (rule 10).
+2. **ORIENT** — recruitment frame (rule 9, role-agnostic), the story beat
+   (rule 12), and what this mission will ask — ending, where real, with
+   the learner applying it to their own work (rule 11).
+
+---
+
 ## The Creator's Worksheet
 
 Copy, fill, and keep with the fork. An AI builder should refuse to
@@ -128,7 +210,15 @@ WORLD NAME:
 6. THE CONSEQUENCES — detour: ____  hold: ____  capture: ____
 7. THE REPORTS    — interval / rating bands / what is never scored
 8. THE DESTINATION — best ending / hardest ending
+
+PER-LESSON WEAVE (audit every generated lesson):
+9.  RECRUITMENT CONTRACT — recruited how / why them / toward what end
+10. MISSION LINK  — concept → campaign mechanism (passes the swap test)
+11. APPLIED TURN  — where the learner runs it against their own work
+12. THE BEAT      — one thread of the arc, in narrative, not tokens
 ```
 
 A world with eight honest answers is ready for lessons. A world without them
-is a reading list wearing a costume.
+is a reading list wearing a costume. And lessons that skip the weave rules
+are a reading list *inside* a costume — the story stays on the box art and
+never reaches the learner's hands.
