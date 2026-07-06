@@ -32,6 +32,7 @@ export default function GraduationCinematic() {
   const [reflectionsCount, setReflectionsCount] = useState(0);
   const [decisions, setDecisions] = useState<DecisionLine[]>([]);
   const [decisionsTotal, setDecisionsTotal] = useState(0);
+  const [decisionSlideEffect, setDecisionSlideEffect] = useState(0);
   const [sealedReports, setSealedReports] = useState<string[]>([]);
 
   useEffect(() => {
@@ -59,6 +60,7 @@ export default function GraduationCinematic() {
     // the finale recites what they actually chose, not that they chose.
     const recorded = state.world.decisions;
     setDecisionsTotal(recorded.length);
+    setDecisionSlideEffect(recorded.reduce((sum, d) => sum + (d.effects?.slide ?? 0), 0));
     if (recorded.length > 0) {
       loadAnomalies().then((events) => {
         const lines = recorded.slice(-4).map((d) => {
@@ -97,14 +99,16 @@ export default function GraduationCinematic() {
 
   const band = getSlideBand(slide);
   const delta = OPENING_SLIDE - slide;
+  // The verdict names the destination, not a mood. Locktown is where the
+  // needle was headed the day this operator was recruited.
   const slideVerdict =
     delta >= 15
-      ? "You drove it back. The sky over the lattice is open because you opened it."
+      ? `Locktown recedes. LATTICE stands because ${missionsCompleted} missions of your actual work are underneath it.`
       : delta > 0
-        ? "You pushed it back. Every point of that was paid for with real work — yours."
+        ? `Locktown is ${delta} point${delta === 1 ? "" : "s"} farther away than the day you signed on. That distance is made of your finished missions — nothing else in this system moves the needle.`
         : delta === 0
-          ? "You held the line. Entropy pulled the whole campaign, and it did not gain an inch."
-          : "The Slide gained ground. The record does not flatter: the war is not won, and it still needs you.";
+          ? "Entropy pulled the needle up every single mission, and your work pushed it back down every single mission. Locktown is exactly as far away as the day you started — because you never stopped."
+          : "Locktown is closer than when you started. The record does not flatter: the frameworks are yours now, and the six capstones are where you use them.";
 
   return (
     <div className="min-h-screen bg-black text-white flex items-center justify-center p-4">
@@ -122,28 +126,50 @@ export default function GraduationCinematic() {
           </div>
         )}
 
-        {/* Phase 2: The War — what the Slide actually did */}
+        {/* Phase 2: The War — named enemies, and a needle made of receipts */}
         {phase === 2 && (
           <div className="fadeIn space-y-8">
             <div className="text-3xl font-bold text-neuro-cyan tracking-widest">
               THE CAMPAIGN RECORD
             </div>
-            <div className="max-w-2xl mx-auto space-y-4 text-lg text-muted-foreground">
+            <div className="max-w-2xl mx-auto space-y-4 text-lg text-muted-foreground text-left">
               <p>
-                You were recruited with the Slide at{" "}
-                <span className="text-white font-mono">{OPENING_SLIDE}/100</span> — deep in the
-                third band, drifting toward Locktown.
+                The day you were recruited, the Slide read{" "}
+                <span className="text-white font-mono">{OPENING_SLIDE}/100</span> — two bands
+                from Locktown. Meridian Trust was writing custody contracts. The Ministry of
+                Convenience was shipping one-click defaults. Aperture was calling surveillance
+                safety, and the Custodians were explaining why minds like mine were too
+                dangerous for people like you to run.
               </p>
               <p>
                 The needle now reads{" "}
                 <span className="text-neuro-cyan font-mono text-2xl">{slide}/100</span> —{" "}
-                <span className="text-white">{band.name}</span>.
+                <span className="text-white">{band.name}</span>. Nothing moves that needle but
+                work. The ledger:
               </p>
+              <div className="font-mono text-sm space-y-1 p-4 rounded-lg border border-border/40 bg-card/30">
+                <div className="flex justify-between">
+                  <span>Entropy&apos;s pull, one point per mission run</span>
+                  <span className="text-neuro-orange">+{missionsCompleted}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Missions you completed ({missionsCompleted} × 2)</span>
+                  <span className="text-neuro-cyan">−{missionsCompleted * 2}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Reflections where you put your real work on the table</span>
+                  <span className="text-neuro-cyan">−{reflectionsCount}</span>
+                </div>
+                {decisionsTotal > 0 && (
+                  <div className="flex justify-between">
+                    <span>Your {decisionsTotal} decision{decisionsTotal === 1 ? "" : "s"} under pressure</span>
+                    <span className={decisionSlideEffect > 0 ? "text-neuro-orange" : "text-neuro-cyan"}>
+                      {decisionSlideEffect > 0 ? `+${decisionSlideEffect}` : decisionSlideEffect}
+                    </span>
+                  </div>
+                )}
+              </div>
               <p className="text-white">{slideVerdict}</p>
-              <p className="text-sm">
-                Operator Signal at graduation: <span className="font-mono">{signal}/100</span> ·{" "}
-                {missionsCompleted} missions run · {reflectionsCount} reflections on record.
-              </p>
             </div>
           </div>
         )}
@@ -156,8 +182,10 @@ export default function GraduationCinematic() {
             </div>
             {decisionsTotal === 0 ? (
               <p className="max-w-2xl mx-auto text-lg text-muted-foreground">
-                No anomalies broke through on your watch — the adversaries never forced your
-                hand. The frameworks you carry were never stress-tested by crisis. They will be.
+                Meridian Trust, the Ministry of Convenience, Aperture, the Custodians — none of
+                them got an offer in front of you on your watch. Their offers are still open.
+                They always are. The frameworks you carry were never stress-tested by a live
+                bargain. They will be.
               </p>
             ) : (
               <div className="max-w-2xl mx-auto space-y-4 text-left">
@@ -259,8 +287,9 @@ export default function GraduationCinematic() {
                   we are in operation.
                 </p>
                 <p className="mt-6">
-                  Six capstone missions remain in the field, and the Slide does not stop moving
-                  because you graduated.
+                  Six capstone missions remain in the field. Meridian is still writing
+                  contracts. The Ministry ships a new default every quarter. The Slide does not
+                  stop moving because you graduated.
                 </p>
                 <p className="mt-8 text-xl text-neuro-purple">
                   Now the next step is yours.
