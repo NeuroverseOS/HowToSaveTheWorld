@@ -191,23 +191,33 @@ export default function Dashboard() {
     if (!state || !currentLesson) return;
 
     setIsSaving(true);
+
+    // LOCAL FIRST — the operator's own record is canonical. It is written
+    // before any network call and can never be vetoed by one. (A 401 on the
+    // cloud mirror once cost an anonymous operator their whole completed
+    // mission; that class of bug ends here.)
+    state.reflections.push({
+      lesson_id: state.progress.current_lesson_id,
+      timestamp: new Date().toISOString(),
+      content: reflection,
+      mission_choice: null,
+    });
+    if (!state.progress.lessons_completed.includes(state.progress.current_lesson_id)) {
+      state.progress.lessons_completed.push(state.progress.current_lesson_id);
+    }
+    saveState(state);
+
+    // Cloud mirror: signed-in operators only, best-effort.
     try {
-      // Save reflection to database
-      await saveReflection(state.user.id, currentLesson.id, reflection);
-
-      // Update local state
-      state.reflections.push({
-        lesson_id: state.progress.current_lesson_id,
-        timestamp: new Date().toISOString(),
-        content: reflection,
-        mission_choice: null,
-      });
-
-      // Mark lesson as completed
-      if (!state.progress.lessons_completed.includes(state.progress.current_lesson_id)) {
-        state.progress.lessons_completed.push(state.progress.current_lesson_id);
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        await saveReflection(state.user.id, currentLesson.id, reflection);
       }
+    } catch (error) {
+      console.warn("[MIRROR] Reflection cloud mirror failed (local record intact):", error);
+    }
 
+    try {
       // GRADUATION TRIGGER: Check if lesson 90 complete (canonical graduation capstone)
       // Note: TOTAL_MISSIONS is 96, but graduation triggers at lesson 90
       const TOTAL_MISSIONS = 96;

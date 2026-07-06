@@ -2,15 +2,14 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Lock, Lightbulb, Hammer, Users } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
+import { ArrowLeft, Lightbulb, Hammer, Users } from "lucide-react";
 import { loadState } from "@/lib/state-engine";
-import { checkWorkModeUnlocks } from "@/lib/work-engine";
+import { getWorkModePower } from "@/lib/work-engine";
 
 export default function WorkModePage() {
   const navigate = useNavigate();
-  const [unlocks, setUnlocks] = useState({ design: false, build: false, lead: false });
-  const [earlyUnlockEnabled, setEarlyUnlockEnabled] = useState(false);
+  const [power, setPower] = useState({ design: 0, build: 0, lead: 0 });
 
   useEffect(() => {
     const state = loadState();
@@ -19,21 +18,11 @@ export default function WorkModePage() {
       return;
     }
 
-    // Check work mode unlocks
-    const unlockedModes = checkWorkModeUnlocks(state.progress.lessons_completed);
-    setUnlocks(unlockedModes);
-    
-    // Check early unlock setting
-    setEarlyUnlockEnabled(state.work?.early_unlock_enabled || false);
+    // Every mode is open. Training doesn't gate the lens — it powers it.
+    setPower(getWorkModePower(state.progress.lessons_completed));
   }, [navigate]);
 
   const handleModeSelect = (mode: "design" | "build" | "lead") => {
-    const isUnlocked = unlocks[mode] || earlyUnlockEnabled;
-    
-    if (!isUnlocked) {
-      return; // Do nothing if locked
-    }
-    
     // Save selected mode and navigate to context page
     const state = loadState();
     if (state) {
@@ -58,7 +47,7 @@ export default function WorkModePage() {
       color: "text-purple-400",
       bgColor: "bg-purple-500/10",
       borderColor: "border-purple-500/30",
-      unlockRequirement: "Complete Design Session (Lessons 1-30)"
+      phaseLabel: "Design missions (1–30)"
     },
     {
       id: "build" as const,
@@ -68,7 +57,7 @@ export default function WorkModePage() {
       color: "text-neuro-cyan",
       bgColor: "bg-neuro-cyan/10",
       borderColor: "border-neuro-cyan/30",
-      unlockRequirement: "Complete Build Session (Lessons 31-60)"
+      phaseLabel: "Build missions (31–60)"
     },
     {
       id: "lead" as const,
@@ -78,7 +67,7 @@ export default function WorkModePage() {
       color: "text-neuro-orange",
       bgColor: "bg-neuro-orange/10",
       borderColor: "border-neuro-orange/30",
-      unlockRequirement: "Complete Lead Session (Lessons 61-90)"
+      phaseLabel: "Lead missions (61–90)"
     }
   ];
 
@@ -118,65 +107,54 @@ export default function WorkModePage() {
             model — <span className="text-purple-400">Design</span> asks what form this could
             take, <span className="text-neuro-cyan">Build</span> asks what's the smallest
             actionable step, <span className="text-neuro-orange">Lead</span> asks what people
-            will feel. You earn each lens by finishing its training arc.
+            will feel. Every lens is open from day one — and every mission you complete makes
+            it sharper, because Echelon coaches with the traits and patterns your training
+            writes into your record.
           </p>
         </Card>
 
         <div className="grid gap-6 md:grid-cols-3">
           {modes.map((mode) => {
-            const isUnlocked = unlocks[mode.id] || earlyUnlockEnabled;
             const Icon = mode.icon;
+            const missionsIn = power[mode.id];
 
             return (
               <Card
                 key={mode.id}
-                className={`relative p-6 cursor-pointer transition-all ${
-                  isUnlocked 
-                    ? `${mode.borderColor} hover:bg-card/60` 
-                    : 'opacity-50 cursor-not-allowed'
-                }`}
+                className={`relative p-6 cursor-pointer transition-all ${mode.borderColor} hover:bg-card/60`}
                 onClick={() => handleModeSelect(mode.id)}
               >
-                {!isUnlocked && (
-                  <div className="absolute top-3 right-3">
-                    <Lock className="h-5 w-5 text-muted-foreground" />
-                  </div>
-                )}
-
                 <div className={`${mode.bgColor} ${mode.borderColor} border rounded-lg p-4 mb-4`}>
                   <Icon className={`h-8 w-8 ${mode.color}`} />
                 </div>
 
-                <h3 className={`text-xl font-bold mb-2 ${isUnlocked ? mode.color : 'text-muted-foreground'}`}>
+                <h3 className={`text-xl font-bold mb-2 ${mode.color}`}>
                   {mode.title}
                 </h3>
                 <p className="text-sm text-muted-foreground mb-4">
                   {mode.description}
                 </p>
 
-                {!isUnlocked && (
-                  <Badge variant="outline" className="text-xs">
-                    {mode.unlockRequirement}
-                  </Badge>
-                )}
+                <div className="space-y-1.5 mb-4">
+                  <div className="flex justify-between text-xs text-muted-foreground">
+                    <span>Lens power</span>
+                    <span className="font-mono">{missionsIn}/30</span>
+                  </div>
+                  <Progress value={(missionsIn / 30) * 100} className="h-1.5" />
+                  <p className="text-[11px] text-muted-foreground/80">
+                    {missionsIn === 0
+                      ? `Works now — sharpens with every ${mode.phaseLabel.split(" ")[0]} mission you finish.`
+                      : `Powered by ${missionsIn} of 30 ${mode.phaseLabel}.`}
+                  </p>
+                </div>
 
-                {isUnlocked && (
-                  <Button className={`w-full ${mode.color}`} variant="outline">
-                    Enter {mode.title}
-                  </Button>
-                )}
+                <Button className={`w-full ${mode.color}`} variant="outline">
+                  Enter {mode.title}
+                </Button>
               </Card>
             );
           })}
         </div>
-
-        {earlyUnlockEnabled && (
-          <div className="mt-6 p-4 bg-neuro-orange/10 border border-neuro-orange/30 rounded-lg">
-            <p className="text-sm text-neuro-orange">
-              Early Unlock is enabled. All modes are accessible regardless of mission completion.
-            </p>
-          </div>
-        )}
       </main>
     </div>
   );

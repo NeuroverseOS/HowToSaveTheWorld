@@ -42,7 +42,7 @@ Your response MUST:
 Keep total response under 80 words. Stay in mythic-tech voice.
 Do NOT give advice. ONE question only.`;
 
-    await streamEchelonResponse(mirrorPrompt);
+    await streamEchelonResponse("[REFLECTION_DEEP_MIRROR]", mirrorPrompt);
     
     // Note: The actual mirrored text will be captured in LessonRunner's message state
     // We'll store the reflection entry when moving to next phase
@@ -72,7 +72,7 @@ Provide a single sentence that:
 
 Maximum 30 words. No questions.`;
 
-    await streamEchelonResponse(closePrompt);
+    await streamEchelonResponse("[REFLECTION_DEEP_CLOSE]", closePrompt);
     
     // Save complete reflection entry to local storage
     saveReflectionEntry({

@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { ArrowLeft, ChevronDown, Lock, Circle, CheckCircle2, HelpCircle, Settings as SettingsIcon, BookOpen } from "lucide-react";
-import { loadState } from "@/lib/state-engine";
+import { loadState, saveState } from "@/lib/state-engine";
 import type { Lesson } from "@/lib/lesson-queries";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { getAllLessons, forceSupabaseRefresh } from "@/lib/lesson-loader";
@@ -58,6 +58,8 @@ export default function MissionList() {
         } else if (lesson.lesson_number === currentLessonId || lesson.id === currentLessonId) {
           status = "active";
         } else {
+          // Open navigation: any mission can be jumped to. "locked" now only
+          // means "ahead of you" for the visuals — never unclickable.
           status = "locked";
         }
 
@@ -128,8 +130,17 @@ export default function MissionList() {
   };
 
   const handleLessonClick = (lesson: LessonWithStatus) => {
-    if (lesson.status === "locked") return;
-    
+    // Jumping ahead moves the campaign pointer so the Dashboard, briefings,
+    // and section transitions all follow the operator to the new mission.
+    if (lesson.status === "locked") {
+      const state = loadState();
+      if (state) {
+        state.progress.current_lesson_id = lesson.lesson_number;
+        state.progress.current_section = Math.ceil(lesson.lesson_number / 10);
+        saveState(state);
+      }
+    }
+
     // Navigate to lesson with mode parameter
     const mode = lesson.status === "completed" ? "replay" : "active";
     navigate(`/lesson/${lesson.id}?mode=${mode}`);
@@ -262,10 +273,9 @@ export default function MissionList() {
                         <button
                           key={lesson.id}
                           onClick={() => handleLessonClick(lesson)}
-                          disabled={lesson.status === "locked"}
                           className={`w-full text-left p-3 rounded-md flex items-center justify-between transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
                             lesson.status === "locked"
-                              ? "cursor-not-allowed opacity-40"
+                              ? "opacity-60 hover:opacity-100 hover:bg-accent/70 cursor-pointer"
                               : "hover:bg-accent/70 cursor-pointer"
                           }`}
                         >

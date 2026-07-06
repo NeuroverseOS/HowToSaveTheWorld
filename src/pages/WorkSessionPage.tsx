@@ -60,6 +60,11 @@ export default function WorkSessionPage() {
             callsign: state.user.vanguard.callsign,
             userId: state.user.id,
             language: state.user.language,
+            // The identity the training built — local-first, so Work Mode
+            // sharpens with every mission for anonymous operators too.
+            archetype: state.user.archetype,
+            identity_traits: state.identity?.unlocked_traits ?? [],
+            missions_completed: state.progress.lessons_completed.length,
           },
         },
         headers: {

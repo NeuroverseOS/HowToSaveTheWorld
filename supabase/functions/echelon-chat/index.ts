@@ -203,8 +203,22 @@ Deno.serve(async (req) => {
       // Box 1: Work-specific Core Rules
       const box1 = modeData.box1_rules;
       
-      // Box 2: Identity Tags (reuses operator traits)
-      const box2 = `Operator: ${userData?.callsign || "Operator"}\nIdentity Tags: ${traitTags.join(', ')}`;
+      // Box 2: Identity Tags — server-fetched traits for signed-in operators,
+      // else the local-first identity the client sends (the operator's own
+      // training record; same trust level as the work context itself).
+      const localTraits: string[] = Array.isArray(userData?.identity_traits)
+        ? userData.identity_traits.slice(0, 40).map(String)
+        : [];
+      const workTraits = traitTags.length > 0 ? traitTags : localTraits;
+      const box2Lines = [`Operator: ${userData?.callsign || "Operator"}`];
+      if (userData?.archetype?.primary) {
+        box2Lines.push(`Archetype: ${userData.archetype.primary}${userData.archetype.shadow ? ` (shadow: ${userData.archetype.shadow}${userData.archetype.rising ? `, rising: ${userData.archetype.rising}` : ""})` : ""}`);
+      }
+      if (workTraits.length > 0) box2Lines.push(`Identity Tags: ${workTraits.join(', ')}`);
+      if (typeof userData?.missions_completed === "number" && userData.missions_completed > 0) {
+        box2Lines.push(`Training depth: ${userData.missions_completed} missions completed`);
+      }
+      const box2 = box2Lines.join('\n');
       
       // Box 3: Work Stage Instructions
       const box3 = `STAGE: WORK SESSION\nMode: ${mode.toUpperCase()}`;

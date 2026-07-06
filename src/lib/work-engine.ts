@@ -61,6 +61,24 @@ export function getWorkStageLabel(stage: WorkStage): string {
   return labels[stage];
 }
 
+/**
+ * Work Mode power: how many missions of each phase feed the lens.
+ * The lenses are open to everyone — training doesn't gate them, it sharpens
+ * them: every completed mission adds traits and pattern for Echelon to
+ * coach with.
+ */
+export function getWorkModePower(lessonsCompleted: number[]): {
+  design: number;
+  build: number;
+  lead: number;
+} {
+  return {
+    design: lessonsCompleted.filter((n) => n >= 1 && n <= 30).length,
+    build: lessonsCompleted.filter((n) => n >= 31 && n <= 60).length,
+    lead: lessonsCompleted.filter((n) => n >= 61 && n <= 90).length,
+  };
+}
+
 export function checkWorkModeUnlocks(lessonsCompleted: number[]): {
   design: boolean;
   build: boolean;

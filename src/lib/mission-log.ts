@@ -11,6 +11,7 @@ export interface MissionLogEntry {
   traitSignals: string[];        // Mapped to TRAIT_MAP tags
   shadowSignals: string[];       // Shadow tendencies detected
   powerSignals: string[];        // Power tendencies detected
+  echelonRead?: string;          // Echelon's own contribution — two minds, one record
   timestamp: number;
 }
 
@@ -40,6 +41,27 @@ export function getMissionLogs(): MissionLogEntry[] {
   } catch (error) {
     console.error("[MISSION LOG] Failed to load entries:", error);
     return [];
+  }
+}
+
+/**
+ * Attach Echelon's read to an existing mission log entry.
+ * The read arrives asynchronously (the operator's own AI writes it after the
+ * local inference pass) — update the latest entry for the lesson in place.
+ */
+export function attachEchelonRead(lessonId: number, read: string): void {
+  try {
+    const logs = getMissionLogs();
+    for (let i = logs.length - 1; i >= 0; i--) {
+      if (logs[i].lessonId === lessonId) {
+        logs[i].echelonRead = read;
+        localStorage.setItem(KEY, JSON.stringify(logs));
+        console.log(`[MISSION LOG] Echelon's read attached for lesson ${lessonId}`);
+        return;
+      }
+    }
+  } catch (error) {
+    console.error("[MISSION LOG] Failed to attach Echelon's read:", error);
   }
 }
 

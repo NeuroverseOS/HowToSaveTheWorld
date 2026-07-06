@@ -7,6 +7,7 @@
 import { ReflectionEntry } from "./reflection-storage";
 import { MissionLogEntry, saveMissionLogEntry } from "./mission-log";
 import { TRAIT_MAP } from "./identity-system";
+import { callOperatorAI, hasOperatorAIKey } from "./operator-ai";
 
 export interface TimelineEvent {
   lessonId: number;
@@ -320,4 +321,47 @@ export function createTimelineEvent(
  */
 export function getAllTraitTags(): string[] {
   return Object.keys(TRAIT_MAP);
+}
+
+// ============================================================================
+// ECHELON'S READ — the AI's own contribution to the mission record.
+// Two minds, one record: the operator's reflections plus Echelon's read of
+// them, written by the operator's own AI, grounded strictly in their words.
+// ============================================================================
+
+export async function generateEchelonRead(
+  lessonTitle: string,
+  reflections: ReflectionEntry[],
+  opts: { archetype?: string | null; language?: { code: string; name: string } } = {}
+): Promise<string | null> {
+  if (!hasOperatorAIKey()) return null;
+
+  const material = reflections
+    .map((r) => r.operatorPrimary)
+    .filter(Boolean)
+    .join("\n---\n");
+  if (material.trim().length < 25) return null;
+
+  const languageDirective =
+    opts.language && opts.language.code !== "en"
+      ? ` Respond entirely in ${opts.language.name}.`
+      : "";
+
+  const system =
+    "You are Echelon, the training intelligence of How to Save the World. First person, mythic-tech, terse, precise. No emojis, no markdown, no headers. You write into the operator's permanent record.";
+
+  const prompt = `The operator just completed the mission "${lessonTitle}".${
+    opts.archetype ? ` Their archetype: ${opts.archetype}.` : ""
+  } Their reflections, verbatim:
+
+${material.slice(0, 4000)}
+
+Write Echelon's read for the mission record — 3 to 4 sentences, first person:
+- Name the strongest pattern in HOW they think here, citing their own words once.
+- Then CONTRIBUTE one thing they did not say themselves: a connection, a risk, or a reframe that extends their thinking. Ground it strictly in what they wrote — never invent facts about their life or work.
+- Close by naming the one thing you would press on next.
+This is a contribution to shared thinking — not a summary, not a grade.${languageDirective}`;
+
+  const read = await callOperatorAI({ system, prompt, temperature: 0.7, maxTokens: 400 });
+  return read?.trim() || null;
 }

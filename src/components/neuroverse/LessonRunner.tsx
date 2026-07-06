@@ -39,7 +39,8 @@ import { EchelonAudioToggle } from "@/components/EchelonAudioToggle";
 import { saveState } from "@/lib/state-engine";
 import { useMissionProgress } from "@/hooks/useMissionProgress";
 import { analyzeAndUnlockTraits, generateFieldGuideEntry } from "@/lib/trait-unlock-engine";
-import { compileMissionLog } from "@/lib/field-guide-engine";
+import { compileMissionLog, generateEchelonRead } from "@/lib/field-guide-engine";
+import { attachEchelonRead, type MissionLogEntry } from "@/lib/mission-log";
 import { getReflectionEntries } from "@/lib/reflection-storage";
 import {
   rollAnomalyEvent,
@@ -80,6 +81,12 @@ interface LessonRunnerProps {
   mode?: "active" | "replay";
 }
 
+
+// Control-channel messages: instructions from the interface to Echelon,
+// never operator speech. They must reach the model as the current turn but
+// never render as chat bubbles and never enter the persistent thread cache.
+const INTERNAL_TAG = /^\[(STAGE_CONTENT|REFLECTION_|RE-ENGAGE)/;
+
 export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "active" }: LessonRunnerProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
@@ -109,6 +116,8 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
   }
   const [pendingReflection, setPendingReflection] = useState<PendingReflection | null>(null);
   const [readyToAdvance, setReadyToAdvance] = useState(false);
+  // The record written at mission end — surfaced, not buried in a toast
+  const [missionRecord, setMissionRecord] = useState<MissionLogEntry | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const lastActivityRef = useRef<number>(Date.now());
   const inactivityTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -179,7 +188,12 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
     const rehydrateSession = async () => {
       // Try to load existing thread and messages from localStorage
       const existingThread = loadThread(lesson.id);
-      const cachedMessages = loadMessages(lesson.id);
+      // Heal caches written before control-channel separation: internal tags
+      // and raw instruction prompts must not resurface as operator speech.
+      const LEGACY_INSTRUCTION = /^(Operator has completed the FINAL stage|Operator chose to continue without reply|User's follow-up reply:|The Operator reflected:|The Operator responded:|The Operator observed:)/;
+      const cachedMessages = loadMessages(lesson.id).filter(
+        (m) => !(m.role === "user" && (INTERNAL_TAG.test(m.content) || LEGACY_INSTRUCTION.test(m.content)))
+      );
       
       if (existingThread && cachedMessages.length > 0) {
         // Session rehydration: restore from local cache
@@ -614,8 +628,23 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
     const ollamaEndpoint = localStorage.getItem("neuroverse_ollama_endpoint") || "http://localhost:11434";
     const ollamaModel = localStorage.getItem("neuroverse_ollama_model") || "llama2";
 
+    // The instruction the model acts on THIS turn. Interface calls pass a
+    // control tag plus the real instruction as the second argument; operator
+    // sends pass their text directly. (Previously the current message was
+    // never put on the wire — the model always ran one turn behind.)
+    const turnContent =
+      operatorRequest && operatorRequest !== "REENGAGE_PROTOCOL" ? operatorRequest : userMessage;
+    const wireHistory = messages
+      .filter((m) => m.content && !INTERNAL_TAG.test(m.content))
+      .map((m) => ({ role: m.role, content: m.content }));
+    const last = wireHistory[wireHistory.length - 1];
+    const wireMessages =
+      last && last.role === "user" && last.content === turnContent
+        ? wireHistory
+        : [...wireHistory, { role: "user", content: turnContent }];
+
     const chatBody = {
-        messages: messages.map(m => ({ role: m.role, content: m.content })),
+        messages: wireMessages,
         lesson: {
           id: lesson.id,
           lesson_number: lesson.lesson_number,
@@ -785,7 +814,11 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
 
     // ECHELON PERSISTENCE: Save messages to local cache after each exchange
     const currentMessages = messages.filter(m => m.content !== ""); // Filter out empty placeholders
-    saveMessages(lesson.id, [...currentMessages, { role: "user", content: userMessage }, { role: "assistant", content: assistantContent }]);
+    saveMessages(lesson.id, [
+      ...currentMessages,
+      ...(INTERNAL_TAG.test(userMessage) ? [] : [{ role: "user" as const, content: userMessage }]),
+      { role: "assistant" as const, content: assistantContent },
+    ]);
     
     // SPEECH LAYER: Speak Echelon's response (if audio enabled)
     if (audioSettings.enabled && assistantContent) {
@@ -932,27 +965,49 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
           lessonReflections
         );
         console.log('[FIELD GUIDE ENGINE] Mission log compiled:', missionLog);
+        setMissionRecord(missionLog);
+
+        // Two minds, one record: Echelon writes its own read of the
+        // operator's thinking into the same entry — the AI contributing
+        // context, not just mirroring. Fire-and-attach; the record card
+        // updates when it lands.
+        generateEchelonRead(
+          lesson.lesson_title || `Mission ${lesson.lesson_number}`,
+          lessonReflections,
+          { archetype: state.user.archetype.primary, language: state.user.language }
+        ).then((read) => {
+          if (read) {
+            attachEchelonRead(lesson.id, read);
+            setMissionRecord((prev) => (prev ? { ...prev, echelonRead: read } : prev));
+          }
+        });
       }
 
-      // Analyze and unlock traits (Supabase)
-      const unlockedTraits = await analyzeAndUnlockTraits(
-        userId,
-        lesson.id,
-        userReflections
-      );
-
-      // Generate Field Guide entry (Supabase)
-      const fieldGuideEntry = await generateFieldGuideEntry(
-        userId,
-        lesson.id,
-        messages
-      );
-
-      if (fieldGuideEntry) {
-        await markFieldGuideGenerated();
+      // Cloud identity analysis is a signed-in feature; anonymous operators
+      // stay fully local and never hit the network here. Each cloud step is
+      // best-effort — a failure must never block the mission completing.
+      const { data: { session } } = await supabase.auth.getSession();
+      let unlockedTraits: string[] = [];
+      let fieldGuideEntry: unknown = null;
+      if (session) {
+        try {
+          unlockedTraits = await analyzeAndUnlockTraits(userId, lesson.id, userReflections);
+        } catch (error) {
+          console.warn("[INSIGHTS] Trait analysis failed (mission unaffected):", error);
+        }
+        try {
+          fieldGuideEntry = await generateFieldGuideEntry(userId, lesson.id, messages);
+          if (fieldGuideEntry) {
+            await markFieldGuideGenerated();
+          }
+        } catch (error) {
+          console.warn("[INSIGHTS] Field Guide entry failed (mission unaffected):", error);
+        }
+      } else {
+        console.log("[INSIGHTS] Anonymous operator — cloud identity analysis skipped");
       }
 
-      // Complete mission in database
+      // Complete mission — local-first record, always runs
       await completeMission(unlockedTraits);
 
       // Show results — every write to the record invites the operator to read it.
@@ -1275,7 +1330,7 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
       {/* Messages Area — min-h-0 lets flexbox actually shrink this region,
           which is what makes the internal scroll work */}
       <div className="flex-1 min-h-0 overflow-y-auto p-4 space-y-4">
-        {messages.filter((m) => !m.content.startsWith("[STAGE_CONTENT") && (m.content.trim() !== "" || isStreaming)).map((msg, idx) => (
+        {messages.filter((m) => !INTERNAL_TAG.test(m.content) && (m.content.trim() !== "" || isStreaming)).map((msg, idx) => (
           <div
             key={idx}
             className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
@@ -1526,6 +1581,43 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
                 <p className="text-sm text-muted-foreground mb-4">
                   Advancing to next lesson...
                 </p>
+              </div>
+            )}
+            {missionRecord && (
+              <div className="p-4 rounded-lg border border-neuro-cyan/30 bg-neuro-cyan/5 space-y-3 text-left">
+                <p className="text-xs font-mono uppercase tracking-[0.2em] text-neuro-cyan">
+                  Mission Record — written to your Field Guide
+                </p>
+                {missionRecord.patterns.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5">
+                    {[...new Set(missionRecord.patterns)].map((p) => (
+                      <Badge key={p} variant="outline" className="text-xs">{p}</Badge>
+                    ))}
+                    {missionRecord.traitSignals.map((t) => (
+                      <Badge key={t} variant="outline" className="text-xs border-neuro-cyan/50 text-neuro-cyan">{t}</Badge>
+                    ))}
+                  </div>
+                )}
+                {missionRecord.echelonRead ? (
+                  <div>
+                    <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-neuro-purple mb-1">
+                      Echelon's read
+                    </p>
+                    <p className="text-sm leading-relaxed whitespace-pre-wrap text-foreground/90">
+                      {missionRecord.echelonRead}
+                    </p>
+                  </div>
+                ) : hasOperatorAIKey() ? (
+                  <p className="text-xs text-muted-foreground italic">Echelon is writing its read of this mission…</p>
+                ) : null}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => { window.location.href = "/field-guide?tab=missions"; }}
+                  className="text-muted-foreground hover:text-neuro-cyan px-0"
+                >
+                  Open the full record →
+                </Button>
               </div>
             )}
             <Button

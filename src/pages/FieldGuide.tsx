@@ -962,6 +962,19 @@ export default function FieldGuide() {
                                 </p>
                               </div>
                               
+                              {/* ECHELON'S READ — the AI's contribution to the record */}
+                              {log.echelonRead && (
+                                <div>
+                                  <div className="text-xs font-semibold text-neuro-purple mb-2 flex items-center gap-1">
+                                    <Brain className="h-3 w-3" />
+                                    ECHELON'S READ
+                                  </div>
+                                  <p className="text-sm text-foreground/90 leading-relaxed whitespace-pre-wrap">
+                                    {log.echelonRead}
+                                  </p>
+                                </div>
+                              )}
+
                               {/* PATTERNS */}
                               {log.patterns.length > 0 && (
                                 <div>
