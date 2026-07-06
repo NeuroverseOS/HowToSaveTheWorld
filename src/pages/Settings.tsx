@@ -35,6 +35,12 @@ import { SUPPORTED_LANGUAGES, getLanguageNativeName } from "@/lib/language-utils
 import { ECHELON_VOICES } from "@/data/voices";
 import { speakText, stopSpeaking } from "@/lib/speech-engine";
 import { getTextScale, setTextScale, TEXT_SCALE_LABELS, type TextScale } from "@/lib/text-scale";
+import { downloadVaultZip } from "@/lib/markdown-vault-export";
+import { downloadFullBackup, restoreFullBackup } from "@/lib/full-backup";
+import { VaultSetupWizard } from "@/components/neuroverse/VaultSetupWizard";
+import { isAutoSyncEnabled, setAutoSyncEnabled } from "@/lib/auto-sync";
+import { Switch } from "@/components/ui/switch";
+import { Zap } from "lucide-react";
 
 export default function Settings() {
   const navigate = useNavigate();
@@ -119,6 +125,11 @@ export default function Settings() {
     if (storedSovereignKey) setSovereignAnonKey(storedSovereignKey);
 
     // Deep-link support: /settings#data-sovereignty scrolls to the archive section
+    if (window.location.hash === "#cloud-vault") {
+      setTimeout(() => {
+        document.getElementById("cloud-vault")?.scrollIntoView({ behavior: "smooth" });
+      }, 300);
+    }
     if (window.location.hash === "#data-sovereignty") {
       setTimeout(() => {
         document.getElementById("data-sovereignty")?.scrollIntoView({ behavior: "smooth" });
@@ -138,8 +149,7 @@ export default function Settings() {
   // SECTION A: Export to User's Cloud
   const handleExport = () => {
     try {
-      const state = loadState();
-      if (!state) {
+      if (!downloadFullBackup()) {
         toast({
           title: "No Data",
           description: "No local state found to export.",
@@ -148,30 +158,10 @@ export default function Settings() {
         return;
       }
 
-      // Wrap in metadata envelope
-      const exportData = {
-        neuroverse_version: "1.0.0",
-        exported_at: new Date().toISOString(),
-        exported_from: "NeuroVerse OS",
-        state: state,
-      };
-
-      // Create and download file
-      const blob = new Blob([JSON.stringify(exportData, null, 2)], {
-        type: "application/json",
-      });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `neuroverse_backup_${Date.now()}.json`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-
       toast({
-        title: "State Exported",
-        description: "You control this file. Save it anywhere you choose.",
+        title: "Everything Exported",
+        description:
+          "Progress, reflections, and conversations — one file, fully restorable. Save it anywhere you choose.",
       });
     } catch (error) {
       console.error("Export error:", error);
@@ -211,11 +201,14 @@ export default function Settings() {
       );
       if (!confirmed) return;
 
-      // Save and reload
-      saveState(importedState);
+      // Save and reload (v2 bundles also restore reflections, mission
+      // logs, and Echelon conversations)
+      const result = restoreFullBackup(importData);
       toast({
         title: "State Restored",
-        description: "Reloading application...",
+        description: result.legacyFormat
+          ? "Core progress restored (older backup — conversations and dossier entries weren't in the file). Reloading..."
+          : "Everything restored — progress, reflections, and conversations. Reloading...",
       });
 
       setTimeout(() => {
@@ -232,6 +225,25 @@ export default function Settings() {
   };
 
   // SECTION C: User-Owned Supabase Sync
+  const [vaultWizardOpen, setVaultWizardOpen] = useState(false);
+  const [autoSync, setAutoSync] = useState(isAutoSyncEnabled());
+
+  // Guided wizard verified the connection — save, first-sync, arm auto-sync.
+  const handleVaultLinked = async (vaultUrl: string, vaultKey: string) => {
+    saveUserSupabaseSettings({ url: vaultUrl, anon_key: vaultKey });
+    setSupabaseUrl(vaultUrl);
+    setSupabaseKey(vaultKey);
+    setHasCredentials(true);
+    setAutoSyncEnabled(true);
+    setAutoSync(true);
+    await uploadStateToUserSupabase();
+    await fetchSyncTimestamp();
+    toast({
+      title: "Vault Linked",
+      description: "First backup uploaded. Auto-sync is on — your record uploads after every mission.",
+    });
+  };
+
   const handleSaveCredentials = () => {
     if (!supabaseUrl.trim() || !supabaseKey.trim()) {
       toast({
@@ -729,14 +741,39 @@ export default function Settings() {
               <h2 className="text-xl font-semibold text-foreground mb-2">
                 Export to Your Cloud
               </h2>
-              <p className="text-sm text-muted-foreground mb-4">
+              <p className="text-sm text-muted-foreground mb-3">
                 Save your NeuroVerse OS state anywhere you choose—iCloud, Google
                 Drive, Dropbox, or your device. You control this file completely.
               </p>
-              <Button onClick={handleExport} className="bg-neuro-purple hover:bg-neuro-purple/90">
-                <Download className="h-4 w-4 mr-2" />
-                Export My Data
-              </Button>
+              <p className="text-xs text-amber-600 dark:text-amber-400 mb-4">
+                ⚠️ This device holds the only copy of your work. Uninstalling the
+                app or clearing browser data erases everything permanently —
+                export first. There is no cloud copy unless you make one.
+              </p>
+              <div className="flex flex-wrap gap-2">
+                <Button onClick={handleExport} className="bg-neuro-purple hover:bg-neuro-purple/90">
+                  <Download className="h-4 w-4 mr-2" />
+                  Export My Data
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    const count = downloadVaultZip();
+                    if (count > 0) {
+                      toast({
+                        title: "Vault Exported",
+                        description: `${count} Markdown files — readable in Obsidian or any notes tool.`,
+                      });
+                    } else {
+                      toast({ title: "Nothing to Export", description: "No local state found.", variant: "destructive" });
+                    }
+                  }}
+                  className="border-neuro-purple/40 text-neuro-purple hover:bg-neuro-purple/10"
+                >
+                  <Download className="h-4 w-4 mr-2" />
+                  Obsidian Vault (.md)
+                </Button>
+              </div>
             </div>
           </div>
         </Card>
@@ -1399,7 +1436,7 @@ export default function Settings() {
         </Card>
 
         {/* SECTION C: Multi-Device Sync */}
-        <Card className="p-6 bg-card/50 backdrop-blur-sm border-neuro-border space-y-6">
+        <Card id="cloud-vault" className="p-6 bg-card/50 backdrop-blur-sm border-neuro-border space-y-6">
           <div className="flex items-start gap-4">
             <div className="p-3 rounded-lg bg-neuro-green/10">
               <Cloud className="h-6 w-6 text-neuro-green" />
@@ -1431,6 +1468,43 @@ export default function Settings() {
               </button>
             </AlertDescription>
           </Alert>
+
+          {/* Guided path: three steps, verified connection, auto-sync armed */}
+          <div className="flex flex-wrap items-center gap-3">
+            <Button
+              onClick={() => setVaultWizardOpen(true)}
+              className="bg-neuro-cyan hover:bg-neuro-cyan/90 text-background"
+            >
+              <Zap className="h-4 w-4 mr-2" />
+              Guided Setup (2 min)
+            </Button>
+            <span className="text-xs text-muted-foreground">
+              …or enter credentials manually below
+            </span>
+          </div>
+          <VaultSetupWizard
+            open={vaultWizardOpen}
+            onOpenChange={setVaultWizardOpen}
+            onLinked={handleVaultLinked}
+          />
+
+          {hasCredentials && (
+            <div className="flex items-center justify-between gap-4 rounded-md border border-neuro-border p-3">
+              <div>
+                <p className="text-sm font-medium text-foreground">Auto-sync after each mission</p>
+                <p className="text-xs text-muted-foreground">
+                  Your full record — progress, reflections, conversations — uploads to your vault in the background.
+                </p>
+              </div>
+              <Switch
+                checked={autoSync}
+                onCheckedChange={(v) => {
+                  setAutoSync(v);
+                  setAutoSyncEnabled(v);
+                }}
+              />
+            </div>
+          )}
 
           {/* Credentials Form */}
           <div className="space-y-4">

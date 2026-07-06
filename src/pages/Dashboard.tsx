@@ -11,6 +11,7 @@ import { Progress } from "@/components/ui/progress";
 import { ViewportDebugPanel } from "@/components/debug/ViewportDebugPanel";
 import { LessonRunner } from "@/components/neuroverse/LessonRunner";
 import { WorldStatePanel } from "@/components/neuroverse/WorldStatePanel";
+import { BackupGuard } from "@/components/neuroverse/BackupGuard";
 import { ArchetypeAssessment } from "@/components/neuroverse/ArchetypeAssessment";
 import { Orientation } from "@/components/neuroverse/Orientation";
 import { saveReflection, type Lesson } from "@/lib/lesson-queries";
@@ -623,6 +624,9 @@ export default function Dashboard() {
               <Progress value={progressPercent} className="h-2 w-full" />
             </div>
           </Card>
+
+          {/* Sovereignty's sharp edge: warn while there's still time to export */}
+          <BackupGuard state={state} />
 
           {/* THE SLIDE — campaign world state and the living map */}
           <WorldStatePanel state={state} />

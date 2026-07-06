@@ -48,6 +48,8 @@ import {
   type AnomalyChoice,
 } from "@/lib/campaign-engine";
 import { AnomalyEventCard } from "./AnomalyEventCard";
+import { downloadFullBackup } from "@/lib/full-backup";
+import { maybeAutoSync } from "@/lib/auto-sync";
 import { cn } from "@/lib/utils";
 import { 
   loadThread, 
@@ -765,6 +767,9 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
     // THE SLIDE: completion pushes the world back against entropy
     applyMissionCompletion(lesson.id, getReflectionEntries(lesson.id).length > 0);
 
+    // Linked vault: back up the full record in the background
+    maybeAutoSync(`mission ${lesson.lesson_number} complete`);
+
     // Deliver closing message
     const closingText = lesson.echelon_closing || "Mission complete, Operator. Integration in progress.";
     
@@ -862,16 +867,7 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
   };
 
   const handleExportState = () => {
-    const stateData = JSON.stringify(state, null, 2);
-    const blob = new Blob([stateData], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `neuroverse_backup_${new Date().toISOString().split('T')[0]}.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    downloadFullBackup();
 
     // Update last export timestamp
     state.user.backup.last_export_at = new Date().toISOString();
@@ -879,7 +875,7 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
 
     toast({
       title: "Backup Exported",
-      description: "Your training data has been saved",
+      description: "Everything saved — progress, reflections, conversations. Restorable any time.",
     });
 
     setShowExportReminder(false);

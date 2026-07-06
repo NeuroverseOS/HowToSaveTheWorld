@@ -1,6 +1,8 @@
 // NeuroVerse OS State Engine
 // Implements the state schema from BlockD
 
+import { collectSatellites, restoreSatellites } from "./satellite-stores";
+
 // Mission Stage Types
 // EXPANDED TO INCLUDE ONBOARDING STAGES (Box-Stage Map Integration v3.0)
 export enum MissionStage {
@@ -594,26 +596,29 @@ function getUserSupabaseClient(): SupabaseClient | null {
   return createClient(settings.url, settings.anon_key);
 }
 
-// Upload state to user's own Supabase
+// Upload state to user's own Supabase — the full record: core state plus
+// the satellite stores (reflections, mission logs, Echelon conversations),
+// so a sync-down on a new device resumes exactly where the operator left off.
 export async function uploadStateToUserSupabase(): Promise<void> {
   const userSupabase = getUserSupabaseClient();
   if (!userSupabase) throw new Error("User Supabase credentials not configured");
-  
+
   const state = loadState();
   if (!state) throw new Error("No local state to upload");
 
+  const now = new Date().toISOString();
   const { error } = await userSupabase
     .from('user_state')
-    .upsert({
-      id: 'neuroverse_state',
-      state_json: state,
-      updated_at: new Date().toISOString()
-    });
+    .upsert([
+      { id: 'neuroverse_state', state_json: state, updated_at: now },
+      { id: 'neuroverse_satellites', state_json: collectSatellites(), updated_at: now },
+    ]);
 
   if (error) throw error;
 }
 
-// Download state from user's own Supabase
+// Download state from user's own Supabase. Restores satellite stores too
+// when present (older self-hosted backends without that row still work).
 export async function downloadStateFromUserSupabase(): Promise<StateSchema | null> {
   const userSupabase = getUserSupabaseClient();
   if (!userSupabase) throw new Error("User Supabase credentials not configured");
@@ -625,6 +630,20 @@ export async function downloadStateFromUserSupabase(): Promise<StateSchema | nul
     .maybeSingle();
 
   if (error) throw error;
+
+  try {
+    const { data: satellites } = await userSupabase
+      .from('user_state')
+      .select('state_json')
+      .eq('id', 'neuroverse_satellites')
+      .maybeSingle();
+    if (satellites?.state_json) {
+      restoreSatellites(satellites.state_json as Record<string, string>);
+    }
+  } catch (satError) {
+    console.warn('[SYNC] Satellite restore skipped:', satError);
+  }
+
   return data?.state_json as StateSchema | null;
 }
 

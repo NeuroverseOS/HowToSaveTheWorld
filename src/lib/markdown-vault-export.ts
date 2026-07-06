@@ -15,6 +15,7 @@ import { getMissionLogs, type MissionLogEntry } from "./mission-log";
 import { getReflectionEntries, type ReflectionEntry } from "./reflection-storage";
 import { TRAIT_MAP } from "./identity-system";
 import { zipStore } from "./zip-store";
+import { markExported } from "./backup-tracker";
 
 interface VaultFile {
   path: string;
@@ -243,5 +244,6 @@ export function downloadVaultZip(): number {
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
+  markExported();
   return files.length;
 }
