@@ -127,13 +127,12 @@ export default function StandardReflection({
               <div className="text-xs font-mono uppercase tracking-wider text-neuro-cyan">
                 Echelon Response
               </div>
-              {echelonMirror ? (
-                <p className="text-sm text-foreground/90 leading-relaxed whitespace-pre-wrap">{echelonMirror}</p>
-              ) : (
-                <div className="text-sm text-muted-foreground italic">
-                  Echelon has responded in the mission thread above.
-                </div>
-              )}
+              {/* Echelon's reply already streamed into the thread above —
+                  re-printing it here read as a duplicate transmission. The
+                  card only captures it for the record and points up. */}
+              <div className="text-sm text-muted-foreground italic">
+                ↑ Echelon has responded in the mission thread above. Answer here, or skip.
+              </div>
             </div>
 
             <Textarea
@@ -174,13 +173,9 @@ export default function StandardReflection({
               <div className="text-xs font-mono uppercase tracking-wider text-neuro-cyan">
                 Integration
               </div>
-              {echelonClose ? (
-                <p className="text-sm text-foreground/90 leading-relaxed whitespace-pre-wrap">{echelonClose}</p>
-              ) : (
-                <div className="text-sm text-muted-foreground italic">
-                  Echelon has closed the reflection in the mission thread above.
-                </div>
-              )}
+              <div className="text-sm text-muted-foreground italic">
+                ↑ Echelon has closed the reflection in the mission thread above. Logged to your record.
+              </div>
             </div>
 
             <Button

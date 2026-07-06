@@ -106,13 +106,10 @@ export default function MicroInsight({
               <div className="text-xs font-mono uppercase tracking-wider text-neuro-cyan">
                 Acknowledged
               </div>
-              {echelonMirror ? (
-                <p className="text-sm text-foreground/90 leading-relaxed whitespace-pre-wrap">{echelonMirror}</p>
-              ) : (
-                <div className="text-sm text-muted-foreground italic">
-                  Echelon has acknowledged your insight in the mission thread above.
-                </div>
-              )}
+              {/* The reply already streamed into the thread — don't re-print it */}
+              <div className="text-sm text-muted-foreground italic">
+                ↑ Echelon has acknowledged your insight in the mission thread above. Logged to your record.
+              </div>
             </div>
 
             <Button

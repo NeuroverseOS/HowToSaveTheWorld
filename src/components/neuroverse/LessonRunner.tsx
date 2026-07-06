@@ -1073,6 +1073,17 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
     );
   };
 
+  // The advance button names its destination so the operator always knows
+  // the mission is moving — "Continue" to nowhere reads as a dead end.
+  const getAdvanceLabel = (): string => {
+    if (currentStage === MissionStage.FINAL) return "Complete Final Reflection →";
+    const flow = getStageFlow();
+    const next = flow[flow.indexOf(currentStage) + 1];
+    return next && next !== MissionStage.REFLECTION && next !== MissionStage.COMPLETE
+      ? `Log Insight & Continue → ${getStageLabel(next)}`
+      : "Log Insight & Continue →";
+  };
+
   const shouldShowSendButton = (): boolean => {
     // Show send button for stages that require user input
     return (
@@ -1102,7 +1113,10 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
       
       {/* Main Lesson Runner UI - conversation stays visible during dossier entries */}
       {!isInReflectionMode && (
-        <Card className="min-h-[70vh] flex flex-col bg-card/50 backdrop-blur-sm border-neuro-border">
+        // Height-capped so the transcript scrolls INSIDE the card and the
+        // composer + advance buttons stay on screen no matter how long the
+        // conversation runs.
+        <Card className="min-h-[70vh] max-h-[calc(100dvh-5rem)] flex flex-col bg-card/50 backdrop-blur-sm border-neuro-border">
       {/* Header with Stage Progress */}
       <div className="px-4 py-3 border-b border-neuro-border/50">
         <div className="flex items-center justify-between mb-2">
@@ -1258,8 +1272,9 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
         )}
       </div>
 
-      {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      {/* Messages Area — min-h-0 lets flexbox actually shrink this region,
+          which is what makes the internal scroll work */}
+      <div className="flex-1 min-h-0 overflow-y-auto p-4 space-y-4">
         {messages.filter((m) => !m.content.startsWith("[STAGE_CONTENT") && (m.content.trim() !== "" || isStreaming)).map((msg, idx) => (
           <div
             key={idx}
@@ -1336,7 +1351,7 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
       </div>
 
       {/* Input Area with Stage-Specific Controls */}
-      <div className="p-4 border-t border-neuro-border/50 space-y-3">
+      <div className="p-4 border-t border-neuro-border/50 space-y-3 overflow-y-auto">
         {pendingReflection ? (
           <div className="space-y-1">
             {pendingReflection.mode === "standard" && (
@@ -1423,28 +1438,16 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
               </div>
             )}
 
-            {/* Action Buttons */}
+            {/* Action Buttons — one conversation action tied to the text box
+                above it, one clearly-primary advance action that names its
+                destination. Never two identical full-width buttons. */}
             <div className="flex flex-col gap-2">
-              {readyToAdvance && shouldShowSendButton() && !isStreaming && (
-                <>
-                  <Button
-                    onClick={handleAdvanceStage}
-                    className="w-full bg-neuro-cyan hover:bg-neuro-cyan/90 text-background min-h-[44px]"
-                  >
-                    {currentStage === MissionStage.FINAL
-                      ? "Complete Final Reflection →"
-                      : "Log Insight & Continue →"}
-                  </Button>
-                  <p className="text-xs text-center text-muted-foreground">
-                    …or keep the conversation going below. You set the pace.
-                  </p>
-                </>
-              )}
               {shouldShowSendButton() && (
                 <Button
                   onClick={handleSend}
                   disabled={!input.trim() || isStreaming}
-                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground min-h-[44px]"
+                  variant="outline"
+                  className="w-full border-neuro-border hover:bg-primary/10 min-h-[44px]"
                 >
                   {isStreaming ? (
                     <>
@@ -1452,9 +1455,22 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
                       Transmitting...
                     </>
                   ) : (
-                    "Send Response"
+                    "Send to Echelon"
                   )}
                 </Button>
+              )}
+              {readyToAdvance && shouldShowSendButton() && !isStreaming && (
+                <>
+                  <p className="text-xs text-center text-muted-foreground pt-1">
+                    Response logged. Keep talking above — or advance when you're ready:
+                  </p>
+                  <Button
+                    onClick={handleAdvanceStage}
+                    className="w-full bg-neuro-cyan hover:bg-neuro-cyan/90 text-background min-h-[44px] shadow-[0_0_18px_rgba(6,182,212,0.45)]"
+                  >
+                    {getAdvanceLabel()}
+                  </Button>
+                </>
               )}
 
               {shouldShowStageAdvanceButton() && (
