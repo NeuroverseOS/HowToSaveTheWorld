@@ -27,6 +27,7 @@ import SupabaseSetupGuide from "./pages/SupabaseSetupGuide";
 import NotFound from "./pages/NotFound";
 import BuildYourOwn from "./pages/BuildYourOwn";
 import Educators from "./pages/Educators";
+import Manifesto from "./pages/Manifesto";
 import VanguardLore from "./pages/VanguardLore";
 import BackupSetupPage from "./pages/BackupSetupPage";
 import SupportMission from "./pages/SupportMission";
@@ -103,6 +104,8 @@ const App = () => {
             <Route path="/admin/import-lessons" element={<AdminRoute><AdminImportLessons /></AdminRoute>} />
             <Route path="/build" element={<BuildYourOwn />} />
             <Route path="/educators" element={<Educators />} />
+            <Route path="/manifesto" element={<Manifesto />} />
+            <Route path="/whitepaper" element={<Manifesto />} />
             <Route path="/faq" element={<FAQ />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />

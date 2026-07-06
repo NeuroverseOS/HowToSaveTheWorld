@@ -3,7 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { ArrowRight, ChevronDown, Heart, Download, Smartphone, GraduationCap, KeyRound, Database, Hammer, Brain } from "lucide-react";
+import { ArrowRight, ChevronDown, Heart, Download, Smartphone, GraduationCap, KeyRound, Database, Hammer, Brain, ScrollText } from "lucide-react";
 import type { Session } from "@supabase/supabase-js";
 import { Card } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -861,6 +861,15 @@ const Index = () => {
               className="border-neuro-cyan/40 text-foreground hover:bg-neuro-cyan/10"
             >
               Operator Doctrine
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => navigate("/manifesto")}
+              className="border-neuro-cyan/40 text-foreground hover:bg-neuro-cyan/10"
+            >
+              <ScrollText className="mr-2 h-3.5 w-3.5" />
+              The Manifesto
             </Button>
           </div>
 
