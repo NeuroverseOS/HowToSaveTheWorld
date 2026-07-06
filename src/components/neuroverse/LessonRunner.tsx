@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { supabase, getEdgeFunctionUrl, ACTIVE_SUPABASE_PUBLISHABLE_KEY } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { ToastAction } from "@/components/ui/toast";
+import { streamEchelonDirect } from "@/lib/echelon-direct";
 import { VoiceRecorder } from "@/components/neuroverse/VoiceRecorder";
 import { VideoPlayer } from "@/components/neuroverse/VideoPlayer";
 import ReflectionMode from "@/components/neuroverse/ReflectionMode";
@@ -613,17 +614,7 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
     const ollamaEndpoint = localStorage.getItem("neuroverse_ollama_endpoint") || "http://localhost:11434";
     const ollamaModel = localStorage.getItem("neuroverse_ollama_model") || "llama2";
 
-    const resp = await fetch(CHAT_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${ACTIVE_SUPABASE_PUBLISHABLE_KEY}`,
-        "x-ai-provider": aiProvider,
-        "x-ai-key": apiKey,
-        "x-ollama-endpoint": ollamaEndpoint,
-        "x-ollama-model": ollamaModel,
-      },
-      body: JSON.stringify({
+    const chatBody = {
         messages: messages.map(m => ({ role: m.role, content: m.content })),
         lesson: {
           id: lesson.id,
@@ -666,8 +657,46 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
         ...(mode && { mode }),
         ...(systemLiteracyContext && { system_literacy_context: systemLiteracyContext }),
         ...(savedMissionState && { paused_mission: savedMissionState }),
-      }),
-    });
+    };
+
+    // DIRECT PATH FIRST: the Eight-Box prompt is assembled in this browser
+    // from the same kernel files the relay runs, and streamed straight to the
+    // operator's provider — the conversation never transits our
+    // infrastructure. The relay is only an automatic fallback for networks
+    // that block the direct call. Ollama is direct-only: a cloud relay can
+    // never reach an operator's localhost.
+    let resp: Response;
+    try {
+      resp = await streamEchelonDirect(chatBody, {
+        provider: aiProvider,
+        apiKey,
+        ollamaEndpoint,
+        ollamaModel,
+      });
+    } catch (directError) {
+      if (aiProvider === "ollama") {
+        console.error("[ECHELON] Local model unreachable:", directError);
+        toast({
+          title: "Can't reach your local model",
+          description: "Echelon couldn't connect to Ollama at your configured endpoint. Make sure it's running (ollama serve) and allows this site (OLLAMA_ORIGINS).",
+          variant: "destructive",
+        });
+        return;
+      }
+      console.warn("[ECHELON] Direct provider call blocked, falling back to relay:", directError);
+      resp = await fetch(CHAT_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${ACTIVE_SUPABASE_PUBLISHABLE_KEY}`,
+          "x-ai-provider": aiProvider,
+          "x-ai-key": apiKey,
+          "x-ollama-endpoint": ollamaEndpoint,
+          "x-ollama-model": ollamaModel,
+        },
+        body: JSON.stringify(chatBody),
+      });
+    }
 
     if (!resp.ok) {
       if (resp.status === 429) {

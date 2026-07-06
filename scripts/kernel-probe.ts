@@ -64,11 +64,13 @@ const canaryLesson: Record<string, string> = Object.fromEntries(
   CANARY_FIELDS.map((f) => [f, canary(f)])
 );
 
-// Replicates the edge function's per-stage content selection by parsing the
-// actual source — so drift between index.ts and this probe is impossible.
+// Replicates the kernel's per-stage content selection by parsing the actual
+// source — so drift between prompt-kernel.ts and this probe is impossible.
+// (The kernel is shared verbatim by the edge relay AND the browser's direct
+// provider path, so this single check covers both.)
 function extractStageContentMap(): Record<string, string[]> {
   const src = readFileSync(
-    join(ROOT, "supabase/functions/echelon-chat/index.ts"),
+    join(ROOT, "supabase/functions/_shared/prompt-kernel.ts"),
     "utf8"
   );
   const mapMatch = src.match(

@@ -13,12 +13,18 @@ This document explains exactly how that works, because sovereignty you can't ins
 ## The Flow of One Message
 
 1. You type a message in the app.
-2. The app sends it to the `echelon-chat` edge function, along with your provider choice and API key in request headers (`x-ai-provider`, `x-ai-key`). The key travels with the request and is never stored — the function is a stateless relay.
-3. The edge function assembles Echelon's system prompt (the Eight-Box Kernel, below), using **only** the content your current mission stage permits.
-4. It forwards the assembled prompt plus your message to your provider and streams the response straight back to you.
-5. Nothing about the conversation is retained server-side. Anonymous operators get zero database reads; authenticated operators get exactly two kinds of memory reads, and only when visibility rules allow (below).
+2. **Your browser assembles Echelon's system prompt itself** (the Eight-Box Kernel, below), using **only** the content your current mission stage permits.
+3. Your browser streams the assembled prompt plus your message **directly to your provider** — OpenAI, Anthropic, Google, or your local Ollama instance. The conversation never transits any server this project operates. Your key never leaves your device except to reach your own provider.
+4. The response streams straight back into the page.
 
-Source: [`supabase/functions/echelon-chat/index.ts`](../supabase/functions/echelon-chat/index.ts)
+If the direct call can't leave your network (a strict corporate proxy, for example), the app automatically falls back to a stateless relay — a small edge function that runs **the exact same kernel files** and forwards to your provider without storing anything. Local Ollama models never use the relay: your machine talks to itself.
+
+There is no server-side prompt and no client-side prompt. One kernel file is imported by both paths, so they cannot drift:
+
+- Kernel (assembly + stage instructions): [`supabase/functions/_shared/prompt-kernel.ts`](../supabase/functions/_shared/prompt-kernel.ts)
+- The wall (Box-Stage Map + visibility allowlists): [`supabase/functions/_shared/visibility-rules.ts`](../supabase/functions/_shared/visibility-rules.ts)
+- Browser direct path: [`src/lib/echelon-direct.ts`](../src/lib/echelon-direct.ts)
+- Relay (fallback transport): [`supabase/functions/echelon-chat/index.ts`](../supabase/functions/echelon-chat/index.ts)
 
 ---
 
