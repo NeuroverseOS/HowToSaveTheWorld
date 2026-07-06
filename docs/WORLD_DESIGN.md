@@ -44,20 +44,29 @@ system*, not vibes.
 The opening briefing states the world plainly, so the operator is oriented
 before the first drill:
 
-> The machines arrived. Embodied AI is in homes, streets, hospitals, and
-> fields — and 94% of it runs on Custodian-certified stacks. Meridian
-> holds the identity layer every robot authenticates against. Every unit
-> phones home through Aperture. The Ministry made it all one effortless
-> login. The Slide reads 62 — deep in the third band — and drifting.
+> **The year is 2038. Robotics has become the infrastructure of
+> civilization.** Every warehouse, farm, hospital, port, factory, and
+> home depends on autonomous systems — and 94% of them run on
+> Custodian-certified stacks. Meridian holds the identity layer every
+> robot authenticates against. Every unit phones home through Aperture.
+> The Ministry made it all one effortless login. The Slide reads 62 —
+> and drifting.
 >
-> There is one working alternative: **LATTICE**, the open robotics stack —
-> control of AI and robotics in the hands of the many, so that creativity
-> and flourishing stay possible for everyone. It is unfinished. That is
-> why you were recruited, Operator. You and I are going to build it.
+> One future puts that infrastructure under the control of a handful of
+> companies. The other makes it open, inspectable, forkable, and owned
+> by the people who use it. The window between those futures is closing.
+>
+> **The Vanguard has one mission: build the world's first fully
+> decentralized robotics ecosystem — the Open Robotics Network, running
+> on the LATTICE stack — before centralized infrastructure becomes
+> irreversible.** That is why you were recruited, Operator. You and I
+> are going to build it.
 
-Start state, concretely: dossier empty, rank Recruit, Signal full, the
-Slide at 62. Nothing vague: the operator can point at the map and say
-*here*.
+Not "save the world" — a **specific operational objective**: measurable
+(the map fills in, the Slide holds or falls), visual, and something a
+learner can imagine actually helping with. Start state, concretely:
+dossier empty, rank Recruit, Signal full, the Slide at 62. The operator
+can point at the map and say *here*.
 
 ### 2.2 LATTICE — the decentralized robotics stack (working name)
 
@@ -89,17 +98,23 @@ knows this. Each archetype maps to a **contribution role**, which flavors
 scenarios (anomaly events come in role variants: same concept, different
 vantage) and determines what kind of artifact compiles on the dossier:
 
-| Archetype | Role on LATTICE | Scenario lens | Dossier artifacts |
+The assignment is delivered as a posting, not a personality result. Not
+"you're an Architect personality" — instead: *"Your strengths suggest
+you'll contribute most effectively as a **Systems Architect** within the
+Vanguard."* The titles are real jobs, because the learner is becoming
+someone:
+
+| Archetype | Vanguard role | Scenario lens | Dossier artifacts |
 |---|---|---|---|
-| **The Watchtower** | Sentinel | Sees the threat first | Early-warning briefs, anomaly analyses |
-| **The Weaver** | Coalition Architect | Builds the alliance | Interop accords, integration maps |
+| **The Watchtower** | Risk & Security Analyst | Sees the threat first | Early-warning briefs, threat analyses |
+| **The Weaver** | Systems Architect | Designs how it all connects | Interop accords, integration maps |
 | **The Veil** | Privacy Engineer | Guards what is private | Consent protocols, opacity layers (L2) |
-| **The Operator** | Field Commander | Runs the deployment | Field playbooks, rollout plans (L1) |
-| **The Engine** | Infrastructure Builder | Makes it actually run | Mesh build specs, compute plans (L1) |
-| **The Lumen** | Adoption Steward | Brings the people | Community charters, teaching kits (L4) |
-| **The Cipher** | Protocol Cryptographer | Makes trust mathematical | Verification schemes, key ceremonies (L2/L3) |
-| **The Drift** | Scout | Finds the edge cases | Recon reports, weak-signal surveys |
-| **The Chronicle** | Archivist | Keeps the memory | Canon entries, governance records (L4) |
+| **The Operator** | Field Operations Lead | Runs the deployment | Field playbooks, rollout plans (L1) |
+| **The Engine** | Field Engineer | Makes it actually run | Mesh build specs, compute plans (L1) |
+| **The Lumen** | Community Organizer | Brings the people | Community charters, teaching kits (L4) |
+| **The Cipher** | Protocol Steward | Makes trust mathematical | Verification schemes, key ceremonies (L2/L3) |
+| **The Drift** | Edge Researcher | Finds the edge cases | Recon reports, weak-signal surveys |
+| **The Chronicle** | Governance Designer | Keeps power accountable | Governance proposals, canon records (L4) |
 
 Same mission, different role, different scenario: when Meridian makes its
 Continuity Offer, the Veil is asked to sign off on the privacy terms, the
@@ -109,7 +124,32 @@ temptation is personal. Commander's Reports cite contributions by role,
 and the Graduation Dossier reads as a professional record: *Sentinel,
 Vanguard rank, 31 contributions to LATTICE L2 — cited at the Mirror Gates.*
 
-### 2.4 The Living Map: a world that visibly grows
+### 2.4 The Dossier Is a Deployment Record
+
+Not "Lesson 17 complete." A dossier entry compiles like this:
+
+> **Mission Assignment:** Open Robotics Network
+> **Current Theater:** Autonomous Logistics
+> **Role:** Protocol Steward
+> **Contributions:**
+> - Designed resilient identity exchange
+> - Prevented centralization risk in fleet handoff
+> - Improved fleet coordination protocol
+> - Published governance proposal
+>
+> **Commander's Notes:** Your instinct is to design robust systems
+> before scaling them. This prevented two downstream failures during
+> this campaign.
+
+The six course sections become six **theaters of deployment** — e.g.
+Autonomous Logistics, Open Agriculture, Care & Health Robotics, the
+Autonomous Home, Energy & Grid, Civic Robotics (final names to match the
+curriculum's section themes). Each Commander's Report closes a theater;
+the Graduation Dossier is the full deployment record. The feeling this
+is engineered to produce, in the learner's own words: *"I'm becoming
+someone."*
+
+### 2.5 The Living Map: a world that visibly grows
 
 Imagine a map. At the beginning, very little exists — a few faint nodes
 in a dark field, the Slide pressing in from the edges. As the operator
@@ -129,7 +169,7 @@ missions and dossier contributions, one node type per LATTICE layer.
 Cohort aggregation — watching your whole cohort light the same map — is
 a later phase, opt-in, sovereignty-preserving.)
 
-### 2.5 It Doesn't Have to Be Fictional: the real stack
+### 2.6 It Doesn't Have to Be Fictional: the real stack
 
 Here is the move that turns the game into a field guide to reality:
 **LATTICE is grounded in the real open ecosystems that already exist.**
@@ -138,8 +178,8 @@ Each layer's missions introduce, and link to, the genuine article:
 | LATTICE layer | Real-world grounding |
 |---|---|
 | **L1 · Mesh** | Community mesh networks (NYC Mesh, Althea, Meshtastic/LoRa), open hardware (Raspberry Pi, RISC-V, Arduino) |
-| **L2 · Control Protocol** | ROS / ROS 2 (the open robotics middleware the real robotics world runs on), Home Assistant (local-first home autonomy), Matter/open IoT standards |
-| **L3 · Model Commons** | Open-weight LLMs and the ecosystems around them (Hugging Face, Ollama for local inference), open evaluation suites |
+| **L2 · Control Protocol** | ROS / ROS 2 (the open robotics middleware the real robotics world runs on), Home Assistant (local-first home autonomy), open fleet management, spatial computing and human-robot collaboration research, Matter/open IoT standards |
+| **L3 · Model Commons** | Open-weight LLMs and the ecosystems around them (Hugging Face, Ollama for local inference), edge AI and on-device inference, open evaluation suites |
 | **L4 · Governance** | Decentralized identity (W3C DIDs, verifiable credentials), DAOs and open governance experiments, open-source foundations and their license politics |
 
 Map nodes carry a real-project profile: what it is, who builds it, how a
@@ -362,6 +402,17 @@ network, or the operator's own future self. Decide when it matters.)
 At mission 90, LATTICE v1 ships, and the ending is read off the final
 Slide band — the ceremony narrates the state of the stack, the map the
 cohort lit up, and the operator contribution record:
+
+Graduation is not a certificate — it is a **deployment summary**:
+
+> During your training, you helped establish the foundations of the Open
+> Robotics Network. Your contributions focused on governance, resilient
+> identity, and operator education. The network is stronger because of
+> your work.
+
+The learner participated in building something larger than themselves —
+which is the philosophy of decentralization, enacted. The ending band
+sets the summary's tone:
 
 - **Open Sky** — the full graduation ceremony; the world made it. Rare, earned.
 - **Overcast** — graduation with a charge: the fight continues, and now
