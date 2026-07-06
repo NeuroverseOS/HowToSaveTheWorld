@@ -202,6 +202,11 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
         setCurrentStage(existingThread.currentStage);
         if (existingThread.currentStage === MissionStage.COMPLETE) {
           setIsComplete(true);
+        } else if (existingThread.currentStage === MissionStage.REFLECTION) {
+          // The reflection view is driven by an in-memory flag that a reload
+          // wipes. Restore it, or the operator lands on the REFLECTION stage
+          // with no input and no advance button — a dead end.
+          setIsInReflectionMode(true);
         }
         setHasOpened(true);
         setIsResumedSession(true);
@@ -1156,8 +1161,10 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
 
   return (
     <>
-      {/* Deep Reflection Mode (FINAL stage) */}
-      {isInReflectionMode && currentStage === MissionStage.REFLECTION && (
+      {/* Deep Reflection Mode — keyed on the stage itself, not a separate
+          in-memory flag, so the reflection UI can never fail to render at the
+          REFLECTION stage (the source of the "stuck with no controls" bug). */}
+      {currentStage === MissionStage.REFLECTION && (
         <ReflectionMode
           lessonId={lesson.id}
           reflectionPrompt={lesson.final_question || "What is your key insight from this mission?"}
@@ -1167,8 +1174,9 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
         />
       )}
       
-      {/* Main Lesson Runner UI - conversation stays visible during dossier entries */}
-      {!isInReflectionMode && (
+      {/* Main Lesson Runner UI — hidden at the REFLECTION stage (the reflection
+          view above owns that stage), so the two can never render at once. */}
+      {currentStage !== MissionStage.REFLECTION && (
         // Height-capped so the transcript scrolls INSIDE the card and the
         // composer + advance buttons stay on screen no matter how long the
         // conversation runs.
