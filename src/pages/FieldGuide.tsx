@@ -68,6 +68,7 @@ import {
   SelectValue 
 } from "@/components/ui/select";
 import { getMissionLogs, MissionLogEntry } from "@/lib/mission-log";
+import { downloadVaultZip } from "@/lib/markdown-vault-export";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 type DbOperatorTrait = Database["public"]["Tables"]["operator_traits"]["Row"];
@@ -397,6 +398,11 @@ export default function FieldGuide() {
     URL.revokeObjectURL(url);
   };
 
+  // Export the complete learning record as an Obsidian-ready vault of .md files
+  const exportVault = () => {
+    downloadVaultZip();
+  };
+
   // Chart configuration
   const signalTrendConfig: ChartConfig = {
     traits: { label: "Traits", color: "hsl(187 100% 42%)" },
@@ -689,6 +695,16 @@ export default function FieldGuide() {
                           >
                             <Download className="h-3 w-3 mr-1" />
                             Markdown
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={exportVault}
+                            className="text-xs border-neuro-cyan/40 text-neuro-cyan hover:bg-neuro-cyan/10"
+                            title="Your complete record — dossier, missions, reflections, reports — as Markdown files for Obsidian or any notes tool"
+                          >
+                            <Download className="h-3 w-3 mr-1" />
+                            Obsidian Vault
                           </Button>
                         </div>
                       </div>

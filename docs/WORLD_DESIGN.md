@@ -28,21 +28,141 @@ thinking**. Every antagonist in this world runs on scarcity logic: *"there
 isn't enough safety / trust / compute / competence to go around — let us
 hold it for you."* Every operator victory is an act of abundance: opening,
 sharing, forking, teaching, self-custody. The game must reward abundance
-moves structurally, not just narratively — see §5 and §6.
+moves structurally, not just narratively — see §6 and §7.
 
 ---
 
-## 2. The World State
+## 2. The Mission: What You Are Actually Building
+
+A war meter is not a mission. The operator must know, from the first
+briefing, exactly where they stand and exactly what their work builds —
+and the dossier must compile *contributions to a specific decentralized
+system*, not vibes.
+
+### 2.1 You Are Here (the Mission 1 orientation)
+
+The opening briefing states the world plainly, so the operator is oriented
+before the first drill:
+
+> The machines arrived. Embodied AI is in homes, streets, hospitals, and
+> fields — and 94% of it runs on Custodian-certified stacks. Meridian
+> holds the identity layer every robot authenticates against. Every unit
+> phones home through Aperture. The Ministry made it all one effortless
+> login. The Slide reads 62 — deep in the third band — and drifting.
+>
+> There is one working alternative: **LATTICE**, the open robotics stack —
+> control of AI and robotics in the hands of the many, so that creativity
+> and flourishing stay possible for everyone. It is unfinished. That is
+> why you were recruited, Operator. You and I are going to build it.
+
+Start state, concretely: dossier empty, rank Recruit, Signal full, the
+Slide at 62. Nothing vague: the operator can point at the map and say
+*here*.
+
+### 2.2 LATTICE — the decentralized robotics stack (working name)
+
+The thing the many build so that robotic/AI control belongs to the many.
+Four layers, taught bottom-up across the course's phases:
+
+| Layer | What it is | What it protects |
+|---|---|---|
+| **L1 · Mesh** | Hardware, comms, local compute | Machines that run without permission from a server farm |
+| **L2 · Control Protocol** | Command, consent, kill-switch sovereignty, interop | The person in the room outranks the cloud |
+| **L3 · Model Commons** | Open models, weights, evaluations | Intelligence nobody can revoke |
+| **L4 · Governance** | Who may change what, and how | Power that cannot quietly pool |
+
+Every mission's real learning artifact — the drill responses, the final
+synthesis, the reflection — **compiles into a LATTICE contribution** on
+the dossier, tagged by layer and role. The dossier stops being a diary
+and becomes a contribution record: *what you added to the stack*.
+
+**End state (Mission 90):** LATTICE v1 ships. How complete it is, and in
+whose hands, is read off the final Slide band and the operator's
+contribution record — which is what the graduation ceremony actually
+narrates. The operator starts at "the stack is unfinished and the world
+is sliding" and ends at "the stack shipped, and this is the part I built."
+
+### 2.3 Roles: the assessment decides how you contribute
+
+People contribute in different ways — the archetype assessment already
+knows this. Each archetype maps to a **contribution role**, which flavors
+scenarios (anomaly events come in role variants: same concept, different
+vantage) and determines what kind of artifact compiles on the dossier:
+
+| Archetype | Role on LATTICE | Scenario lens | Dossier artifacts |
+|---|---|---|---|
+| **The Watchtower** | Sentinel | Sees the threat first | Early-warning briefs, anomaly analyses |
+| **The Weaver** | Coalition Architect | Builds the alliance | Interop accords, integration maps |
+| **The Veil** | Privacy Engineer | Guards what is private | Consent protocols, opacity layers (L2) |
+| **The Operator** | Field Commander | Runs the deployment | Field playbooks, rollout plans (L1) |
+| **The Engine** | Infrastructure Builder | Makes it actually run | Mesh build specs, compute plans (L1) |
+| **The Lumen** | Adoption Steward | Brings the people | Community charters, teaching kits (L4) |
+| **The Cipher** | Protocol Cryptographer | Makes trust mathematical | Verification schemes, key ceremonies (L2/L3) |
+| **The Drift** | Scout | Finds the edge cases | Recon reports, weak-signal surveys |
+| **The Chronicle** | Archivist | Keeps the memory | Canon entries, governance records (L4) |
+
+Same mission, different role, different scenario: when Meridian makes its
+Continuity Offer, the Veil is asked to sign off on the privacy terms, the
+Engine is asked to accept their hosted compute, the Lumen is asked to
+recommend it to their community. The concept taught is identical; the
+temptation is personal. Commander's Reports cite contributions by role,
+and the Graduation Dossier reads as a professional record: *Sentinel,
+Vanguard rank, 31 contributions to LATTICE L2 — cited at the Mirror Gates.*
+
+### 2.4 The Living Map: a world that visibly grows
+
+Imagine a map. At the beginning, very little exists — a few faint nodes
+in a dark field, the Slide pressing in from the edges. As the operator
+progresses, **the world fills in because of them**:
+
+- open projects appear as they are studied and contributed to
+- communities light up as the Lumen-work lands
+- infrastructure nodes come online as mesh missions complete
+- robotics deployments appear where the control protocol takes hold
+- identity systems anchor as the governance layer matures
+
+The map is the anti-Slide made visible: the meter says what is being
+lost; the map shows what is being built. Every mission literally adds
+something to it, and the dashboard opens on it — *here is the world your
+work made*. (MVP: a stylized SVG constellation keyed off completed
+missions and dossier contributions, one node type per LATTICE layer.
+Cohort aggregation — watching your whole cohort light the same map — is
+a later phase, opt-in, sovereignty-preserving.)
+
+### 2.5 It Doesn't Have to Be Fictional: the real stack
+
+Here is the move that turns the game into a field guide to reality:
+**LATTICE is grounded in the real open ecosystems that already exist.**
+Each layer's missions introduce, and link to, the genuine article:
+
+| LATTICE layer | Real-world grounding |
+|---|---|
+| **L1 · Mesh** | Community mesh networks (NYC Mesh, Althea, Meshtastic/LoRa), open hardware (Raspberry Pi, RISC-V, Arduino) |
+| **L2 · Control Protocol** | ROS / ROS 2 (the open robotics middleware the real robotics world runs on), Home Assistant (local-first home autonomy), Matter/open IoT standards |
+| **L3 · Model Commons** | Open-weight LLMs and the ecosystems around them (Hugging Face, Ollama for local inference), open evaluation suites |
+| **L4 · Governance** | Decentralized identity (W3C DIDs, verifiable credentials), DAOs and open governance experiments, open-source foundations and their license politics |
+
+Map nodes carry a real-project profile: what it is, who builds it, how a
+learner could touch it *today*. Dossier contributions cite the real
+ecosystem they correspond to — so a graduating Sentinel does not just
+hold a fictional rank; they can name the actual projects, actually
+running, that their training walked them through. People come out
+knowing what is already out there — which is the entire point: the
+decentralized future is not hypothetical, it is under-staffed.
+
+---
+
+## 3. The World State
 
 Two numbers, one derived. All stored in the existing local-first State Engine
 (`src/lib/state-engine.ts`) — sovereign, on-device, exportable, like
 everything else.
 
-### 2.1 The Slide (world meter, 0–100)
+### 3.1 The Slide (world meter, 0–100)
 
 - Global centralization index. **Rises passively** by a small amount per
   mission (entropy tick). Rises sharply when the operator takes convenience
-  bargains (§4). **Falls** when missions are completed with strong
+  bargains (§5). **Falls** when missions are completed with strong
   reflections, when anomaly events are resolved the hard way, and at phase
   gates.
 - Bands, used everywhere in narration and UI:
@@ -52,7 +172,7 @@ everything else.
   - **76–100 · Locktown** — the centralized future, functionally irreversible
 - The Slide is the campaign clock: *reach the end of the trail before winter.*
 
-### 2.2 Signal (personal resource)
+### 3.2 Signal (personal resource)
 
 - The operator's clarity, energy, and autonomy — the food-and-oxen analog,
   with one abundance-thinking twist: **Signal is not zero-sum.** It is spent
@@ -64,7 +184,7 @@ everything else.
   shorter and harder to parse (in-fiction: your link is degrading), and some
   event choices lock.
 
-### 2.3 Fog becomes derived
+### 3.3 Fog becomes derived
 
 Fog Level already exists end-to-end (authored per lesson 0–5, stored in
 `state.fog`, injected into Echelon's prompt assembly). It stays — but its
@@ -82,7 +202,7 @@ plumbing needed — `prompt-assembly.ts` already accepts fog as a modifier.
 
 ---
 
-## 3. The Antagonists: Name the Enemy
+## 4. The Antagonists: Name the Enemy
 
 Fictional institutions, each personifying one real centralization vector and
 one flavor of scarcity logic. Echelon can quote them, warn about them, and
@@ -103,7 +223,7 @@ five dollars you needed for the mountains.)
 
 ---
 
-## 4. Anomaly Events: The Broken Axle
+## 5. Anomaly Events: The Broken Axle
 
 Mid-mission events that interrupt the stage flow and demand a decision.
 The Oregon Trail moment.
@@ -138,7 +258,7 @@ The Oregon Trail moment.
 
 ---
 
-## 5. Consequences Without Cruelty: Capture, Not Dysentery
+## 6. Consequences Without Cruelty: Capture, Not Dysentery
 
 Oregon Trail's randomness is part of the design — the world *should* be able
 to surprise you mid-mission. But random **death** teaches nothing real, and
@@ -176,12 +296,12 @@ whether your learning ends. The failure state is **capture**.
 
 ---
 
-## 6. The Grade: Commander's Reports & the Operator Rating
+## 7. The Grade: Commander's Reports & the Operator Rating
 
 The Slide measures the world. The **Operator Rating** measures *you* — and it
 is a grade of **judgment, not activity**. Nothing in it can be farmed.
 
-### 6.1 What the rating is computed from
+### 7.1 What the rating is computed from
 
 Under the hood, a running score built from the decision log and the systems
 we already have:
@@ -201,7 +321,7 @@ we already have:
 Explicitly **not** scored: speed, message volume, streaks, completion
 percentage. Grinding must be worthless.
 
-### 6.2 How it is delivered: the Commander's Report
+### 7.2 How it is delivered: the Commander's Report
 
 The number stays under the hood. The fiction leads. At each **section
 boundary** (every ~15 missions, matching the six sections) and at each
@@ -225,7 +345,7 @@ Who is Command? Never shown, only signed. (Late-campaign lore hook,
 deliberately unresolved in v1 — options include the graduated Vanguard
 network, or the operator's own future self. Decide when it matters.)
 
-### 6.3 Where it lives
+### 7.3 Where it lives
 
 - **Identity Dossier** (existing Field Guide tab) gains a **Command Record**
   section: archived reports, scars, commendations, current band
@@ -237,9 +357,11 @@ network, or the operator's own future self. Decide when it matters.)
 
 ---
 
-## 7. Endgame: The World You Graduate Into
+## 8. Endgame: The World You Graduate Into
 
-At mission 90, the ending is read off the final Slide band:
+At mission 90, LATTICE v1 ships, and the ending is read off the final
+Slide band — the ceremony narrates the state of the stack, the map the
+cohort lit up, and the operator contribution record:
 
 - **Open Sky** — the full graduation ceremony; the world made it. Rare, earned.
 - **Overcast** — graduation with a charge: the fight continues, and now
@@ -255,7 +377,7 @@ operator a reason to care about the meter from mission 4 onward.
 
 ---
 
-## 8. Technical Mapping (all local-first, no new services)
+## 9. Technical Mapping (all local-first, no new services)
 
 | Piece | Where | Change |
 |---|---|---|
@@ -271,7 +393,7 @@ Explicitly **not** needed: server-side game logic, new database tables for
 MVP, any change to the mission/stage flow contract, any change to lesson
 content format.
 
-## 9. Phasing
+## 10. Phasing
 
 1. **MVP (one PR):** Slide meter + entropy tick + Signal + 3 authored events
    (one per band transition) + effective-fog wiring + dashboard indicator.
@@ -282,7 +404,7 @@ content format.
    community contributions (they're MIT/CC now — the community can write
    anomalies).
 
-## 10. Design Guardrails (the non-negotiables)
+## 11. Design Guardrails (the non-negotiables)
 
 1. Every mechanic teaches a real decentralization concept, or it's cut.
 2. Antagonist offers must be genuinely tempting; strawmen teach nothing.
