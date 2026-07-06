@@ -23,6 +23,9 @@ export const LessonImportSchema = z.object({
   // Optional authored Visual Intel briefing — overrides the generated
   // "why this footage" bridge shown above the video.
   video_intro: z.string().optional().nullable(),
+  // Harvested real footage metadata — filled by the
+  // harvest-video-descriptions workflow, grounds the generated bridge.
+  video_description: z.string().optional().nullable(),
   story_beat: z.string().optional().nullable(),
   mission_badge_description: z.string().optional().nullable(),
   field_guide_prompt: z.string().optional().nullable(),

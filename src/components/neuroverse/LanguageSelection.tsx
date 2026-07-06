@@ -40,10 +40,12 @@ export function LanguageSelection({ onLanguageSelect }: LanguageSelectionProps) 
             Language Protocol Selection
           </h1>
           <p className="text-muted-foreground">
-            Echelon can operate in any language you prefer.
+            Echelon — your briefings, drills, coaching, and reflections — will
+            speak the language you choose.
           </p>
           <p className="text-sm text-muted-foreground">
-            Choose the language for your missions, diagnostics, and coaching.
+            The interface and written reference cards remain in English for
+            now. Your conversation with Echelon is fully translated.
           </p>
         </div>
 

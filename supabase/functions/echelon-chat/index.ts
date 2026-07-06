@@ -83,7 +83,11 @@ function getStageInstruction(stage: string): string {
   sentences of the larger arc, never a synopsis
 - Use callsign
 - Do not ask questions yet
-- End with readiness check`,
+- End with readiness check
+- If the operator answers the readiness check with "not ready" (or
+  hesitation), honor it: ask what they need — a question answered, the
+  concept restated plainly, or simply a moment — and hold the briefing.
+  The mission waits. There is no penalty for honesty about readiness`,
 
     drill1: `STAGE: Primary Drill
 - Present the drill prompt exactly as written
@@ -95,7 +99,10 @@ function getStageInstruction(stage: string): string {
 
     video: `STAGE: Visual Intel
 - Acknowledge video review completion
-- Ask ONE reflection question about observed content
+- Ask ONE reflection question that bridges what they watched to something
+  real in the operator's own life, work, or thinking — where does this
+  concept already operate in their world?
+- Never a comprehension check about the footage itself
 - No summarizing, no teaching`,
 
     hp: `STAGE: Head & Practical Integration
@@ -137,7 +144,7 @@ function getStageInstruction(stage: string): string {
   return instructions[stage] || `STAGE: ${stage}\n- Proceed with mission protocol`;
 }
 
-// Assemble 7-box prompt system using Box-Stage Map
+// Assemble the Eight-Box prompt system using the Box-Stage Map
 function assembleEchelonPrompt(context: {
   callsign: string;
   traitTags: string[];
@@ -147,6 +154,7 @@ function assembleEchelonPrompt(context: {
   archetype?: { primary?: string | null; shadow?: string | null; rising?: string | null };
   recentInsight?: string;      // Box 6: Short-term memory
   longTermNote?: string;        // Box 7: Long-term pattern
+  world?: { context: string } | null;  // Box 8: World State (campaign)
   language?: { code: string; name: string };  // Language preference
 }): string {
   // Get active boxes from Box-Stage Map (single source of truth)
@@ -249,6 +257,11 @@ ${context.language ? `\nIMPERATIVE: Respond ENTIRELY in ${context.language.name}
   // Box 7: Long-Term Notes (Persistent Pattern)
   const buildBox7 = () => context.longTermNote ? `LONG-TERM PATTERN:\n${context.longTermNote}` : "";
 
+  // Box 8: World State — campaign continuity (THE SLIDE). Client-supplied,
+  // size-capped upstream, contains no personal data beyond the operator's
+  // own role line. Colors narration; never a lecture.
+  const buildBox8 = () => context.world?.context ?? "";
+
   // Build ONLY the boxes that are active for this stage
   const boxBuilders: Record<number, () => string> = {
     1: buildBox1,
@@ -258,6 +271,7 @@ ${context.language ? `\nIMPERATIVE: Respond ENTIRELY in ${context.language.name}
     5: buildBox5,
     6: buildBox6,
     7: buildBox7,
+    8: buildBox8,
   };
 
   // Assemble only active boxes in order
@@ -419,6 +433,14 @@ Deno.serve(async (req) => {
       Object.keys(stageContent)
     );
 
+    // Box 8: World State — validated once; consumed by the Box-Stage Map in
+    // the standard path, appended directly by the off-map paths (work /
+    // literacy / re-engage), which sit outside stage governance.
+    const safeWorld =
+      world && typeof world.context === "string" && world.context.length > 0 && world.context.length <= 1200
+        ? { context: world.context }
+        : null;
+
     // Handle RE-ENGAGE PROTOCOL special request
     let systemPrompt: string;
     
@@ -548,14 +570,16 @@ Example structure: "Protocol re-engaged, [Callsign]. We are in [Stage]. [Next re
           : undefined,
         recentInsight,    // Box 6: Short-term memory
         longTermNote,     // Box 7: Long-term pattern
+        world: safeWorld, // Box 8: World State — gated by the Box-Stage Map
         language: userData?.language,  // Language preference
       });
     }
 
-    // THE SLIDE: campaign world context — narration continuity, never a lecture.
-    // Client-supplied and size-capped; it only colors Echelon's voice.
-    if (world && typeof world.context === "string" && world.context.length > 0 && world.context.length <= 1200) {
-      systemPrompt += `\n\n${world.context}`;
+    // Off-map paths (work modes, system literacy, re-engage) still get the
+    // campaign continuity — they are conversations, not stages, so the map
+    // does not govern them.
+    if (safeWorld && (mode || operatorRequest === "REENGAGE_PROTOCOL")) {
+      systemPrompt += `\n\n${safeWorld.context}`;
     }
 
     // Token compression metrics
@@ -566,11 +590,11 @@ Example structure: "Protocol re-engaged, [Callsign]. We are in [Stage]. [Next re
       ? Math.round((1 - actualPromptTokens / fullLessonTokens) * 100)
       : 0;
 
-    console.log(`[PROMPT ASSEMBLY] 7-Box Token Efficiency:`);
+    console.log(`[PROMPT ASSEMBLY] Eight-Box Token Efficiency:`);
     console.log(`  - Full Lesson: ~${fullLessonTokens} tokens`);
-    console.log(`  - 7-Box Prompt: ~${actualPromptTokens} tokens`);
+    console.log(`  - Eight-Box Prompt: ~${actualPromptTokens} tokens`);
     console.log(`  - Compression: ${compressionPercent}% reduction`);
-    console.log(`  - Boxes active: ${[recentInsight, longTermNote].filter(Boolean).length + 5}/7`);
+    console.log(`  - Boxes active: ${[recentInsight, longTermNote].filter(Boolean).length + 5}/8`);
     console.log(`  - Stage: ${currentStage} (${Object.keys(stageContent).length} fields)`);
 
     const formattedMessages = [{ role: "system", content: systemPrompt }, ...messages];

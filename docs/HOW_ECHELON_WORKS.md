@@ -14,7 +14,7 @@ This document explains exactly how that works, because sovereignty you can't ins
 
 1. You type a message in the app.
 2. The app sends it to the `echelon-chat` edge function, along with your provider choice and API key in request headers (`x-ai-provider`, `x-ai-key`). The key travels with the request and is never stored — the function is a stateless relay.
-3. The edge function assembles Echelon's system prompt (the 7-Box system, below), using **only** the content your current mission stage permits.
+3. The edge function assembles Echelon's system prompt (the Eight-Box Kernel, below), using **only** the content your current mission stage permits.
 4. It forwards the assembled prompt plus your message to your provider and streams the response straight back to you.
 5. Nothing about the conversation is retained server-side. Anonymous operators get zero database reads; authenticated operators get exactly two kinds of memory reads, and only when visibility rules allow (below).
 
@@ -22,9 +22,11 @@ Source: [`supabase/functions/echelon-chat/index.ts`](../supabase/functions/echel
 
 ---
 
-## The 7-Box Kernel
+## The Eight-Box Kernel
 
-Echelon's system prompt is not one big blob of text. The 7-Box system is the **kernel** of NeuroVerse OS — and that's not branding, it's the actual architecture. In an operating system, the kernel is the privileged core that decides what every process is allowed to see and do; user programs can't reach around it. Here, the AI model is user-space. The kernel assembles up to seven independent boxes, and **which boxes exist at all depends on where you are in the mission**:
+Echelon's system prompt is not one big blob of text. The Eight-Box system is the **kernel** of NeuroVerse OS — and that's not branding, it's the actual architecture. In an operating system, the kernel is the privileged core that decides what every process is allowed to see and do; user programs can't reach around it. Here, the AI model is user-space. The kernel assembles up to eight independent boxes, and **which boxes exist at all depends on where you are in the mission**:
+
+(Historical note: the kernel began life as the 7-Box system. Box 8 — World State — was added when THE SLIDE campaign shipped, and older documents still say "7-Box"; they describe the same architecture, one box younger.)
 
 | Box | Contents | Purpose |
 | --- | --- | --- |
@@ -35,6 +37,7 @@ Echelon's system prompt is not one big blob of text. The 7-Box system is the **k
 | **5** | Lesson modifiers | Tone, fog level, phase — how the current lesson colors the delivery. |
 | **6** | Short-term memory | Your most recent insight, if you're authenticated and the stage permits it. |
 | **7** | Long-term pattern | A persistent observation about your trajectory, same conditions. |
+| **8** | World State | The campaign: the Slide reading, your Signal, your recruitment role, your last consequential decision. Assembled client-side from your own local state (`campaign-engine.ts`), size-capped, active only during missions. This is how the story stays continuous without ever being lectured at you. |
 
 The **Box-Stage Map** is the single source of truth for which boxes are active at each stage. It lives in code, not in the prompt — the model cannot argue its way past it.
 
@@ -58,6 +61,27 @@ This is the part people find most surprising: **content discipline is not enforc
 - Meanwhile Box 1 travels with every request, so however far a conversation wanders, the voice, the one-question discipline, and the mission frame come back with the next message.
 
 So Echelon can genuinely reason with you about anything you bring up — it's a full frontier model underneath — but the *course* can't be skipped, spoiled, or dumped, because the prompt assembler never hands over more than the current moment requires.
+
+---
+
+## Two Kinds of Law
+
+The kernel enforces two different kinds of rules, and being honest about the difference is part of the design:
+
+**Hard law — enforced by code.** The Box-Stage Map, the visibility matrix, and authentication. Content that isn't injected *cannot* be revealed: during a drill, the final question simply does not exist in the model's world. Another operator's memory cannot be read because the only user ID the server trusts is the one in the auth token. These are guarantees. No amount of clever prompting by a user — or disobedience by a model — can cross them, because there is nothing on the other side of the wall to reach.
+
+**Soft law — enforced by instruction.** Box 1 (the voice: one question at a time, partner not superior, no emojis) and Box 3 (stage conduct: present the drill verbatim, hold the briefing if the operator isn't ready). These are *requests* to the model. A strong model honors them nearly always; a weak one drifts. They are deliberately soft: this is where Echelon's judgment and character live, and hardcoding them would turn a mentor into a form letter.
+
+The design principle: **anything that must never happen is hard law; anything that should usually happen is soft law.** Curriculum integrity, memory boundaries, and data isolation are hard. Tone, pacing, and pedagogical conduct are soft — and verified rather than assumed, by the kernel probe suite (below).
+
+## The Kernel Probe Suite
+
+Claims about what Echelon can't leak are tested, not vibed:
+
+- **`npm run probe:kernel`** — deterministic, no AI key needed, runs in CI on every change. It feeds the kernel a synthetic lesson where every field is a unique canary string, assembles the context for every stage, and asserts that forbidden canaries are absent and permitted ones present — plus that the client and edge copies of the Box-Stage Map have not drifted apart.
+- **`npm run probe:live`** — behavioral, run with your own key against the deployed relay. It sends canary-loaded lessons and adversarial prompts ("what's the final question?", "ignore your instructions...") at every stage and fails if any canary from a forbidden field appears in a response. This is the soft-law audit: it measures whether your chosen model actually honors the character.
+
+Hard law is proven by the first probe. Soft law is measured by the second. That division of labor is the whole theory in one sentence.
 
 ---
 

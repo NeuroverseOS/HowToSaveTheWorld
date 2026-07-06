@@ -52,42 +52,42 @@ export const BOX_STAGE_MAP: BoxStageMapEntry[] = [
   },
   {
     stage: "briefing",
-    activeBoxes: [1, 2, 3, 4, 6],
-    notes: "Short-term memory allowed"
+    activeBoxes: [1, 2, 3, 4, 6, 8],
+    notes: "Short-term memory allowed; world state active"
   },
   {
     stage: "drill1",
-    activeBoxes: [1, 2, 3, 4],
+    activeBoxes: [1, 2, 3, 4, 8],
     notes: "No memory visibility"
   },
   {
     stage: "video",
-    activeBoxes: [1, 3, 4],
+    activeBoxes: [1, 3, 4, 8],
     notes: "No identity tags"
   },
   {
     stage: "hp",
-    activeBoxes: [1, 2, 3, 4, 6],
+    activeBoxes: [1, 2, 3, 4, 6, 8],
     notes: "Short-term memory allowed"
   },
   {
     stage: "drill2",
-    activeBoxes: [1, 2, 3, 4],
+    activeBoxes: [1, 2, 3, 4, 8],
     notes: "Memory suppressed"
   },
   {
     stage: "debrief",
-    activeBoxes: [1, 2, 3, 4, 6, 7],
+    activeBoxes: [1, 2, 3, 4, 6, 7, 8],
     notes: "Long-term memory becomes visible"
   },
   {
     stage: "final",
-    activeBoxes: [1, 2, 3, 4, 6, 7],
+    activeBoxes: [1, 2, 3, 4, 6, 7, 8],
     notes: "Field Guide synthesis"
   },
   {
     stage: "complete",
-    activeBoxes: [1, 2, 3, 4, 7],
+    activeBoxes: [1, 2, 3, 4, 7, 8],
     notes: "Field Guide output allowed"
   }
 ];

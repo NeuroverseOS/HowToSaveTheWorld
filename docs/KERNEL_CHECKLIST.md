@@ -54,6 +54,12 @@ builders).
       companion may reveal, and the validator passes
 - [ ] The companion never leaks future content past the current stage —
       test by asking it directly
+- [ ] Every one-shot generator is grounded: never ask the model to describe
+      an artifact (footage, source, document) it was not handed metadata
+      for — feed it the real title/author and instruct it to write around
+      unknowns, never invent them. Generators skip generation entirely on
+      trivial inputs (a bare "yes" is not material for a reflection
+      question)
 
 ## 3. State & Sovereignty (the sacred layer)
 

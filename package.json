@@ -9,7 +9,9 @@
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "preview": "vite preview",
-    "seed": "tsx scripts/seed-database.ts"
+    "seed": "tsx scripts/seed-database.ts",
+    "probe:kernel": "tsx scripts/kernel-probe.ts",
+    "probe:live": "node scripts/probe-echelon.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

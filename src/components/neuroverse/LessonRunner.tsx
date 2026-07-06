@@ -51,7 +51,7 @@ import {
 import { AnomalyEventCard } from "./AnomalyEventCard";
 import { downloadFullBackup } from "@/lib/full-backup";
 import { maybeAutoSync } from "@/lib/auto-sync";
-import { generateReflectionQuestion, generateVideoBridge, type VideoBridge } from "@/lib/reflection-question";
+import { generateReflectionQuestion, generateVideoBridge, fetchVideoMeta, type VideoBridge } from "@/lib/reflection-question";
 import { cn } from "@/lib/utils";
 import { 
   loadThread, 
@@ -331,14 +331,27 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
     const concept = [lesson.head, lesson.lesson_summary, lesson.briefing]
       .filter(Boolean)
       .join("\n\n");
-    generateVideoBridge({
-      lessonTitle: lesson.lesson_title,
-      concept,
-      authoredIntro: lesson.video_intro,
-      fallbackIntro:
-        "Field footage incoming, Operator. This is the mission concept running live in the real world — watch how the practitioners handle it.",
-      fallbackQuestion: "What stood out to you from this video?",
-    }).then((bridge) => setVideoBridge({ ...bridge, lessonId: lesson.id }));
+    (async () => {
+      // Ground the bridge in what the footage actually is — without the
+      // real title the model invents subjects ("emergency responders"
+      // for a sprinter's reaction-time drill).
+      // Stored description (harvested) beats a live title fetch; only hit
+      // oEmbed when the archive has nothing for this footage.
+      const meta = lesson.video_description ? null : await fetchVideoMeta(lesson.video_url!);
+      const bridge = await generateVideoBridge({
+        lessonTitle: lesson.lesson_title,
+        concept,
+        videoTitle: meta?.title,
+        videoAuthor: meta?.author,
+        videoDescription: lesson.video_description,
+        authoredIntro: lesson.video_intro,
+        fallbackIntro:
+          "Field footage incoming, Operator. This is the mission concept running live in the real world — watch how the practitioners handle it.",
+        fallbackQuestion: "Where does what you just watched already operate in your own life or work?",
+        language: state.user.language,
+      });
+      setVideoBridge({ ...bridge, lessonId: lesson.id });
+    })();
   }, [currentStage, lesson.id, lesson.video_url]);
 
   // A stage re-entered via back navigation re-prompts its reflection once,
@@ -388,6 +401,7 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
           operatorResponse: lastOperatorMessage(),
           fallback: "What insight emerged from this drill?",
           authored: lesson.reflection_prompt,
+          language: state.user.language,
         });
         setPendingReflection({
           mode: "standard",
@@ -405,7 +419,7 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
           stage: "video",
           prompt:
             (videoBridge?.lessonId === lesson.id && videoBridge.question) ||
-            "What stood out to you from this video?",
+            "Where does what you just watched already operate in your own life or work?",
         });
         return;
       }
@@ -418,6 +432,7 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
           operatorResponse: lastOperatorMessage(),
           fallback: "What pattern or realization surfaced during this drill?",
           authored: lesson.reflection_prompt,
+          language: state.user.language,
         });
         setPendingReflection({
           mode: "standard",

@@ -20,6 +20,9 @@ export interface Lesson {
   fog_level?: number;
   reflection_prompt?: string | null;
   video_intro?: string | null;
+  // Harvested real footage metadata (title/channel/description) — grounds
+  // the Visual Intel bridge in what the video actually shows.
+  video_description?: string | null;
   story_beat?: string;
   mission_badge_description?: string;
   field_guide_prompt?: string;

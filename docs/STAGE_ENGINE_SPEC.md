@@ -1,5 +1,10 @@
 # Stage Engine Specification
 
+> **Canon note (2026-07):** the kernel is now the **Eight-Box Kernel** —
+> Box 8 (World State, campaign continuity) joined the original seven.
+> This document predates Box 8 and is kept as the historical spec;
+> the living description is [HOW_ECHELON_WORKS.md](./HOW_ECHELON_WORKS.md).
+
 **Mission Engine Subsystem #2**
 
 ## Overview
