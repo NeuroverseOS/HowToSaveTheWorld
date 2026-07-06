@@ -98,6 +98,26 @@ export default function FAQ() {
           </Card>
 
           <Accordion type="single" collapsible className="space-y-2">
+            <AccordionItem value="analytics" className="border border-border rounded-lg px-4">
+              <AccordionTrigger className="text-left">
+                Do you track me?
+              </AccordionTrigger>
+              <AccordionContent className="text-muted-foreground leading-relaxed space-y-2">
+                <p>
+                  No. Your training — reflections, conversations with Echelon, progress, your
+                  dossier — lives on your device and is never transmitted to us. Your AI key
+                  goes from your browser to your own AI provider and nowhere else.
+                </p>
+                <p>
+                  The website counts visits using cookieless, aggregate analytics
+                  (Vercel Web Analytics): page views and referrers only, no cookies, no
+                  personal profiles, no cross-site tracking, and deliberately no Google
+                  Analytics. We can see <em>that</em> people visited — never <em>who</em> you
+                  are or what you trained on.
+                </p>
+              </AccordionContent>
+            </AccordionItem>
+
             <AccordionItem value="why-website" className="border border-border rounded-lg px-4">
               <AccordionTrigger className="text-left">
                 Why did it open on the website instead of the app?

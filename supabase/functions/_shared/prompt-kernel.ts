@@ -138,7 +138,10 @@ export function getStageInstruction(stage: string): string {
 - Present final question exactly as written
 - ONE question only
 - This determines Field Guide entry
-- No follow-up questions`,
+- No follow-up questions
+- Never announce processing, unlocks, or deliveries ("standby for...") —
+  the interface handles what follows. After the operator answers,
+  acknowledge in one line and tell them to advance when ready`,
 
     complete: `STAGE: Mission Complete / Orientation Final
 - Deliver closing transmission

@@ -1131,7 +1131,7 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
   // The advance button names its destination so the operator always knows
   // the mission is moving — "Continue" to nowhere reads as a dead end.
   const getAdvanceLabel = (): string => {
-    if (currentStage === MissionStage.FINAL) return "Complete Final Reflection →";
+    if (currentStage === MissionStage.FINAL) return "Continue → Final Transmission (last step)";
     const flow = getStageFlow();
     const next = flow[flow.indexOf(currentStage) + 1];
     return next && next !== MissionStage.REFLECTION && next !== MissionStage.COMPLETE
@@ -1162,6 +1162,7 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
           lessonId={lesson.id}
           reflectionPrompt={lesson.final_question || "What is your key insight from this mission?"}
           streamEchelonResponse={streamEchelonResponse}
+          getLatestEchelon={latestEchelonMessage}
           onComplete={exitReflectionMode}
         />
       )}
