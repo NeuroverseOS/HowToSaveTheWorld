@@ -1405,8 +1405,10 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Input Area with Stage-Specific Controls */}
-      <div className="p-4 border-t border-neuro-border/50 space-y-3 overflow-y-auto">
+      {/* Input Area with Stage-Specific Controls — shrink-0: the composer
+          always keeps its full height and never scrolls; only the transcript
+          above compresses. */}
+      <div className="p-4 border-t border-neuro-border/50 space-y-3 shrink-0">
         {pendingReflection ? (
           <div className="space-y-1">
             {pendingReflection.mode === "standard" && (
@@ -1481,7 +1483,7 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
                       ? "Respond to secondary drill..."
                       : "Share your final reflection..."
                   }
-                  className="min-h-[80px] bg-input border-neuro-border resize-none"
+                  className="min-h-[120px] text-base bg-input border-neuro-border resize-y"
                   disabled={isStreaming}
                 />
                 <VoiceRecorder
