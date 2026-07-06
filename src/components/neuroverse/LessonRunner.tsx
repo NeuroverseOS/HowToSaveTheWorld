@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { supabase, getEdgeFunctionUrl, ACTIVE_SUPABASE_PUBLISHABLE_KEY } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
+import { ToastAction } from "@/components/ui/toast";
 import { VoiceRecorder } from "@/components/neuroverse/VoiceRecorder";
 import { VideoPlayer } from "@/components/neuroverse/VideoPlayer";
 import ReflectionMode from "@/components/neuroverse/ReflectionMode";
@@ -925,18 +926,35 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
       // Complete mission in database
       await completeMission(unlockedTraits);
 
-      // Show results
+      // Show results — every write to the record invites the operator to read it.
+      // A dossier nobody opens is a dead letter; the nudge keeps it a living document.
       if (unlockedTraits.length > 0) {
         toast({
           title: "Traits Unlocked!",
           description: `${unlockedTraits.length} new cognitive trait(s) detected`,
+          action: (
+            <ToastAction
+              altText="Open your Field Guide traits"
+              onClick={() => { window.location.href = "/field-guide?tab=traits"; }}
+            >
+              See them
+            </ToastAction>
+          ),
         });
       }
 
       if (fieldGuideEntry) {
         toast({
           title: "Field Guide Updated",
-          description: "New insights captured",
+          description: "Echelon wrote a new entry about how you think",
+          action: (
+            <ToastAction
+              altText="Open your Field Guide timeline"
+              onClick={() => { window.location.href = "/field-guide?tab=evolution"; }}
+            >
+              Read it
+            </ToastAction>
+          ),
         });
       }
     } catch (error) {

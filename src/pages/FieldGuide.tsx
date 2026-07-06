@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -95,8 +95,15 @@ interface EvolutionEntry {
   unlocked_at: string | null;
 }
 
+const FIELD_GUIDE_TABS = ["identity", "missions", "traits", "shadows", "superpowers", "evolution", "dossier"];
+
 export default function FieldGuide() {
   const navigate = useNavigate();
+  // Deep-linkable tabs (e.g. /field-guide?tab=dossier) so nudges elsewhere in
+  // the app can land the operator directly on the record that was just written.
+  const [searchParams] = useSearchParams();
+  const requestedTab = searchParams.get("tab");
+  const initialTab = requestedTab && FIELD_GUIDE_TABS.includes(requestedTab) ? requestedTab : "identity";
   const [traits, setTraits] = useState<OperatorTrait[]>([]);
   const [evolution, setEvolution] = useState<EvolutionEntry[]>([]);
   const [missionLogs, setMissionLogs] = useState<MissionLogEntry[]>([]);
@@ -566,7 +573,7 @@ export default function FieldGuide() {
           </div>
         </div>
 
-        <Tabs defaultValue="identity" className="w-full">
+        <Tabs defaultValue={initialTab} className="w-full">
           <TabsList className="grid w-full grid-cols-4 sm:grid-cols-7 mb-8 gap-1">
             <TabsTrigger value="identity" className="text-xs sm:text-sm">
               <Activity className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />

@@ -344,6 +344,16 @@ export default function PhaseCeremony() {
             >
               Continue →
             </Button>
+            <div>
+              <Button
+                onClick={() => navigate("/field-guide?tab=dossier")}
+                variant="ghost"
+                size="sm"
+                className="text-muted-foreground hover:text-neuro-cyan"
+              >
+                Read it in your dossier →
+              </Button>
+            </div>
           </div>
         )}
 

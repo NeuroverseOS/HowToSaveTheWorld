@@ -2,6 +2,7 @@ import { loadState } from "@/lib/state-engine";
 import { supabase } from "@/integrations/supabase/client";
 import { getTraitCompletion, getEvolutionTimeline } from "@/lib/identity-unlock-engine";
 import { TRAIT_MAP } from "@/lib/identity-system";
+import { getSlideBand, loadAnomalies } from "@/lib/campaign-engine";
 
 export interface DossierData {
   callsign: string;
@@ -43,6 +44,12 @@ export interface DossierData {
     totalMissions: number;
     completedMissions: number;
     completionRate: number;
+  };
+  campaign: {
+    slide: number;
+    band: string;
+    signal: number;
+    decisions: { label: string; choice: string; at: string }[];
   };
   generatedAt: string;
 }
@@ -131,9 +138,27 @@ export async function buildDossierData(): Promise<DossierData> {
   }
 
   // Calculate mission statistics
-  const totalMissions = 90; // NeuroVerse canonical total
+  const totalMissions = 96; // 90 training missions + 6 post-graduation capstones
   const completedMissions = state.progress.lessons_completed.length;
   const completionRate = Math.round((completedMissions / totalMissions) * 100);
+
+  // Campaign record — the world this operator actually ran, decisions named
+  // from the anomaly catalog so the dossier reads as a story, not a ledger.
+  const anomalyEvents = await loadAnomalies();
+  const campaign = {
+    slide: state.world.slide,
+    band: getSlideBand(state.world.slide).name,
+    signal: state.world.signal,
+    decisions: state.world.decisions.map((d) => {
+      const event = anomalyEvents.find((e) => e.id === d.event_id);
+      const choice = event?.choices.find((c) => c.id === d.choice_id);
+      return {
+        label: event ? `${event.antagonist} — ${event.title}` : d.event_id,
+        choice: choice?.label ?? d.choice_id,
+        at: d.at,
+      };
+    }),
+  };
 
   const dossierData: DossierData = {
     callsign,
@@ -150,6 +175,7 @@ export async function buildDossierData(): Promise<DossierData> {
       completedMissions,
       completionRate,
     },
+    campaign,
     generatedAt: new Date().toISOString(),
   };
 

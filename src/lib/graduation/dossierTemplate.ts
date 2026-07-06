@@ -35,6 +35,16 @@ export function buildDossierHTML(data: DossierData): string {
     </div>
   `).join('');
 
+  const decisionsHTML = data.campaign.decisions.map(d => `
+    <div class="trait-block">
+      <h4>${escapeHTML(d.label)}</h4>
+      <div class="trait-meta">
+        <span>Chose: ${escapeHTML(d.choice)}</span>
+        <span>${new Date(d.at).toLocaleDateString()}</span>
+      </div>
+    </div>
+  `).join('');
+
   const timelineHTML = data.timeline.slice(0, 20).map(entry => `
     <div class="timeline-entry">
       <div class="timeline-dot"></div>
@@ -374,6 +384,26 @@ export function buildDossierHTML(data: DossierData): string {
           <div class="stat-label">Superpowers Active</div>
         </div>
       </div>
+    </section>
+
+    <!-- CAMPAIGN RECORD -->
+    <section class="section">
+      <h3 class="section-title">Campaign Record</h3>
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-value">${data.campaign.slide}/100</div>
+          <div class="stat-label">The Slide — ${escapeHTML(data.campaign.band)}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">${data.campaign.signal}/100</div>
+          <div class="stat-label">Operator Signal</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">${data.campaign.decisions.length}</div>
+          <div class="stat-label">Decisions on Record</div>
+        </div>
+      </div>
+      ${decisionsHTML ? `<div style="margin-top: 20px;">${decisionsHTML}</div>` : ''}
     </section>
 
     <!-- SEALED PHASE ASSESSMENTS -->

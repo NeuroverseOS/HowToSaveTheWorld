@@ -19,6 +19,7 @@ import { saveReflection, type Lesson } from "@/lib/lesson-queries";
 import { getLessonByNumber, getLessonById, forceSupabaseRefresh } from "@/lib/lesson-loader";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/hooks/use-toast";
+import { ToastAction } from "@/components/ui/toast";
 import { LogOut, HelpCircle, Shield, List, Settings as SettingsIcon, Cpu, Smartphone, BookOpen, Menu, Anchor, FileText, Radio, Heart, ScrollText, FileCode, Scale, Database } from "lucide-react";
 import {
   DropdownMenu,
@@ -252,10 +253,27 @@ export default function Dashboard() {
       saveState(state);
       setState({ ...state });
 
-      toast({
-        title: "Mission Complete",
-        description: "Advancing to next lesson...",
-      });
+      // Dossier check-in at the midpoint of each section (missions 5, 15, 25…):
+      // the record only matters if the operator actually reads it now and then.
+      if (completedLessonNumber % 10 === 5) {
+        toast({
+          title: "Your dossier is growing",
+          description: "Echelon has been writing about how you think. Worth a read.",
+          action: (
+            <ToastAction
+              altText="Open your dossier"
+              onClick={() => navigate("/field-guide?tab=dossier")}
+            >
+              Open it
+            </ToastAction>
+          ),
+        });
+      } else {
+        toast({
+          title: "Mission Complete",
+          description: "Advancing to next lesson...",
+        });
+      }
 
       // Navigate to funding page on badge unlocks (every 10th lesson)
       if (isBadgeUnlock) {
