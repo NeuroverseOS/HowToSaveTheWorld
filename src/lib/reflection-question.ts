@@ -117,7 +117,7 @@ export async function generateVideoBridge(opts: {
   if (!hasOperatorAIKey()) return fallback;
 
   const footageLine = opts.videoDescription
-    ? `The actual footage (title, channel, and description from the archive): ${opts.videoDescription.slice(0, 900)}`
+    ? `The actual footage (title, channel, and description from the archive): ${opts.videoDescription.slice(0, 2000)}`
     : opts.videoTitle
       ? `The actual footage: "${opts.videoTitle}"${opts.videoAuthor ? ` (by ${opts.videoAuthor})` : ""}.`
       : "The footage subject is not known to you.";

@@ -36,6 +36,13 @@ const BuildYourOwn = () => {
             on this exact platform — taught by each learner's own AI, under rules you declare,
             with data that stays theirs.
           </p>
+          <p className="text-sm text-muted-foreground">
+            Teacher or professor who's never touched a repo?{" "}
+            <Link to="/educators" className="text-amber-500 dark:text-amber-400 hover:underline">
+              Start with the educator walkthrough
+            </Link>{" "}
+            — it assumes nothing and explains every click.
+          </p>
         </header>
 
         <div className="space-y-6">

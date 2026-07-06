@@ -498,6 +498,10 @@ const Index = () => {
               and run it on infrastructure you control.{" "}
               <Link to="/build" className="text-neuro-cyan hover:underline">
                 Build your own course →
+              </Link>{" "}
+              Teaching a class and never touched a repo?{" "}
+              <Link to="/educators" className="text-amber-500 dark:text-amber-400 hover:underline">
+                The educator walkthrough starts from zero →
               </Link>
             </p>
           </Card>
@@ -840,6 +844,15 @@ const Index = () => {
             >
               <Hammer className="mr-2 h-3.5 w-3.5" />
               Build Your Own Course
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => navigate("/educators")}
+              className="border-amber-400/60 text-amber-500 dark:text-amber-400 hover:bg-amber-400/10"
+            >
+              <GraduationCap className="mr-2 h-3.5 w-3.5" />
+              Educators Start Here
             </Button>
             <Button
               variant="outline"

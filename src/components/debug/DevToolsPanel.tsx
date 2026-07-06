@@ -112,8 +112,8 @@ export function DevToolsPanel() {
         <Button
           variant="outline"
           size="icon"
-          className="fixed bottom-4 left-4 z-50 shadow-lg"
-          title="Dev Tools (Ctrl+Shift+D)"
+          className="fixed bottom-4 left-4 z-50 border-amber-400 text-amber-500 dark:text-amber-400 hover:bg-amber-400/15 shadow-[0_0_14px_rgba(251,191,36,0.45)]"
+          title="Sovereignty Inspector — see everything this app stores (Ctrl+Shift+D)"
         >
           <Code2 className="h-4 w-4" />
         </Button>
