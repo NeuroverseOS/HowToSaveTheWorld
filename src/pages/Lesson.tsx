@@ -31,6 +31,14 @@ export default function Lesson() {
       return;
     }
 
+    // No local state (fresh browser / post-reset deep link to /lesson/:id) —
+    // there is no operator to run the mission, and the render guard would
+    // otherwise spin on "Loading mission..." forever. Send them to onboarding.
+    if (!loadState()) {
+      navigate("/");
+      return;
+    }
+
     try {
       const lessonData = await getLessonById(parseInt(lessonId));
       if (!lessonData) throw new Error("Lesson not found");

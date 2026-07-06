@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { ArrowLeft, Lightbulb, Hammer, Users } from "lucide-react";
-import { loadState } from "@/lib/state-engine";
+import { loadState, saveState } from "@/lib/state-engine";
 import { getWorkModePower } from "@/lib/work-engine";
 
 export default function WorkModePage() {
@@ -34,6 +34,10 @@ export default function WorkModePage() {
         work_history: []
       };
       state.work.current_mode = mode;
+      // Persist before navigating — the next page reads mode from storage, not
+      // memory. Without this save it finds null and bounces straight back here,
+      // which made Work Mode unreachable past selection.
+      saveState(state);
       navigate("/work/context");
     }
   };

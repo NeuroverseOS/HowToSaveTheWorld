@@ -58,10 +58,18 @@ export async function callOperatorAI(
     return null;
   }
 
+  // A stalled provider connection (TCP hang, never resolves, never errors)
+  // once left the phase-ceremony "generating" screen spinning forever with no
+  // escape. A hard timeout turns a hang into an error, which every caller
+  // already handles (return null → the UI's error/retry path).
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 60000);
+
   try {
     if (provider === "openai") {
       const response = await fetch("https://api.openai.com/v1/chat/completions", {
         method: "POST",
+        signal: controller.signal,
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${apiKey}`,
@@ -83,6 +91,7 @@ export async function callOperatorAI(
     if (provider === "anthropic") {
       const response = await fetch("https://api.anthropic.com/v1/messages", {
         method: "POST",
+        signal: controller.signal,
         headers: {
           "Content-Type": "application/json",
           "x-api-key": apiKey,
@@ -106,6 +115,7 @@ export async function callOperatorAI(
         `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
         {
           method: "POST",
+          signal: controller.signal,
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             contents: [
@@ -128,6 +138,7 @@ export async function callOperatorAI(
     if (provider === "ollama") {
       const response = await fetch(`${ollamaEndpoint}/api/chat`, {
         method: "POST",
+        signal: controller.signal,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           model: ollamaModel,
@@ -148,6 +159,8 @@ export async function callOperatorAI(
   } catch (error) {
     console.error("[OPERATOR AI] Call failed:", error);
     return null;
+  } finally {
+    clearTimeout(timeoutId);
   }
 }
 

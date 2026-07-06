@@ -1,10 +1,12 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useUnlockAnimationContext } from '@/components/neuroverse/UnlockAnimationProvider';
 import { Button } from '@/components/ui/button';
-import { Sparkles, Zap, Star } from 'lucide-react';
+import { Sparkles, Zap, Star, ArrowLeft } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function UnlockPreview() {
+  const navigate = useNavigate();
   const { triggerUnlock } = useUnlockAnimationContext();
   const [lastTriggered, setLastTriggered] = useState<string>('');
 
@@ -44,6 +46,14 @@ export default function UnlockPreview() {
   return (
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-4xl mx-auto space-y-6">
+        <Button
+          variant="ghost"
+          onClick={() => navigate("/dashboard")}
+          className="text-muted-foreground hover:text-foreground -ml-2"
+        >
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Back to Dashboard
+        </Button>
         <div className="space-y-2">
           <h1 className="text-3xl font-bold text-foreground">Work Mode Unlock Preview</h1>
           <p className="text-muted-foreground">

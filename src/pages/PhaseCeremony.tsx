@@ -179,6 +179,16 @@ export default function PhaseCeremony() {
               <Loader2 className="h-5 w-5 animate-spin text-neuro-cyan" />
               <span className="text-lg">Echelon is compiling the record...</span>
             </div>
+            {/* Never a spinner with no exit: if generation drags, the operator
+                can leave and the sealed record waits for them next time. */}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate("/dashboard")}
+              className="text-muted-foreground/70 hover:text-foreground"
+            >
+              Return to Dashboard
+            </Button>
           </div>
         )}
 
