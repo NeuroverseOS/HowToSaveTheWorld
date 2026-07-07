@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FoxholeProtocol } from "@/components/neuroverse/FoxholeProtocol";
 import { ensureLocalIdentity } from "@/lib/state-engine";
-import { isAppAnchored } from "@/lib/pwa-detection";
 import { OnboardingProgress } from "@/components/neuroverse/OnboardingProgress";
 
 export default function OrientationPage() {
@@ -10,11 +9,7 @@ export default function OrientationPage() {
   const [callsign, setCallsign] = useState<string | null>(null);
 
   useEffect(() => {
-    // Check PWA installation or bypass
-    if (!isAppAnchored()) {
-      navigate("/");
-      return;
-    }
+    // Web-first: no install gate — orientation runs in any browser.
 
     // Check Vanguard activation
     const state = ensureLocalIdentity();

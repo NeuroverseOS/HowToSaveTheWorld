@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArchetypeReveal } from "@/components/neuroverse/ArchetypeReveal";
 import { loadState } from "@/lib/state-engine";
-import { isAppAnchored } from "@/lib/pwa-detection";
 import { OnboardingProgress } from "@/components/neuroverse/OnboardingProgress";
 
 export default function ArchetypeRevealPage() {
@@ -15,11 +14,7 @@ export default function ArchetypeRevealPage() {
   } | null>(null);
 
   useEffect(() => {
-    // Check PWA installation or bypass
-    if (!isAppAnchored()) {
-      navigate("/");
-      return;
-    }
+    // Web-first: no install gate — the reveal runs in any browser.
 
     const state = loadState();
     if (!state) {

@@ -20,7 +20,7 @@ import { getLessonByNumber, getLessonById, forceSupabaseRefresh } from "@/lib/le
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/hooks/use-toast";
 import { ToastAction } from "@/components/ui/toast";
-import { LogOut, HelpCircle, Shield, List, Settings as SettingsIcon, Cpu, Smartphone, BookOpen, Menu, Anchor, FileText, Radio, Heart, ScrollText, FileCode, Scale, Database, RotateCw } from "lucide-react";
+import { LogOut, HelpCircle, Shield, List, Settings as SettingsIcon, Cpu, Smartphone, BookOpen, Menu, Anchor, FileText, Radio, Heart, ScrollText, FileCode, Scale, Database, RotateCw, Github } from "lucide-react";
 import { backupAndUpdate } from "@/lib/app-update";
 import {
   DropdownMenu,
@@ -555,6 +555,17 @@ export default function Dashboard() {
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => navigate("/verify")}>
                     <FileCode className="mr-2 h-4 w-4" /> Verify Build
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() =>
+                      window.open(
+                        "https://github.com/NeuroverseOS/HowToSaveTheWorld",
+                        "_blank",
+                        "noopener,noreferrer"
+                      )
+                    }
+                  >
+                    <Github className="mr-2 h-4 w-4" /> Open Source on GitHub
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => navigate("/vanguard-lore")} className="text-neuro-orange hover:text-neuro-orange/80">
                     <FileText className="mr-2 h-4 w-4" /> Classified

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -9,7 +9,6 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Shield, ArrowRight, Loader2, Cpu, Eye, EyeOff, Info, CheckCircle2, AlertCircle, XCircle, Sparkles } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
-import { isAppAnchored } from "@/lib/pwa-detection";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import { loadState, saveState, initializeState } from "@/lib/state-engine";
@@ -38,13 +37,8 @@ export default function ActivateEchelon() {
   const [validationSteps, setValidationSteps] = useState<ValidationStep[]>([]);
   const [validationProgress, setValidationProgress] = useState(0);
 
-  useEffect(() => {
-    // Only check PWA installation - API key entry happens BEFORE Vanguard activation
-    if (!isAppAnchored()) {
-      navigate("/");
-      return;
-    }
-  }, [navigate]);
+  // Web-first: no install gate. Anyone can activate straight from the
+  // browser; installing (anchoring) is a recommended option, never a wall.
 
   // Clear API key when switching providers
   const handleProviderChange = (newProvider: AIProvider) => {

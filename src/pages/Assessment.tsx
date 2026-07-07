@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArchetypeAssessment } from "@/components/neuroverse/ArchetypeAssessment";
 import { ensureLocalIdentity, saveState } from "@/lib/state-engine";
-import { isAppAnchored } from "@/lib/pwa-detection";
 import { generateCallsign } from "@/lib/vanguard-generator";
 import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -14,11 +13,7 @@ export default function Assessment() {
   const [callsign, setCallsign] = useState<string | null>(null);
 
   useEffect(() => {
-    // Check PWA installation or bypass
-    if (!isAppAnchored()) {
-      navigate("/");
-      return;
-    }
+    // Web-first: no install gate — the assessment runs in any browser.
 
     // Check backup configuration (must happen before assessment)
     const state = ensureLocalIdentity();

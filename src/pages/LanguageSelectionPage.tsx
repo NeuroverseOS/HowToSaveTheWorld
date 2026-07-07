@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { LanguageSelection } from "@/components/neuroverse/LanguageSelection";
 import { ensureLocalIdentity, saveState } from "@/lib/state-engine";
-import { isAppAnchored } from "@/lib/pwa-detection";
 import { toast } from "@/hooks/use-toast";
 import { OnboardingProgress } from "@/components/neuroverse/OnboardingProgress";
 
@@ -10,11 +9,7 @@ export default function LanguageSelectionPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check prerequisites
-    if (!isAppAnchored()) {
-      navigate("/");
-      return;
-    }
+    // Web-first: no install gate — language selection runs in any browser.
 
     const state = ensureLocalIdentity();
     if (!state) {

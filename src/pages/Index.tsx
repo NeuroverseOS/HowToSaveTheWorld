@@ -3,7 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { ArrowRight, ChevronDown, Heart, Download, Smartphone, GraduationCap, KeyRound, Database, Hammer, Brain, ScrollText } from "lucide-react";
+import { ArrowRight, ChevronDown, Heart, Download, Smartphone, GraduationCap, KeyRound, Database, Hammer, Brain, ScrollText, Github } from "lucide-react";
 import type { Session } from "@supabase/supabase-js";
 import { Card } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -132,13 +132,9 @@ const Index = () => {
   };
 
   const handleBeginActivation = () => {
-    if (!isPWA) {
-      // Not installed as PWA - scroll to install section
-      document.getElementById('install-section')?.scrollIntoView({ behavior: 'smooth' });
-    } else {
-      // Already installed - proceed to dashboard
-      navigate("/dashboard");
-    }
+    // Web-first: activation starts right here in the browser. Installing
+    // (anchoring) is a recommended option offered later — never a wall.
+    navigate("/dashboard");
   };
 
   const handleBypassPWA = () => {
@@ -163,11 +159,8 @@ const Index = () => {
   };
 
   const handleBeginAssessment = () => {
-    if (!isPWA) {
-      document.getElementById('install-section')?.scrollIntoView({ behavior: 'smooth' });
-    } else {
-      navigate("/dashboard");
-    }
+    // Web-first: the assessment runs in any browser, no install needed.
+    navigate("/dashboard");
   };
 
   // Scroll-triggered animations
@@ -218,7 +211,18 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
       {/* Theme Toggle - Fixed Position */}
-      <div className="fixed top-4 right-4 z-50 flex gap-2">
+      <div className="fixed top-4 right-4 z-50 flex items-center gap-2">
+        {/* Open source, visible from the first second — the code IS the proof
+            of every sovereignty claim on this page. */}
+        <a
+          href="https://github.com/NeuroverseOS/HowToSaveTheWorld"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1.5 rounded-md border border-border/70 bg-card/60 backdrop-blur-sm px-2.5 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground hover:border-neuro-cyan/50 transition-colors"
+        >
+          <Github className="h-3.5 w-3.5" />
+          Open Source
+        </a>
         <ThemeToggle />
         {!isPWA && import.meta.env.DEV && (
           <Button
@@ -363,7 +367,7 @@ const Index = () => {
             <Alert className="mt-4 border-neuro-cyan/50 bg-neuro-cyan/10 max-w-md mx-auto animate-pulse-once animation-delay-4000">
               <Smartphone className="h-4 w-4 text-neuro-cyan" />
               <AlertDescription className="text-sm">
-                Installation required. Scroll down to anchor your device.
+                Runs right here in your browser — nothing to install. Open source, and your data stays on your device.
               </AlertDescription>
             </Alert>
           )}
@@ -603,38 +607,41 @@ const Index = () => {
         </div>
       </section>
 
-      {/* SECTION 8: INSTALL REQUIRED (PHASE 0) */}
+      {/* SECTION 8: ANCHOR YOUR DEVICE (recommended, never required) */}
       {!isPWA && (
-        <section 
+        <section
           id="install-section"
           className="relative min-h-screen flex items-center justify-center px-4 bg-gradient-to-b from-background via-neuro-cyan/5 to-background"
         >
           <div className="absolute inset-0 bg-grid-pattern opacity-20" />
           <div className="circuit-overlay opacity-30" />
-          
+
           <div className="relative z-10 max-w-3xl mx-auto text-center space-y-8">
             <div className="inline-block p-4 rounded-full bg-neuro-cyan/10 mb-4">
               <Download className="h-12 w-12 text-neuro-cyan animate-pulse" />
             </div>
-            
+
             <h2 className="text-4xl md:text-6xl font-bold text-foreground mb-6">
-              INSTALL REQUIRED
+              ANCHOR YOUR DEVICE
             </h2>
-            
+            <p className="font-mono text-sm uppercase tracking-[0.2em] text-neuro-cyan -mt-2">
+              Recommended · not required
+            </p>
+
             <Card className="p-8 bg-card/50 backdrop-blur-sm border-neuro-cyan/30">
               <p className="text-xl md:text-2xl text-foreground mb-6">
-                To join the Echelon Network, you must anchor your device.
+                Everything runs in your browser today. Anchoring makes it permanent.
               </p>
               <p className="text-base text-muted-foreground mb-6">
-                This website is the launchpad — the training runs as an app on your device.
-                One tap installs it straight from your browser (no app store), and from then
-                on you launch it from its icon, like any other app.
+                One tap installs the OS straight from your browser (no app store) — its own
+                icon, its own window, and storage the browser will never quietly clear.
+                On iPhone especially, an un-anchored browser tab can lose local data after
+                about a week of inactivity; the anchored app never does.
               </p>
               <div className="space-y-4 text-lg text-muted-foreground mb-8">
-                <p>Installation creates a secure, local-first environment.</p>
-                <p>Your data stays with you.</p>
+                <p>Your data stays with you either way.</p>
                 <p>Your AI links only through your device.</p>
-                <p>Mission progression persists offline.</p>
+                <p>Anchoring adds permanence and offline capability.</p>
               </div>
               
               {deferredPrompt ? (
@@ -703,20 +710,31 @@ const Index = () => {
               )}
             </Card>
             
-            <div className="pt-2">
-              <button
-                onClick={handleAlreadyInstalled}
-                className="text-sm text-muted-foreground underline underline-offset-4 hover:text-neuro-cyan transition-colors"
+            <div className="pt-2 space-y-3">
+              <Button
+                onClick={() => navigate("/dashboard")}
+                variant="outline"
+                size="lg"
+                className="border-neuro-cyan/40 text-neuro-cyan hover:bg-neuro-cyan/10"
               >
-                Already installed the app and still seeing this? Tap here to enter →
-              </button>
+                Continue in browser — no install <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+              <div>
+                <button
+                  onClick={handleAlreadyInstalled}
+                  className="text-sm text-muted-foreground underline underline-offset-4 hover:text-neuro-cyan transition-colors"
+                >
+                  Already installed the app and still seeing this? Tap here to enter →
+                </button>
+              </div>
             </div>
 
             <div className="mt-8 p-6 bg-card/30 border border-border/50 rounded-lg">
-              <p className="text-sm font-semibold text-foreground mb-2">Why install?</p>
+              <p className="text-sm font-semibold text-foreground mb-2">Why anchor?</p>
               <p className="text-sm text-muted-foreground">
-                NeuroVerse OS requires local storage for mission data, secure key management, and autonomous offline capability —
-                because centralized clouds should never own your intelligence.
+                Anchoring gives your mission data permanent local storage, secure key management, and offline
+                capability — because centralized clouds should never own your intelligence. You can anchor at
+                any time from inside the OS; your browser progress carries over automatically.
               </p>
             </div>
           </div>
@@ -732,7 +750,7 @@ const Index = () => {
           
           <div className="space-y-8">
             {[
-              { num: "01", title: "Install the Program", desc: "Runs local-first. Your data never leaves your device." },
+              { num: "01", title: "Open the Program", desc: "Runs local-first, right in your browser — no install needed. Your data never leaves your device." },
               { num: "02", title: "Connect Your AI", desc: "Link GPT, Claude, Gemini, or local models. Your AI boots before identity formation." },
               { num: "03", title: "Vanguard Activation", desc: "Generate your callsign. Establish your Operator identity in the network." },
               { num: "04", title: "Complete the Archetype Assessment", desc: "Twelve scenarios reveal your operating archetype — your tactical role in the decentralized future." },
@@ -776,17 +794,24 @@ const Index = () => {
           {!isPWA && showInstallPrompt ? (
             <div className="space-y-6">
               <Button
-                onClick={handleInstallClick}
-                variant="default"
+                onClick={() => navigate("/dashboard")}
+                variant="critical"
                 size="lg"
-                className="text-2xl px-12 py-8 bg-neuro-cyan hover:bg-neuro-cyan/90 text-background"
+                className="cta-glow text-xl px-12 py-7"
               >
-                <Download className="mr-3 h-6 w-6" />
-                INSTALL NOW
+                {session ? "CONTINUE TRAINING" : "BEGIN ACTIVATION"} <ArrowRight className="ml-3 h-6 w-6" />
               </Button>
-              <p className="text-sm text-muted-foreground">
-                Installation required to proceed
-              </p>
+              <div>
+                <Button
+                  onClick={handleInstallClick}
+                  variant="outline"
+                  size="lg"
+                  className="border-neuro-cyan/40 text-neuro-cyan hover:bg-neuro-cyan/10"
+                >
+                  <Download className="mr-2 h-5 w-5" />
+                  Anchor as an app (optional)
+                </Button>
+              </div>
             </div>
           ) : (
             <Button
@@ -870,6 +895,21 @@ const Index = () => {
             >
               <ScrollText className="mr-2 h-3.5 w-3.5" />
               The Manifesto
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              asChild
+              className="border-neuro-cyan/40 text-foreground hover:bg-neuro-cyan/10"
+            >
+              <a
+                href="https://github.com/NeuroverseOS/HowToSaveTheWorld"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Github className="mr-2 h-3.5 w-3.5" />
+                Open Source on GitHub
+              </a>
             </Button>
           </div>
 
