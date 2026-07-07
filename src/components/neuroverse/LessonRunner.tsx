@@ -318,6 +318,13 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
         content: `Returning to ${getStageLabel(target)}, Operator. Your previous work stands until you replace it.`,
       },
     ]);
+    // Returning to the Briefing means the operator wants the opening story
+    // again — re-deliver it. Their drill work still stands in the dossier.
+    // This is the recovery path when the opening was cut short (e.g. a provider
+    // error mid-stream) and could not otherwise be reached without a restart.
+    if (target === MissionStage.BRIEFING) {
+      deliverOpening();
+    }
     console.log(`Stage jump: ${currentStage} → ${target}`);
   };
 
@@ -569,7 +576,15 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
       setIsStreaming(true);
       try {
         await streamEchelonResponse("[STAGE_CONTENT: briefing]");
-        return;
+        // A handled provider error (rate limit, no credit, bad key) returns
+        // WITHOUT throwing and without streaming anything — which once left the
+        // opening blank with no recovery. Trust the live ref, not that the call
+        // resolved: only skip the canned opening if real text actually landed.
+        const lastAssistant = [...messagesRef.current]
+          .reverse()
+          .find((m) => m.role === "assistant");
+        if (lastAssistant && lastAssistant.content.trim().length > 0) return;
+        console.warn("[BRIEFING] Live opening produced no content — using canned opening");
       } catch (error) {
         console.warn("[BRIEFING] Live delivery failed — canned opening fallback:", error);
       } finally {
@@ -578,29 +593,27 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
     }
 
     setIsStreaming(true);
-    
+
     // Use canonical echelon_opening text
     const openingText = lesson.echelon_opening || "Operator. Your next mission is ready.";
-    
-    // Stream it for effect
+
+    // Append (don't replace) so a replay — returning to the Briefing — adds the
+    // story back rather than wiping the conversation history.
+    const base = [...messagesRef.current];
+    setMessages([...base, { role: "assistant", content: "" }]);
+
     let currentText = "";
     const words = openingText.split(" ");
-    
-    setMessages([{ role: "assistant", content: "" }]);
-    
     for (let i = 0; i < words.length; i++) {
       currentText += (i > 0 ? " " : "") + words[i];
-      setMessages([{ role: "assistant", content: currentText }]);
+      setMessages([...base, { role: "assistant", content: currentText }]);
       await new Promise(resolve => setTimeout(resolve, 50));
     }
-    
+
     // Canon: raw chat is never saved. Conversation lives in the local
     // Echelon cache only; confirmed reflections persist separately.
+    saveMessages(lesson.id, [...base, { role: "assistant" as const, content: openingText }]);
 
-    // ECHELON PERSISTENCE: Save opening to local cache
-    const updatedMessages = [{ role: "assistant" as const, content: openingText }];
-    saveMessages(lesson.id, updatedMessages);
-    
     setIsStreaming(false);
   };
 
@@ -733,27 +746,109 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
     }
 
     if (!resp.ok) {
+      // Read the provider's error body once so we can tell the operator what is
+      // actually wrong instead of guessing. Safe to consume here — every
+      // non-ok branch returns, and the final throw discards the body anyway.
+      let errBody = "";
+      try {
+        errBody = await resp.text();
+      } catch {
+        /* body may be empty or already gone — fall back to status-only copy */
+      }
+      const errLower = errBody.toLowerCase();
+
+      // Send the operator straight back to the provider they chose their key
+      // from. We already know which one — it's on their device — so the fix is
+      // one tap away instead of a hunt. name/billing/keys per provider:
+      const PROVIDER_LINKS: Record<
+        string,
+        { name: string; billing: string; keys: string; note: string }
+      > = {
+        openai: {
+          name: "OpenAI",
+          billing: "https://platform.openai.com/settings/organization/billing/overview",
+          keys: "https://platform.openai.com/api-keys",
+          note: "A ChatGPT Plus subscription does NOT include API credit — that's billed separately. Add a few dollars of API credit, then try again.",
+        },
+        anthropic: {
+          name: "Anthropic",
+          billing: "https://console.anthropic.com/settings/billing",
+          keys: "https://console.anthropic.com/settings/keys",
+          note: "A Claude.ai subscription does NOT include API credit — that's billed separately. Add a little API credit, then try again.",
+        },
+        google: {
+          name: "Google AI Studio",
+          billing: "https://aistudio.google.com/app/apikey",
+          keys: "https://aistudio.google.com/app/apikey",
+          note: "Check your key's quota and billing, then try again. Gemini has a free tier, so this is usually a per-minute limit — waiting a moment often clears it.",
+        },
+      };
+      const link = PROVIDER_LINKS[aiProvider];
+      const openBilling = link
+        ? () => window.open(link.billing, "_blank", "noopener,noreferrer")
+        : undefined;
+      const openKeys = link
+        ? () => window.open(link.keys, "_blank", "noopener,noreferrer")
+        : undefined;
+
       if (resp.status === 429) {
-        toast({
-          title: "Rate Limited",
-          description: "Echelon is at capacity. Please wait a moment.",
-          variant: "destructive",
-        });
+        // 429 covers TWO very different problems. `insufficient_quota` means the
+        // account has no API credit — waiting never fixes it (the common case
+        // for a brand-new key). A true rate limit is transient — waiting does.
+        const outOfCredits =
+          errLower.includes("insufficient_quota") ||
+          errLower.includes("exceeded your current quota") ||
+          errLower.includes("check your plan and billing") ||
+          errLower.includes("billing");
+        toast(
+          outOfCredits
+            ? {
+                title: "Your AI key has no credit yet",
+                description: link
+                  ? link.note
+                  : "Add credit to your AI provider account, then try again.",
+                variant: "destructive",
+                action: openBilling ? (
+                  <ToastAction altText={`Open ${link!.name} billing`} onClick={openBilling}>
+                    Open {link!.name}
+                  </ToastAction>
+                ) : undefined,
+              }
+            : {
+                title: "One moment — too many requests",
+                description:
+                  "Your AI provider is briefly limiting requests. Wait a few seconds and send again.",
+                variant: "destructive",
+              }
+        );
         return;
       }
       if (resp.status === 402) {
         toast({
-          title: "Payment Required",
-          description: "Please add funds to continue.",
+          title: "Your AI key has no credit yet",
+          description: link
+            ? link.note
+            : "Add credit to your AI provider account, then try again.",
           variant: "destructive",
+          action: openBilling ? (
+            <ToastAction altText={`Open ${link!.name} billing`} onClick={openBilling}>
+              Open {link!.name}
+            </ToastAction>
+          ) : undefined,
         });
         return;
       }
-      if (resp.status === 401) {
+      if (resp.status === 401 || resp.status === 403) {
         toast({
           title: "Echelon can't reach your AI",
-          description: "Your API key is missing or invalid. Update it in Settings.",
+          description:
+            "Your API key looks missing or invalid. Open Settings and paste it again — make sure it's an API key from your provider's developer console, not an account password.",
           variant: "destructive",
+          action: openKeys ? (
+            <ToastAction altText={`Open ${link!.name} keys`} onClick={openKeys}>
+              Get a key
+            </ToastAction>
+          ) : undefined,
         });
         return;
       }
@@ -1201,8 +1296,8 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
         {/* Stage Indicator & Re-engage Protocol */}
         {!isReplayMode && (
           <>
-          <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-2">
+            <div className="flex items-center gap-2 min-w-0">
               {!systemLiteracyMode &&
                 getStageFlow().indexOf(currentStage) > 0 && (
                   <TooltipProvider>
@@ -1257,8 +1352,8 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
                       )}
                     >
                       <RefreshCw className={cn("h-4 w-4", isStreaming && "animate-spin")} />
-                      <span className="hidden xs:inline">Re-engage Protocol</span>
-                      <span className="xs:hidden">Re-engage</span>
+                      <span className="hidden sm:inline">Re-engage Protocol</span>
+                      <span className="sm:hidden">Re-engage</span>
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>

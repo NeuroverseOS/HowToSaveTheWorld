@@ -266,13 +266,16 @@ export function compileMissionLog(
     .filter(Boolean)
     .join(" | ");
   
-  // Extract themes from each reflection
-  const patterns = reflections.map(r => extractTheme(r.operatorPrimary));
-  
-  // Run inference functions
-  const traitSignals = inferTraitSignals(reflections);
-  const shadowSignals = inferShadowSignals(reflections);
-  const powerSignals = inferPowerSignals(reflections);
+  // Extract themes from each reflection, deduped — the same theme surfacing in
+  // two reflections of one mission is a single pattern, not two badges.
+  const patterns = Array.from(
+    new Set(reflections.map(r => extractTheme(r.operatorPrimary)))
+  );
+
+  // Run inference functions (deduped: one signal per mission, not one per hit)
+  const traitSignals = Array.from(new Set(inferTraitSignals(reflections)));
+  const shadowSignals = Array.from(new Set(inferShadowSignals(reflections)));
+  const powerSignals = Array.from(new Set(inferPowerSignals(reflections)));
   
   // Create entry
   const entry: MissionLogEntry = {

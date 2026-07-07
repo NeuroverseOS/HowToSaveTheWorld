@@ -18,12 +18,20 @@ export interface MissionLogEntry {
 const KEY = "neuroverse_mission_log_v2";
 
 /**
- * Save a mission log entry to local storage
+ * Save a mission log entry to local storage.
+ * One entry per mission: re-running a mission REPLACES its prior entry in place
+ * rather than stacking a duplicate. Without this, replaying a lesson showed the
+ * same mission twice in Mission Insights and double-counted it in every chart.
  */
 export function saveMissionLogEntry(entry: MissionLogEntry): void {
   try {
     const existing = getMissionLogs();
-    existing.push(entry);
+    const idx = existing.findIndex(e => e.lessonId === entry.lessonId);
+    if (idx >= 0) {
+      existing[idx] = entry;
+    } else {
+      existing.push(entry);
+    }
     localStorage.setItem(KEY, JSON.stringify(existing));
     console.log(`[MISSION LOG] Saved entry for lesson ${entry.lessonId}`);
   } catch (error) {
@@ -32,12 +40,24 @@ export function saveMissionLogEntry(entry: MissionLogEntry): void {
 }
 
 /**
- * Get all mission logs
+ * Get all mission logs.
+ * Heals any legacy duplicates (from before saveMissionLogEntry upserted): one
+ * entry per lessonId, keeping the most recent by timestamp. Order is preserved
+ * by first appearance so the archive doesn't reshuffle.
  */
 export function getMissionLogs(): MissionLogEntry[] {
   try {
     const stored = localStorage.getItem(KEY);
-    return stored ? JSON.parse(stored) : [];
+    const parsed: MissionLogEntry[] = stored ? JSON.parse(stored) : [];
+
+    const byLesson = new Map<number, MissionLogEntry>();
+    for (const entry of parsed) {
+      const prior = byLesson.get(entry.lessonId);
+      if (!prior || (entry.timestamp ?? 0) >= (prior.timestamp ?? 0)) {
+        byLesson.set(entry.lessonId, entry);
+      }
+    }
+    return Array.from(byLesson.values());
   } catch (error) {
     console.error("[MISSION LOG] Failed to load entries:", error);
     return [];

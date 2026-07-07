@@ -406,24 +406,31 @@ export default function Dashboard() {
   const pendingCeremonyPhase = getPendingCeremonyPhase(state);
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur-md">
+    <div className="min-h-screen bg-background overflow-x-hidden">
+      {/* Header — pt reserves the phone's status-bar / notch zone (safe-area)
+          so the title and badges don't render under the clock and battery. */}
+      <header
+        className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur-md"
+        style={{ paddingTop: "env(safe-area-inset-top)" }}
+      >
         <div className="container mx-auto px-3 sm:px-4 py-2 sm:py-3">
           <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2 sm:gap-3">
-              <img 
-                src="/logo-transparent.png" 
-                alt="NeuroVerse OS" 
-                className="h-8 w-auto opacity-90 cursor-pointer hover:opacity-100 transition-opacity"
+            <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+              <img
+                src="/logo-transparent.png"
+                alt="NeuroVerse OS"
+                className="h-8 w-auto shrink-0 opacity-90 cursor-pointer hover:opacity-100 transition-opacity"
                 onClick={() => navigate("/")}
               />
-              <div className="text-lg sm:text-xl md:text-2xl font-bold tracking-tight text-primary">
+              <div className="text-lg sm:text-xl md:text-2xl font-bold tracking-tight text-primary min-w-0 break-words">
                 {state.user.vanguard.full_identity || "NeuroVerse OS"}
               </div>
             </div>
-            <div className="flex items-center gap-2 sm:gap-4">
-              <div className="flex items-center gap-2">
+            {/* Wraps instead of overflowing: on a narrow phone the badges spill
+                onto a second line rather than pushing the page wider than the
+                screen (which let the whole page scroll sideways). */}
+            <div className="flex flex-wrap items-center justify-end gap-2 sm:gap-4 min-w-0">
+              <div className="flex flex-wrap items-center justify-end gap-1.5">
                 {isPWA && (
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -432,8 +439,8 @@ export default function Dashboard() {
                         className="font-mono text-[10px] sm:text-xs tracking-wider px-1.5 py-0 h-5 border-neuro-cyan/50 bg-neuro-cyan/10 text-neuro-cyan hover:bg-neuro-cyan/20 animate-pulse-once cursor-help"
                       >
                         <Anchor className="h-2.5 w-2.5 sm:h-3 sm:w-3 mr-0.5 sm:mr-1" />
-                        <span className="hidden xs:inline">OS ANCHORED</span>
-                        <span className="xs:hidden">ANCHORED</span>
+                        <span className="hidden sm:inline">OS ANCHORED</span>
+                        <span className="sm:hidden">ANCHORED</span>
                       </Badge>
                     </TooltipTrigger>
                     <TooltipContent>
@@ -473,13 +480,13 @@ export default function Dashboard() {
                         className="font-mono text-[10px] sm:text-xs tracking-wider px-1.5 py-0 h-5 border-neuro-orange/30 bg-neuro-orange/5 text-neuro-orange hover:bg-neuro-orange/10 cursor-help"
                       >
                         <Cpu className="h-2.5 w-2.5 sm:h-3 sm:w-3 mr-0.5 sm:mr-1" />
-                        <span className="hidden xs:inline">
+                        <span className="hidden sm:inline">
                           {aiProvider === "openai" ? "OpenAI" :
                            aiProvider === "anthropic" ? "Claude" :
                            aiProvider === "google" ? "Gemini" :
                            "Ollama"}
                         </span>
-                        <span className="xs:hidden">
+                        <span className="sm:hidden">
                           {aiProvider === "openai" ? "OAI" :
                            aiProvider === "anthropic" ? "CLD" :
                            aiProvider === "google" ? "GEM" :

@@ -6,11 +6,78 @@
 import { supabase } from "@/integrations/supabase/client";
 import { TRAIT_MAP, type TraitDefinition } from "./identity-system";
 import { saveRecentInsight, saveLongTermPattern } from "./identity-system";
+import { getMissionLogs } from "./mission-log";
 import {
   callOperatorAI,
   hasOperatorAIKey,
   parseJSONObjectFromAIResponse,
 } from "./operator-ai";
+
+// ============================================
+// LOCAL-FIRST TRAIT DERIVATION
+// ============================================
+//
+// The cloud trait tables (operator_traits, operator_evolution_log) only fill
+// when the operator is signed in. Sovereignty-first, most operators never sign
+// in — yet every completed mission already writes trait/shadow/power signals
+// into the local mission log. So we derive the operator's living trait record
+// from that local record and merge it with any cloud state. This is why the
+// Field Guide and graduation dossier now reflect progress for local operators
+// instead of showing "0 Traits Unlocked."
+
+interface LocalTraitSignal {
+  /** Distinct missions in which this trait was exercised. */
+  missions: Set<number>;
+  shadow: boolean;
+  power: boolean;
+}
+
+/** Aggregate every mission log's signals per trait tag, once. */
+function aggregateLocalTraitSignals(): Record<string, LocalTraitSignal> {
+  const agg: Record<string, LocalTraitSignal> = {};
+  const ensure = (tag: string): LocalTraitSignal =>
+    (agg[tag] ??= { missions: new Set<number>(), shadow: false, power: false });
+
+  for (const log of getMissionLogs()) {
+    for (const tag of log.traitSignals || []) ensure(tag).missions.add(log.lessonId);
+    for (const tag of log.shadowSignals || []) {
+      const a = ensure(tag);
+      a.shadow = true;
+      a.missions.add(log.lessonId);
+    }
+    for (const tag of log.powerSignals || []) {
+      const a = ensure(tag);
+      a.power = true;
+      a.missions.add(log.lessonId);
+    }
+  }
+  return agg;
+}
+
+/** Derive one trait's completion state from local mission signals. */
+function localTraitCompletion(traitTag: string) {
+  const traitDef = TRAIT_MAP[traitTag];
+  const signal = aggregateLocalTraitSignals()[traitTag];
+  const missions = signal?.missions.size || 0;
+  const totalSubskills = traitDef.subskills.length;
+
+  // Each distinct mission that exercises the trait unlocks one subskill, up to
+  // the trait's ceiling — training makes the lens sharper, mission by mission.
+  const subskillsUnlocked = Math.min(missions, totalSubskills);
+  // Shadow surfaces once the trait is well-practiced (mirrors the cloud engine's
+  // 3-subskill auto-reveal) or the moment a shadow signal is detected outright.
+  const shadowRevealed = !!signal && (signal.shadow || subskillsUnlocked >= totalSubskills);
+  // Superpower emerges only when the trait is fully practiced, its shadow owned,
+  // and a breakthrough (power) signal has fired.
+  const superpowerRevealed = !!signal && signal.power && shadowRevealed && subskillsUnlocked >= totalSubskills;
+
+  return {
+    unlocked: missions >= 1,
+    subskillsUnlocked,
+    shadowRevealed,
+    superpowerRevealed,
+  };
+}
 
 // ============================================
 // CORE UNLOCK TYPES
@@ -567,14 +634,76 @@ export async function getEvolutionTimeline(userId: string): Promise<EvolutionLog
 
     if (error) {
       console.error('[UNLOCK ENGINE] Failed to fetch evolution timeline:', error);
-      return [];
+      return deriveLocalEvolution();
     }
 
-    return data || [];
+    // Cloud is authoritative when present (signed-in operator). Otherwise fall
+    // back to the timeline derived from the local mission log so local-first
+    // operators still see their evolution history.
+    return data && data.length > 0 ? data : deriveLocalEvolution();
   } catch (error) {
     console.error('[UNLOCK ENGINE] Evolution timeline error:', error);
-    return [];
+    return deriveLocalEvolution();
   }
+}
+
+/**
+ * Build an evolution timeline from the local mission log — trait activations,
+ * reinforcements, shadow surfacings, and superpower emergences — in the same
+ * newest-first order the cloud query returns.
+ */
+function deriveLocalEvolution(): EvolutionLogEntry[] {
+  const logs = [...getMissionLogs()].sort((a, b) => a.lessonId - b.lessonId);
+  const seenTrait = new Set<string>();
+  const seenShadow = new Set<string>();
+  const seenPower = new Set<string>();
+  const entries: EvolutionLogEntry[] = [];
+
+  const push = (
+    log: (typeof logs)[number],
+    tag: string,
+    insight_type: string,
+    insight_text: string,
+  ) => {
+    // The Field Guide timeline keys on `id` and renders `created_at`; these live
+    // outside the cloud EvolutionLogEntry shape, so attach them via a widened cast.
+    entries.push({
+      id: `local-${log.lessonId}-${insight_type}-${tag}`,
+      user_id: 'local',
+      lesson_id: log.lessonId,
+      trait_tag: tag,
+      insight_type,
+      insight_text,
+      created_at: new Date(log.timestamp).toISOString(),
+    } as EvolutionLogEntry);
+  };
+
+  for (const log of logs) {
+    for (const tag of Array.from(new Set(log.traitSignals || []))) {
+      const def = TRAIT_MAP[tag];
+      if (!def) continue;
+      if (!seenTrait.has(tag)) {
+        seenTrait.add(tag);
+        push(log, tag, 'trait_unlock', `Trait activated: ${def.name}`);
+      } else {
+        push(log, tag, 'subskill_unlock', `${def.name}: pattern reinforced`);
+      }
+    }
+    for (const tag of Array.from(new Set(log.shadowSignals || []))) {
+      const def = TRAIT_MAP[tag];
+      if (!def || seenShadow.has(tag)) continue;
+      seenShadow.add(tag);
+      push(log, tag, 'shadow_reveal', `Shadow surfaced: ${def.shadow}`);
+    }
+    for (const tag of Array.from(new Set(log.powerSignals || []))) {
+      const def = TRAIT_MAP[tag];
+      if (!def || seenPower.has(tag)) continue;
+      seenPower.add(tag);
+      push(log, tag, 'superpower_reveal', `Superpower emerging: ${def.superpower}`);
+    }
+  }
+
+  return entries.reverse();
 }
 
 // ============================================
@@ -605,10 +734,18 @@ export async function getTraitCompletion(
     .eq('trait_tag', traitTag)
     .single();
 
-  const subskillsUnlocked = (trait?.subskills_unlocked as string[])?.length || 0;
   const totalSubskills = traitDef.subskills.length;
-  const shadowRevealed = trait?.shadow_revealed || false;
-  const superpowerRevealed = trait?.superpower_revealed || false;
+
+  // Merge cloud state (signed-in) with the local-first derivation so the record
+  // is honest whether or not the operator ever created an account. Take the
+  // stronger of the two for every dimension — cloud progress is never lost, and
+  // local progress finally shows up.
+  const local = localTraitCompletion(traitTag);
+  const cloudSubskills = (trait?.subskills_unlocked as string[])?.length || 0;
+  const subskillsUnlocked = Math.max(cloudSubskills, local.subskillsUnlocked);
+  const shadowRevealed = (trait?.shadow_revealed || false) || local.shadowRevealed;
+  const superpowerRevealed = (trait?.superpower_revealed || false) || local.superpowerRevealed;
+  const unlocked = (trait?.unlocked || false) || local.unlocked;
 
   // Calculate completion: subskills (60%) + shadow (20%) + superpower (20%)
   const subskillPercent = (subskillsUnlocked / totalSubskills) * 60;
@@ -618,7 +755,7 @@ export async function getTraitCompletion(
 
   return {
     trait: traitDef,
-    unlocked: trait?.unlocked || false,
+    unlocked,
     subskillsUnlocked,
     totalSubskills,
     shadowRevealed,

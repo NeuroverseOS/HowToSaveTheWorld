@@ -1,4 +1,8 @@
+import { useState } from "react";
+import { ChevronDown } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { cn } from "@/lib/utils";
 import { getSlideBand } from "@/lib/campaign-engine";
 import type { StateSchema } from "@/lib/state-engine";
 
@@ -32,18 +36,54 @@ export function WorldStatePanel({ state, totalLessons = 96 }: WorldStatePanelPro
   const W = 640;
   const H = 120;
 
-  return (
-    <Card className="p-4 sm:p-6 bg-card/50 backdrop-blur-sm border-neuro-border space-y-4">
-      <div className="flex items-baseline justify-between gap-2 flex-wrap">
-        <span className="font-mono text-[11px] sm:text-xs uppercase tracking-[0.15em] text-muted-foreground">
-          Campaign · The Open Robotics Network
-        </span>
-        <span className="font-mono text-[10px] text-muted-foreground">
-          Objective: build it before the window closes
-        </span>
-      </div>
+  // Collapsed by default so the mission conversation sits near the top on
+  // mobile instead of below a tall panel. The compact bar keeps the campaign
+  // stakes present — The Slide, Signal, nodes online — one tap from the map.
+  const [open, setOpen] = useState(false);
 
-      {/* The Living Map — nodes light as missions complete */}
+  return (
+    <Card className="p-4 sm:p-6 bg-card/50 backdrop-blur-sm border-neuro-border">
+      <Collapsible open={open} onOpenChange={setOpen}>
+        {/* Always-visible compact status — the world at a glance */}
+        <CollapsibleTrigger className="w-full group">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-x-3 gap-y-1 flex-wrap min-w-0 text-left">
+              <span className="font-mono text-[10px] uppercase tracking-[0.15em] text-muted-foreground">
+                The Slide
+              </span>
+              <span
+                className="font-mono text-xs tabular-nums font-medium"
+                style={{ color: BAND_COLORS[band.index] }}
+              >
+                {slide} · {band.name}
+              </span>
+              <span className="font-mono text-xs tabular-nums text-neuro-cyan">
+                Signal {signal}
+              </span>
+              <span className="font-mono text-[10px] text-muted-foreground tabular-nums">
+                {completed.size}/{totalLessons} nodes online
+              </span>
+            </div>
+            <ChevronDown
+              className={cn(
+                "h-4 w-4 shrink-0 text-muted-foreground transition-transform",
+                open && "rotate-180"
+              )}
+            />
+          </div>
+        </CollapsibleTrigger>
+
+        <CollapsibleContent className="space-y-4 pt-4">
+          <div className="flex items-baseline justify-between gap-2 flex-wrap">
+            <span className="font-mono text-[11px] sm:text-xs uppercase tracking-[0.15em] text-muted-foreground">
+              Campaign · The Open Robotics Network
+            </span>
+            <span className="font-mono text-[10px] text-muted-foreground">
+              Objective: build it before the window closes
+            </span>
+          </div>
+
+          {/* The Living Map — nodes light as missions complete */}
       <div className="rounded-md border border-neuro-border/50 bg-background/40 overflow-hidden">
         <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-auto block" role="img" aria-label={`Network map: ${completed.size} of ${totalLessons} nodes online`}>
           {Array.from({ length: totalLessons }, (_, i) => {
@@ -102,6 +142,8 @@ export function WorldStatePanel({ state, totalLessons = 96 }: WorldStatePanelPro
           />
         </div>
       </div>
+        </CollapsibleContent>
+      </Collapsible>
     </Card>
   );
 }
