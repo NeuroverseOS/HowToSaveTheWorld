@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, ChevronDown, FastForward, Sparkles } from "lucide-react";
 import { calculateArchetypes } from "@/lib/archetype-scoring";
+import { ARCHETYPE_INTERPRETATIONS } from "@/lib/archetype-interpretations";
+import { hasOperatorAIKey } from "@/lib/operator-ai";
 
 interface ArchetypeAssessmentProps {
   callsign?: string;
@@ -155,6 +157,24 @@ export function ArchetypeAssessment({ callsign, onComplete }: ArchetypeAssessmen
   const [choices, setChoices] = useState<number[]>([]);
   const [shuffledChoices, setShuffledChoices] = useState<ShuffledChoice[]>([]);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [showRoster, setShowRoster] = useState(false);
+
+  // Explore mode (no AI connected): a visitor touring the OS shouldn't have
+  // to answer twelve scenarios to see the inside. They can preview what the
+  // assessment reveals — the nine archetypes — and fast-forward with a
+  // provisional signature. The real assessment reads real decisions; this
+  // is honest about being a simulation of one.
+  const exploreMode = !hasOperatorAIKey();
+
+  const handleSkipToEnd = () => {
+    // Keep any answers already given; fill the rest with a simulated pattern
+    // and run it through the same canonical scoring engine.
+    const filled = [...choices];
+    while (filled.length < scenarios.length) {
+      filled.push(Math.floor(Math.random() * 4));
+    }
+    onComplete(calculateArchetypes(filled));
+  };
 
   // Shuffle choices when scenario changes
   useEffect(() => {
@@ -237,6 +257,64 @@ export function ArchetypeAssessment({ callsign, onComplete }: ArchetypeAssessmen
             </div>
             <Progress value={progress} className="h-2" />
           </div>
+
+          {/* Explore mode: preview the reveals & fast-forward */}
+          {exploreMode && (
+            <div className="rounded-lg border border-neuro-purple/30 bg-neuro-purple/5 overflow-hidden">
+              <button
+                onClick={() => setShowRoster((v) => !v)}
+                className="w-full flex items-center justify-between gap-2 px-4 py-3 text-left"
+              >
+                <span className="flex items-center gap-2 text-sm font-medium text-neuro-purple">
+                  <Sparkles className="h-4 w-4 shrink-0" />
+                  Just looking around? Preview the nine archetypes &amp; skip ahead
+                </span>
+                <ChevronDown
+                  className={`h-4 w-4 shrink-0 text-neuro-purple transition-transform ${showRoster ? "rotate-180" : ""}`}
+                />
+              </button>
+
+              {showRoster && (
+                <div className="px-4 pb-4 space-y-3">
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    These twelve scenarios map your cognitive signature to one of nine
+                    archetypes — a primary, a shadow, and a rising. This is what the
+                    assessment can reveal about how you think:
+                  </p>
+                  <div className="grid gap-2 sm:grid-cols-3">
+                    {Object.entries(ARCHETYPE_INTERPRETATIONS).map(([key, a]) => (
+                      <div
+                        key={key}
+                        className="rounded-md border border-border/50 bg-card/40 p-2.5"
+                      >
+                        <p className="text-xs font-semibold text-foreground">{a.name}</p>
+                        <p className="text-[10px] font-mono uppercase tracking-wider text-neuro-purple mb-1">
+                          {a.subtitle}
+                        </p>
+                        <p className="text-[11px] text-muted-foreground leading-snug">{a.gift}</p>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="space-y-2 pt-1">
+                    <Button
+                      onClick={handleSkipToEnd}
+                      variant="outline"
+                      size="sm"
+                      className="w-full border-neuro-purple/40 text-neuro-purple hover:bg-neuro-purple/10"
+                    >
+                      <FastForward className="mr-2 h-4 w-4" />
+                      Skip to the end — assign a provisional signature
+                    </Button>
+                    <p className="text-[11px] text-muted-foreground leading-snug">
+                      A simulated pattern completes the tour so you can see everything inside.
+                      The real assessment reads your actual decisions — answer the scenarios
+                      when you're ready to make it yours.
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Scenario */}
           <div className={`space-y-4 sm:space-y-6 transition-opacity duration-300 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
