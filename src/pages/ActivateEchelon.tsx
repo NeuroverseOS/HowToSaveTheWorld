@@ -7,7 +7,7 @@ import { SecretInput } from "@/components/ui/secret-input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Shield, ArrowRight, Loader2, Cpu, Eye, EyeOff, Info, CheckCircle2, AlertCircle, XCircle } from "lucide-react";
+import { Shield, ArrowRight, Loader2, Cpu, Eye, EyeOff, Info, CheckCircle2, AlertCircle, XCircle, Sparkles } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { isAppAnchored } from "@/lib/pwa-detection";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -26,7 +26,9 @@ type ValidationStep = {
 
 export default function ActivateEchelon() {
   const navigate = useNavigate();
-  const [provider, setProvider] = useState<AIProvider>("openai");
+  // Default to Gemini: it's the only provider with a genuinely free tier and
+  // no card required, so a first-time operator lands on the lowest-friction path.
+  const [provider, setProvider] = useState<AIProvider>("google");
   const [apiKey, setApiKey] = useState("");
   const [showApiKey, setShowApiKey] = useState(false);
   const [ollamaEndpoint, setOllamaEndpoint] = useState("http://localhost:11434");
@@ -360,8 +362,32 @@ export default function ActivateEchelon() {
             Activate Your Echelon
           </h1>
           <p className="text-muted-foreground">
-            Connect your AI or run locally. You choose the intelligence layer.
+            Bring your own AI — start free in about a minute, or connect any provider.
           </p>
+        </div>
+
+        {/* Free path — front and center. The single biggest thing that stops a
+            newcomer is not having a working key; Gemini removes that wall. */}
+        <div className="rounded-lg border border-emerald-500/40 bg-emerald-500/10 p-4 space-y-2">
+          <div className="flex items-center gap-2">
+            <Sparkles className="h-4 w-4 text-emerald-400 shrink-0" />
+            <span className="text-sm font-semibold text-emerald-300">
+              Start free — no credit card
+            </span>
+          </div>
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            New here? Get a <strong className="text-foreground">free Google Gemini key</strong> in
+            about a minute — no billing, no card. Heads up: a ChatGPT or Claude subscription is{" "}
+            <strong className="text-foreground">not</strong> an API key — those are billed separately.
+          </p>
+          <a
+            href="https://aistudio.google.com/app/apikey"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-emerald-300 hover:text-emerald-200"
+          >
+            Get your free Gemini key <ArrowRight className="h-3.5 w-3.5" />
+          </a>
         </div>
 
         {/* Info Alert */}
@@ -375,9 +401,14 @@ export default function ActivateEchelon() {
         {/* Provider Selection */}
         <Tabs value={provider} onValueChange={(v) => handleProviderChange(v as AIProvider)} className="w-full">
           <TabsList className="grid w-full grid-cols-4">
+            <TabsTrigger value="google" className="data-[state=active]:text-emerald-300">
+              Gemini
+              <span className="ml-1 hidden sm:inline text-[10px] font-semibold text-emerald-400">
+                FREE
+              </span>
+            </TabsTrigger>
             <TabsTrigger value="openai">OpenAI</TabsTrigger>
             <TabsTrigger value="anthropic">Anthropic</TabsTrigger>
-            <TabsTrigger value="google">Google</TabsTrigger>
             <TabsTrigger value="ollama">
               <Cpu className="h-4 w-4 mr-1" />
               Local
@@ -626,81 +657,57 @@ export default function ActivateEchelon() {
                   </div>
                 </AccordionTrigger>
                 <AccordionContent className="space-y-4 text-sm">
-                  <Alert>
-                    <AlertCircle className="h-4 w-4" />
-                    <AlertTitle>Prerequisites</AlertTitle>
+                  <Alert className="border-emerald-500/40 bg-emerald-500/10">
+                    <Sparkles className="h-4 w-4 text-emerald-400" />
+                    <AlertTitle className="text-emerald-300">Free — no credit card</AlertTitle>
                     <AlertDescription>
-                      You need a Google Cloud account with billing enabled and the Generative Language API enabled.
+                      Google AI Studio gives you a free Gemini API key with any Google account.
+                      No billing, no Cloud Console, no card. It's the fastest way in.
                     </AlertDescription>
                   </Alert>
-                  
+
                   <div className="space-y-3">
                     <div className="flex gap-2">
                       <CheckCircle2 className="h-5 w-5 text-neuro-cyan mt-0.5 flex-shrink-0" />
                       <div>
-                        <p className="font-medium">1. Go to Google AI Studio</p>
-                        <p className="text-muted-foreground">Visit aistudio.google.com/app/apikey</p>
+                        <p className="font-medium">1. Open Google AI Studio</p>
+                        <p className="text-muted-foreground">Go to aistudio.google.com/app/apikey and sign in with any Google account.</p>
                       </div>
                     </div>
-                    
+
                     <div className="flex gap-2">
                       <CheckCircle2 className="h-5 w-5 text-neuro-cyan mt-0.5 flex-shrink-0" />
                       <div>
-                        <p className="font-medium">2. Create or Select Project</p>
-                        <p className="text-muted-foreground">Click "Create API Key" and choose "Create API key in new project" or select an existing Google Cloud project</p>
+                        <p className="font-medium">2. Create your key</p>
+                        <p className="text-muted-foreground">Click "Create API key" → "Create API key in new project". That's it — the free tier is on by default.</p>
                       </div>
                     </div>
-                    
-                    <div className="flex gap-2">
-                      <AlertCircle className="h-5 w-5 text-destructive mt-0.5 flex-shrink-0" />
-                      <div>
-                        <p className="font-medium text-destructive">3. Enable Billing (CRITICAL)</p>
-                        <p className="text-muted-foreground">In Google Cloud Console (console.cloud.google.com), go to Billing and link a payment method to your project. Without this, you'll see "You are currently offline" error.</p>
-                      </div>
-                    </div>
-                    
-                    <div className="flex gap-2">
-                      <AlertCircle className="h-5 w-5 text-destructive mt-0.5 flex-shrink-0" />
-                      <div>
-                        <p className="font-medium text-destructive">4. Enable the Generative Language API (CRITICAL)</p>
-                        <p className="text-muted-foreground">In Google Cloud Console (console.cloud.google.com), search for "Generative Language API" and click "Enable". This is the most common issue!</p>
-                      </div>
-                    </div>
-                    
+
                     <div className="flex gap-2">
                       <CheckCircle2 className="h-5 w-5 text-neuro-cyan mt-0.5 flex-shrink-0" />
                       <div>
-                        <p className="font-medium">5. Configure API Restrictions (Optional)</p>
-                        <p className="text-muted-foreground">In API Keys section, you can restrict to "Generative Language API" only. For testing, you can leave restrictions as "None"</p>
+                        <p className="font-medium">3. Copy the key</p>
+                        <p className="text-muted-foreground">Copy it (it starts with "AIza").</p>
                       </div>
                     </div>
-                    
+
                     <div className="flex gap-2">
                       <CheckCircle2 className="h-5 w-5 text-neuro-cyan mt-0.5 flex-shrink-0" />
                       <div>
-                        <p className="font-medium">6. Copy the API Key</p>
-                        <p className="text-muted-foreground">Copy the key (starts with "AIza")</p>
-                      </div>
-                    </div>
-                    
-                    <div className="flex gap-2">
-                      <CheckCircle2 className="h-5 w-5 text-neuro-cyan mt-0.5 flex-shrink-0" />
-                      <div>
-                        <p className="font-medium">7. Paste Below</p>
-                        <p className="text-muted-foreground">Enter the key in the field below</p>
+                        <p className="font-medium">4. Paste it below</p>
+                        <p className="text-muted-foreground">Enter the key in the field below and activate.</p>
                       </div>
                     </div>
                   </div>
-                  
+
                   <Alert variant="destructive">
                     <AlertCircle className="h-4 w-4" />
-                    <AlertTitle>Common Errors</AlertTitle>
+                    <AlertTitle>If something goes wrong</AlertTitle>
                     <AlertDescription>
                       <ul className="list-disc list-inside space-y-1 mt-2">
-                        <li>"You are currently offline" - Enable billing in Google Cloud Console</li>
-                        <li>"API not enabled" - Enable the Generative Language API in Google Cloud Console</li>
-                        <li>"API key not valid" - Check that key isn't restricted by IP/referrer in API settings</li>
-                        <li>"This API project is not authorized" - Make sure Generative Language API is enabled</li>
+                        <li>"API key not valid" — copy the whole key, no extra spaces</li>
+                        <li>Rate limited / "one moment" — the free tier has a per-minute limit; wait a few seconds and continue</li>
+                        <li>Only add billing if you later want higher limits — it's never required to start</li>
                       </ul>
                     </AlertDescription>
                   </Alert>
