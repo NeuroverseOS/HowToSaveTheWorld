@@ -20,7 +20,8 @@ import { getLessonByNumber, getLessonById, forceSupabaseRefresh } from "@/lib/le
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/hooks/use-toast";
 import { ToastAction } from "@/components/ui/toast";
-import { LogOut, HelpCircle, Shield, List, Settings as SettingsIcon, Cpu, Smartphone, BookOpen, Menu, Anchor, FileText, Radio, Heart, ScrollText, FileCode, Scale, Database } from "lucide-react";
+import { LogOut, HelpCircle, Shield, List, Settings as SettingsIcon, Cpu, Smartphone, BookOpen, Menu, Anchor, FileText, Radio, Heart, ScrollText, FileCode, Scale, Database, RotateCw } from "lucide-react";
+import { backupAndUpdate } from "@/lib/app-update";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -515,6 +516,15 @@ export default function Dashboard() {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56 bg-popover/95 backdrop-blur-md border-border/70 shadow-deep z-50">
+                  {/* Get the newest build — backs up first, then force-refreshes
+                      past any stale cached version (iOS PWAs especially). */}
+                  <DropdownMenuItem
+                    onClick={() => backupAndUpdate()}
+                    className="text-neuro-cyan focus:text-neuro-cyan"
+                  >
+                    <RotateCw className="mr-2 h-4 w-4" /> Check for Updates
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator className="my-1.5 bg-border/70" />
                   {/* Core Section */}
                   <DropdownMenuItem onClick={() => navigate("/missions")}>
                     <List className="mr-2 h-4 w-4" /> Missions

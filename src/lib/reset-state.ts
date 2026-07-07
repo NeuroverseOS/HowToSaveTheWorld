@@ -14,6 +14,7 @@
 // ============================================================================
 
 import { loadState, saveState, initializeState } from "./state-engine";
+import { downloadFullBackup } from "./full-backup";
 
 // Per-mission artifacts: conversation threads, reflections, mission logs.
 // These rehydrate lessons — they must die whenever progress resets.
@@ -45,6 +46,9 @@ const EXPERIENCE_KEYS = [
  * progress, world state, ranks, traits, threads, and reflections start fresh.
  */
 export function resetMissionProgress(): void {
+  // A wipe always hands the operator a backup first — nothing is ever cleared
+  // without a restorable file in their hands (sovereignty non-negotiable).
+  try { downloadFullBackup(); } catch { /* no state — nothing to back up */ }
   const state = loadState();
   if (state) {
     const fresh = initializeState();
@@ -62,6 +66,9 @@ export function resetMissionProgress(): void {
  *   resetEverything(); window.location.href = "/";
  */
 export function resetEverything(): void {
+  // Back up before the full wipe — the operator leaves with everything, even
+  // when they're erasing everything.
+  try { downloadFullBackup(); } catch { /* no state — nothing to back up */ }
   EXPERIENCE_KEYS.forEach((key) => localStorage.removeItem(key));
 }
 
