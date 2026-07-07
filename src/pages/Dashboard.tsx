@@ -56,21 +56,15 @@ export default function Dashboard() {
   const [isPWA, setIsPWA] = useState(false);
 
   useEffect(() => {
-    // PHASE 0: Check if running as PWA or bypass is enabled
+    // PHASE 0: Web-first — no install gate. isAppAnchored() only decides
+    // whether to show the ANCHORED badge; browser operators walk right in.
     const bypassPWA = localStorage.getItem('neuroverse_bypass_pwa') === 'true';
-    const pwaInstalled = isAppAnchored();
-    setIsPWA(pwaInstalled);
+    setIsPWA(isAppAnchored());
 
     // Dev bypass: Force fresh load from Supabase
     if (bypassPWA) {
       console.log('[DASHBOARD] Dev bypass detected, forcing Supabase refresh');
       forceSupabaseRefresh().catch(err => console.error('[DASHBOARD] Failed to refresh lessons:', err));
-    }
-
-    if (!pwaInstalled) {
-      // PWA not installed - redirect to landing page
-      navigate("/");
-      return;
     }
 
     // PHASE 1: Check Vanguard activation
@@ -87,17 +81,21 @@ export default function Dashboard() {
       return;
     }
 
-    // PHASE 2: Check AI connection (must come before assessment)
+    // PHASE 2: Check AI connection (must come before assessment).
+    // "Skip for now" on the key screen sets neuroverse_echelon_skipped —
+    // those operators may look around the whole OS without an AI; missions
+    // nudge them to connect when Echelon actually needs to speak.
     const storedProvider = localStorage.getItem("neuroverse_ai_provider") || "openai";
     const apiKey = localStorage.getItem("neuroverse_api_key");
     const ollamaEndpoint = localStorage.getItem("neuroverse_ollama_endpoint");
     const hasAIConnection = (storedProvider === "ollama" && ollamaEndpoint) || (storedProvider !== "ollama" && apiKey);
+    const echelonSkipped = localStorage.getItem("neuroverse_echelon_skipped") === "true";
 
-    if (!hasAIConnection) {
+    if (!hasAIConnection && !echelonSkipped) {
       navigate("/activate-echelon");
       return;
     }
-    setAiProvider(storedProvider);
+    setAiProvider(hasAIConnection ? storedProvider : "");
 
     // PHASE 2.5: Check language selection
     if (!currentState.user.language.selected_at) {

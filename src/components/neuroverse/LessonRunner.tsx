@@ -349,6 +349,10 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
   // not a stale closure over `messages`.
   const messagesRef = useRef<Message[]>([]);
   messagesRef.current = messages;
+
+  // One nudge per mission in simulation mode — the narration itself carries
+  // the invitation after that; repeating the toast every turn would nag.
+  const simulationNudgeShown = useRef(false);
   const latestEchelonMessage = (): string | null =>
     [...messagesRef.current].reverse().find((m) => m.role === "assistant")?.content ?? null;
 
@@ -617,7 +621,68 @@ export function LessonRunner({ lesson, userId, state, onLessonComplete, mode = "
     setIsStreaming(false);
   };
 
+  // SIMULATION MODE (no AI connected) — what Echelon says instead of a live
+  // read, so keyless explorers still feel the shape of training. Clearly
+  // marked as simulation; never pretends to have read their words.
+  const simulationEcho = (stage: MissionStage): string => {
+    const connectLine =
+      "Connect your AI — a free key takes about a minute — and this conversation wakes up.";
+    switch (stage) {
+      case MissionStage.DRILL1:
+      case MissionStage.DRILL2:
+        return `[SIMULATION] Signal logged, Operator — but my link is dark, so I cannot read you yet. Live, I would take what you just wrote and work it: name the strongest pattern in your thinking, press on the spot you avoided, and hand you one sharper question. ${connectLine} Until then, advance when ready — the mission structure is fully open to you.`;
+      case MissionStage.DEBRIEF:
+      case MissionStage.FINAL:
+        return `[SIMULATION] Received. With a live link, this is where I would weigh your answer against everything you wrote this mission and tell you what it reveals — the trait signals, the shadow flickers, what goes in your permanent record. ${connectLine}`;
+      case MissionStage.REFLECTION:
+        return `[SIMULATION] With a live link, I would write a reflection question built from your own words — not a generic prompt — and my read of this mission would be added to your Field Guide. ${connectLine}`;
+      default:
+        return `[SIMULATION] My link is dark, Operator — I can see you, but I cannot speak to what you wrote. Live, every reply here is generated for you alone: your words, your patterns, your record. ${connectLine}`;
+    }
+  };
+
   const streamEchelonResponse = async (userMessage: string, operatorRequest?: string) => {
+    // No AI connected → the mission still walks as a guided tour. Authored
+    // stage content (briefings, drills, debriefs) displays exactly as
+    // written, and operator messages get a simulation narration of what
+    // Echelon would do live — with a one-tap path to the free key.
+    if (!hasOperatorAIKey()) {
+      const isStageDelivery = userMessage.startsWith("[STAGE_CONTENT:");
+      const simulated =
+        isStageDelivery && operatorRequest && operatorRequest !== "REENGAGE_PROTOCOL"
+          ? operatorRequest
+          : simulationEcho(currentStage);
+
+      setMessages((prev) => [...prev, { role: "assistant", content: simulated }]);
+
+      const currentMessages = messagesRef.current.filter((m) => m.content !== "");
+      saveMessages(lesson.id, [
+        ...currentMessages,
+        ...(INTERNAL_TAG.test(userMessage) ? [] : [{ role: "user" as const, content: userMessage }]),
+        { role: "assistant" as const, content: simulated },
+      ]);
+
+      if (!isStageDelivery && !simulationNudgeShown.current) {
+        simulationNudgeShown.current = true;
+        toast({
+          title: "You're in simulation mode",
+          description:
+            "The full mission is walkable, and Echelon narrates what it would do live. A free Gemini key brings it to life.",
+          action: (
+            <ToastAction
+              altText="Connect your AI"
+              onClick={() => {
+                window.location.href = "/activate-echelon";
+              }}
+            >
+              Connect
+            </ToastAction>
+          ),
+        });
+      }
+      return;
+    }
+
     const CHAT_URL = getEdgeFunctionUrl("echelon-chat");
 
     // Detect System Literacy trigger

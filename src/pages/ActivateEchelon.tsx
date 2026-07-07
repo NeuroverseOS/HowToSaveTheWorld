@@ -275,10 +275,13 @@ export default function ActivateEchelon() {
         
         localStorage.setItem("neuroverse_ai_provider", provider);
         localStorage.setItem("neuroverse_api_key", apiKey.trim());
-        
+
         updateStep("save", "success", "Configuration saved securely");
         setValidationProgress(100);
       }
+
+      // A real connection supersedes any earlier "skip for now"
+      localStorage.removeItem("neuroverse_echelon_skipped");
 
       // Show success animation
       setIsSuccess(true);
@@ -940,6 +943,30 @@ export default function ActivateEchelon() {
             </>
           )}
         </Button>
+
+        {/* Look around first — no key required to explore the OS. Echelon
+            stays silent until connected; missions nudge at the moment of need. */}
+        <div className="text-center">
+          <button
+            onClick={() => {
+              localStorage.setItem("neuroverse_echelon_skipped", "true");
+              let state = loadState();
+              if (!state) {
+                state = initializeState();
+                saveState(state);
+              }
+              toast({
+                title: "Exploring without AI",
+                description:
+                  "You can look around everything. Connect an AI anytime — missions need Echelon to talk back.",
+              });
+              navigate("/dashboard");
+            }}
+            className="text-sm text-muted-foreground underline underline-offset-4 hover:text-neuro-cyan transition-colors"
+          >
+            Skip for now — look around without AI →
+          </button>
+        </div>
 
         {/* Help Text */}
         <div className="text-center text-xs text-muted-foreground">

@@ -23,12 +23,16 @@ export default function LanguageSelectionPage() {
       return;
     }
 
-    // Check AI connection
+    // Check AI connection — unless the operator chose to look around first
     const aiProvider = localStorage.getItem("neuroverse_ai_provider");
     const apiKey = localStorage.getItem("neuroverse_api_key");
     const ollamaEndpoint = localStorage.getItem("neuroverse_ollama_endpoint");
+    const echelonSkipped = localStorage.getItem("neuroverse_echelon_skipped") === "true";
 
-    if (!aiProvider || (aiProvider !== "ollama" && !apiKey) || (aiProvider === "ollama" && !ollamaEndpoint)) {
+    if (
+      !echelonSkipped &&
+      (!aiProvider || (aiProvider !== "ollama" && !apiKey) || (aiProvider === "ollama" && !ollamaEndpoint))
+    ) {
       navigate("/activate-echelon");
       return;
     }
