@@ -12,6 +12,7 @@ import { toast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import { loadState, saveState, initializeState } from "@/lib/state-engine";
+import { resetEverything } from "@/lib/reset-state";
 import { OnboardingProgress } from "@/components/neuroverse/OnboardingProgress";
 
 type AIProvider = "openai" | "anthropic" | "google" | "ollama";
@@ -280,15 +281,25 @@ export default function ActivateEchelon() {
         setValidationProgress(100);
       }
 
-      // A real connection supersedes any earlier "skip for now"
+      // Explorer converting to a real operator: the tour ran on a provisional
+      // signature and simulated missions — none of it was truly theirs. Wipe
+      // the experience so the real assessment writes their actual signature
+      // from scratch. resetEverything downloads a backup of the tour first
+      // and never touches device config, so the key just saved survives.
+      const touredWithoutAI = localStorage.getItem("neuroverse_echelon_skipped") === "true";
       localStorage.removeItem("neuroverse_echelon_skipped");
+      if (touredWithoutAI) {
+        resetEverything();
+      }
 
       // Show success animation
       setIsSuccess(true);
-      
+
       toast({
         title: "Connection Established",
-        description: "Echelon online. Language protocol initialization...",
+        description: touredWithoutAI
+          ? "Echelon online. Tour data cleared (a backup was downloaded) — your real training begins now."
+          : "Echelon online. Language protocol initialization...",
       });
 
       setTimeout(() => {

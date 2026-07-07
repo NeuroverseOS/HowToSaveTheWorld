@@ -38,6 +38,7 @@ const EXPERIENCE_KEYS = [
   "neuroverse_recruitment_source",
   "neuroverse_last_export",
   "neuroverse_backup_nudge_snooze",
+  "neuroverse_echelon_skipped",
 ];
 
 /**
