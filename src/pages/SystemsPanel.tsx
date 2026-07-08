@@ -434,7 +434,7 @@ export default function SystemsPanel() {
             <div className="flex items-center justify-between p-3 bg-muted/20 rounded-lg">
               <span className="text-sm text-muted-foreground">Source Code</span>
               <a
-                href={import.meta.env.VITE_GITHUB_REPO || "https://github.com/neuroverse/neuroverse-os"}
+                href={import.meta.env.VITE_GITHUB_REPO || "https://github.com/NeuroverseOS/HowToSaveTheWorld"}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 text-sm text-neuro-cyan hover:text-neuro-cyan/80 transition-colors"
@@ -449,7 +449,7 @@ export default function SystemsPanel() {
               <span className="text-sm text-muted-foreground">Bug Report</span>
               <a
                 href={(() => {
-                  const repoUrl = import.meta.env.VITE_GITHUB_REPO || "https://github.com/neuroverse/neuroverse-os";
+                  const repoUrl = import.meta.env.VITE_GITHUB_REPO || "https://github.com/NeuroverseOS/HowToSaveTheWorld";
                   const version = import.meta.env.VITE_APP_VERSION || "1.0.0";
                   const commit = import.meta.env.VITE_GIT_COMMIT?.substring(0, 8) || "dev";
                   const userAgent = navigator.userAgent;
@@ -494,7 +494,7 @@ Add any other context about the problem here.`
               <span className="text-sm text-muted-foreground">Feature Request</span>
               <a
                 href={(() => {
-                  const repoUrl = import.meta.env.VITE_GITHUB_REPO || "https://github.com/neuroverse/neuroverse-os";
+                  const repoUrl = import.meta.env.VITE_GITHUB_REPO || "https://github.com/NeuroverseOS/HowToSaveTheWorld";
                   const version = import.meta.env.VITE_APP_VERSION || "1.0.0";
                   
                   const title = encodeURIComponent("[Feature Request] ");

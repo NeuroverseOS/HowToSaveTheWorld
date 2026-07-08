@@ -97,8 +97,8 @@ The following **CANNOT** be changed without fundamentally breaking the project:
 
 ### 1. Fork & Clone
 ```bash
-git clone https://github.com/RegardsKiki2/neuroverseos.git
-cd neuroverseos
+git clone https://github.com/NeuroverseOS/HowToSaveTheWorld.git
+cd HowToSaveTheWorld
 npm install
 npm run dev
 ```
@@ -187,7 +187,7 @@ By contributing to How to Save the World, you agree that:
 
 Open a GitHub Discussion or review existing issues before starting work on major changes.
 
-**GitHub Repository:** https://github.com/RegardsKiki2/neuroverseos
+**GitHub Repository:** https://github.com/NeuroverseOS/HowToSaveTheWorld
 
 ---
 

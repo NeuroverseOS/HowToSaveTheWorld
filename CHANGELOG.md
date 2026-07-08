@@ -100,7 +100,7 @@ NeuroVerse OS v1.0.0 marks the first public release of the sovereign, local-firs
 
 #### Open Source Compliance
 - **Dual Licensing** — MIT (code) + CC BY-NC-SA 4.0 (content)
-- **GitHub Integration** — Public repository at https://github.com/RegardsKiki2/neuroverseos
+- **GitHub Integration** — Public repository at https://github.com/NeuroverseOS/HowToSaveTheWorld
 - **Contributing Guidelines** — CONTRIBUTING.md with sovereignty principles
 - **Security Documentation** — SECURITY.md with zero-trust architecture
 - **Content License** — CONTENT_LICENSE.md protecting curriculum from commercialization

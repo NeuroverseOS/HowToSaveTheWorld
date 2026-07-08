@@ -57,7 +57,7 @@ export default function VerifyBuild() {
 
         <footer className="mt-12 pt-8 border-t border-border/50 text-center">
           <a
-            href={import.meta.env.VITE_GITHUB_REPO || "https://github.com/neuroverse/neuroverse-os"}
+            href={import.meta.env.VITE_GITHUB_REPO || "https://github.com/NeuroverseOS/HowToSaveTheWorld"}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 text-sm text-neuro-cyan hover:text-neuro-cyan/80 transition-colors"
