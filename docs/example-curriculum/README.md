@@ -11,6 +11,22 @@ video descriptions, fog levels, the lot.
 - `how-to-save-the-world-lessons.csv` — the same data as CSV, easier for AI
   tools to read and for humans to diff
 
+### Read it on screen (no download)
+
+The spreadsheet only downloads, and its 43 columns don't render as a
+readable table. So the curriculum is also rendered as Markdown you can read
+right here in the browser — every mission, exactly what the AI is told,
+split into the course's three phases:
+
+- **[Design phase](./how-to-save-the-world-lessons-design.md)** — missions 1–30
+- **[Build phase](./how-to-save-the-world-lessons-build.md)** — missions 31–66
+- **[Lead phase](./how-to-save-the-world-lessons-lead.md)** — missions 67–96
+
+These are generated from the spreadsheet by
+[`scripts/curriculum-to-markdown.py`](../../scripts/curriculum-to-markdown.py)
+(`python3 scripts/curriculum-to-markdown.py` regenerates them). The
+spreadsheet stays the source of truth.
+
 ## How to use it (human or AI)
 
 If you're building your own course on this engine, don't study the schema —

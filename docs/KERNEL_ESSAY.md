@@ -290,12 +290,15 @@ enforced before the model runs. The content is the curriculum, and it is
 not buried in the model's weights or scattered through the source. It is a
 spreadsheet. Every one of the ninety-six missions — its briefing, its
 drills, its debrief, its opening and closing lines, its tone, its fog
-level, its story beat — is a single row you can open in Excel, read left
-to right, and check against what the tutor actually says. The complete
-worked course lives at
-[`docs/example-curriculum/how-to-save-the-world-lessons.xlsx`](./example-curriculum/how-to-save-the-world-lessons.xlsx)
-(and as [CSV](./example-curriculum/how-to-save-the-world-lessons.csv) for
-easier diffing), with a [guide to reading a row](./example-curriculum/README.md).
+level, its story beat — is a single row you can read and check against
+what the tutor actually says. The complete worked course is readable on
+screen, no download — every mission, laid out by phase:
+[Design](./example-curriculum/how-to-save-the-world-lessons-design.md) ·
+[Build](./example-curriculum/how-to-save-the-world-lessons-build.md) ·
+[Lead](./example-curriculum/how-to-save-the-world-lessons-lead.md) — with
+the source [spreadsheet](./example-curriculum/how-to-save-the-world-lessons.xlsx)
+([CSV](./example-curriculum/how-to-save-the-world-lessons.csv)) and a
+[guide to reading a row](./example-curriculum/README.md) beside it.
 
 This is Box 4 made visible. When we claim the tutor delivers the
 curriculum as authored rather than a paraphrase of it, the claim is
@@ -415,8 +418,15 @@ Take it. Teach with it. Make it better.
 
 ## Appendix A — For learning and people leaders
 
-*A tighter version for a LinkedIn post or a boardroom. Drop a link to the
-public repository under the final line.*
+*A tighter version for a LinkedIn post or a boardroom. Leads with the
+release; drop a link to the public repository under the final line.*
+
+**We just open-sourced the way we govern an AI teacher — as a Claude
+skill anyone can use.** Point Claude at it and it will help you turn what
+you know — your curriculum, your craft, your IP — into an AI-taught course
+that actually holds teaching standards, not a chatbot with a syllabus
+taped on. It's free, it's open, and it's built on one idea worth
+explaining if you lead learning.
 
 **AI performs best when the person using it thinks critically. That
 conversation usually stops at the learner. It shouldn't — the same demand
@@ -475,7 +485,8 @@ The difference is that the design now has to be architecture — because
 there's no coaching the system after the fact.**
 
 If you want to see what "designed, not hoped for" looks like in code,
-ours is open — go read the eight boxes yourself.
+ours is open — read the eight boxes yourself, or point Claude at the skill
+and build your own course on top of them.
 
 ---
 
