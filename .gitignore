@@ -12,6 +12,11 @@ dist
 dist-ssr
 *.local
 
+# This project uses npm (package-lock.json). Don't commit other lockfiles.
+bun.lockb
+yarn.lock
+pnpm-lock.yaml
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

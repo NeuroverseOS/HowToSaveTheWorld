@@ -154,6 +154,7 @@ how-to-save-the-world/
 │   └── migrations/
 │
 ├── docs/
+│   ├── README.md                   # Documentation index — start here
 │   ├── ARCHITECTURE.md             # How to Save the World vs. NeuroVerse OS
 │   ├── ARCHITECTURE_SEPARATION.md  # Product separation strategy
 │   ├── CONFIGURATION.md            # Environment variables
@@ -170,11 +171,13 @@ how-to-save-the-world/
 │       ├── ARCHITECTURE.md
 │       └── ...
 │
-├── scripts/
-│   ├── check-lesson-numbers.ts
+├── scripts/                        # Developer tooling (see scripts/README.md)
+│   ├── README.md
+│   ├── seed-database.ts
+│   ├── kernel-probe.ts
+│   ├── probe-echelon.mjs
 │   ├── export-lessons-to-json.ts
-│   ├── extract-all-lessons.ts
-│   └── verify-lessons-final.ts
+│   └── curriculum-to-markdown.py
 │
 ├── .github/
 │   └── ISSUE_TEMPLATE/
