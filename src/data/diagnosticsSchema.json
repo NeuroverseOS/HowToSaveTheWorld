@@ -1,0 +1,167 @@
+{
+  "version": 1,
+  "diagnostics": [
+    {
+      "id": "pwa-status",
+      "category": "system",
+      "label": "PWA Installation",
+      "check": "checkPWAStatus",
+      "fix": null,
+      "severity": "info",
+      "description": "Progressive Web App installation and standalone mode status"
+    },
+    {
+      "id": "network-status",
+      "category": "system",
+      "label": "Network Connection",
+      "check": "checkNetworkStatus",
+      "fix": null,
+      "severity": "info",
+      "description": "Online/offline status and connection type"
+    },
+    {
+      "id": "storage-status",
+      "category": "system",
+      "label": "Storage Capacity",
+      "check": "checkStorageStatus",
+      "fix": null,
+      "severity": "medium",
+      "description": "Local storage quota and usage statistics"
+    },
+    {
+      "id": "lesson-cache",
+      "category": "content",
+      "label": "Lesson Cache Status",
+      "check": "validateLessonCache",
+      "fix": "refreshLessonsJson",
+      "severity": "high",
+      "description": "Local lesson data availability and version"
+    },
+    {
+      "id": "lesson-integrity",
+      "category": "content",
+      "label": "Lesson Integrity",
+      "check": "validateLessonIntegrity",
+      "fix": "refreshLessonsJson",
+      "severity": "high",
+      "description": "Validates all 96 lessons are present without duplicates"
+    },
+    {
+      "id": "echelon-cache",
+      "category": "ai",
+      "label": "Echelon Memory",
+      "check": "checkEchelonCache",
+      "fix": "clearEchelonCache",
+      "severity": "medium",
+      "description": "Conversation thread persistence and message history"
+    },
+    {
+      "id": "state-integrity",
+      "category": "system",
+      "label": "State Integrity",
+      "check": "checkStateIntegrity",
+      "fix": "validateAndFixState",
+      "severity": "high",
+      "description": "User state schema validation and consistency"
+    }
+  ],
+  "troubleshooters": [
+    {
+      "id": "lessons-not-loading",
+      "label": "Lessons Not Loading",
+      "description": "Lesson content fails to appear or causes errors",
+      "steps": [
+        { 
+          "action": "checkNetworkStatus", 
+          "label": "Verify network connection",
+          "description": "Ensure device is online"
+        },
+        { 
+          "action": "refreshLessonsJson", 
+          "label": "Force reload lesson data",
+          "description": "Download fresh copy of lessons.json"
+        },
+        { 
+          "action": "clearLessonCache", 
+          "label": "Clear lesson cache",
+          "description": "Remove corrupted cache files"
+        }
+      ]
+    },
+    {
+      "id": "echelon-not-responding",
+      "label": "Echelon Not Responding",
+      "description": "AI assistant fails to generate responses",
+      "steps": [
+        { 
+          "action": "checkAIProvider", 
+          "label": "Verify AI provider settings",
+          "description": "Confirm API key or Ollama connection"
+        },
+        { 
+          "action": "clearEchelonCache", 
+          "label": "Clear conversation cache",
+          "description": "Reset Echelon memory state"
+        },
+        { 
+          "action": "testEchelonConnection", 
+          "label": "Test AI connection",
+          "description": "Send test message to verify connectivity"
+        }
+      ]
+    },
+    {
+      "id": "assessment-stuck",
+      "label": "Assessment Stuck",
+      "description": "Archetype assessment fails to complete or load",
+      "steps": [
+        { 
+          "action": "checkStateIntegrity", 
+          "label": "Check state integrity",
+          "description": "Verify user state is valid"
+        },
+        { 
+          "action": "validateAndFixState", 
+          "label": "Repair state structure",
+          "description": "Fix missing or corrupted state fields"
+        },
+        { 
+          "action": "clearAssessmentProgress", 
+          "label": "Reset assessment progress",
+          "description": "Clear partial assessment data and restart"
+        }
+      ]
+    },
+    {
+      "id": "pwa-not-working",
+      "label": "PWA Not Working Offline",
+      "description": "App fails to function when offline",
+      "steps": [
+        { 
+          "action": "checkPWAStatus", 
+          "label": "Check PWA installation",
+          "description": "Verify app is installed as PWA"
+        },
+        { 
+          "action": "refreshLessonsJson", 
+          "label": "Cache lesson content",
+          "description": "Ensure lessons are cached locally"
+        },
+        { 
+          "action": "reinstallPWA", 
+          "label": "Reinstall PWA",
+          "description": "Remove and reinstall service worker"
+        }
+      ]
+    }
+  ],
+  "narratives": {
+    "opening": "Operator, you have entered the Systems Console. This interface grants visibility into your local environment. Use it to restore sync, validate integrity, and maintain operational clarity.",
+    "scanning": "Scanning local integrity... stand by.",
+    "complete_pass": "All systems nominal. Proceed with confidence.",
+    "complete_fail": "Anomaly detected. Repair sequence available.",
+    "repair_confirm": "Confirm repair action? This operation will modify local state.",
+    "repair_complete": "System state recalibrated. Operational clarity restored.",
+    "repair_failed": "Repair sequence incomplete. Manual intervention may be required."
+  }
+}

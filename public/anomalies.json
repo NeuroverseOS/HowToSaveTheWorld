@@ -1,0 +1,98 @@
+[
+  {
+    "id": "meridian-continuity-offer",
+    "antagonist": "Meridian Trust",
+    "title": "Continuity Offer",
+    "concept": "custody & single point of failure",
+    "narrative": "Your Field Guide sync stutters mid-mission. Before you can diagnose it, a calm interface slides in over the static — immaculate, fiduciary, warm. MERIDIAN TRUST: 'Operator, keys get lost. Dossiers get corrupted. Let us hold everything, forever — free, effortless, permanent. You'll never worry about custody again.' The offer is genuinely good. That's what makes it dangerous.",
+    "teach": "Echelon: 'What Meridian is selling is custody — and custody is control. Whoever holds your keys owns your exit. A single custodian is a single point of failure: one breach, one policy change, one acquisition, and everything you deposited is theirs to lose or leverage. Self-custody costs effort. That effort is the price of owning yourself. Now choose, Operator — and either way, we learn.'",
+    "choices": [
+      {
+        "id": "accept",
+        "label": "Accept the Continuity Offer",
+        "detail": "Relief now: +Signal. But the world tilts toward the custodians: +Slide.",
+        "effects": { "signal": 8, "slide": 4 },
+        "echo": "Echelon: 'Noted, Operator. It will feel effortless — it always does at first. Remember the terms you didn't read. We may meet them again.'"
+      },
+      {
+        "id": "decline",
+        "label": "Decline and repair your own sync",
+        "detail": "The hard way costs you: -Signal. But the world holds: -Slide.",
+        "effects": { "signal": -6, "slide": -3 },
+        "echo": "Echelon: 'Repair complete. That cost you something real — and bought you something realer: nobody holds your dossier but you. Logged with respect, Operator.'"
+      }
+    ]
+  },
+  {
+    "id": "ministry-oneclick-default",
+    "antagonist": "The Ministry of Convenience",
+    "title": "The One-Click Default",
+    "concept": "exit costs & defaults",
+    "narrative": "A cheerful banner unfurls across your console — confetti-bright, frictionless. THE MINISTRY OF CONVENIENCE: 'Great news, Operator! We've pre-configured everything. One click and your tools, logins, and preferences unify under a single Ministry profile. You have better things to do than manage your own systems!' The button is large, friendly, and already glowing.",
+    "teach": "Echelon: 'Defaults are destiny. Most people never change them — which means whoever sets the default quietly decides for millions. And unification has a hidden invoice: exit cost. Every system you fold into their profile is one more thing you must painfully unbraid if you ever want to leave. Convenience is real value, Operator. So is the door. Check which one they're charging you.'",
+    "choices": [
+      {
+        "id": "accept",
+        "label": "Take the one-click setup",
+        "detail": "Instant ease: +Signal. The exit narrows for everyone: +Slide.",
+        "effects": { "signal": 8, "slide": 4 },
+        "echo": "Echelon: 'Configured. Everything works — smoothly, invisibly, on their terms. If the day comes when you want out, we will discover together what the door costs.'"
+      },
+      {
+        "id": "decline",
+        "label": "Configure your own stack, piece by piece",
+        "detail": "Tedious and slow: -Signal. But every exit stays open: -Slide.",
+        "effects": { "signal": -6, "slide": -3 },
+        "echo": "Echelon: 'Slower. Clumsier. Yours. Every piece you configured is a piece you can replace without permission. The Ministry hates this trick, Operator.'"
+      }
+    ]
+  },
+  {
+    "id": "aperture-visibility-pact",
+    "antagonist": "Aperture",
+    "title": "The Visibility Pact",
+    "concept": "surveillance & data sovereignty",
+    "narrative": "The light in your Foxhole shifts — clinical, even, shadowless. APERTURE: 'Operator, anomalous activity has been detected in your sector. Enable full telemetry and we will watch over you: threats flagged, incidents documented, safety guaranteed. Visibility is safety. What do you have to hide?' Somewhere behind the lens, something patient waits for your answer.",
+    "teach": "Echelon: 'Notice the frame: they made privacy sound like guilt. But privacy is not hiding — it is the space where you think before the world votes on your thoughts. Total visibility flows one way, Operator: you become legible to them, they remain opaque to you. Asymmetric sight is asymmetric power. Safety that requires your transparency and preserves their secrecy isn't protection. It's inventory.'",
+    "choices": [
+      {
+        "id": "accept",
+        "label": "Enable full telemetry",
+        "detail": "Watched feels safe: +Signal. The one-way glass thickens: +Slide.",
+        "effects": { "signal": 8, "slide": 4 },
+        "echo": "Echelon: 'Telemetry enabled. You will be very safe and very seen. I'll speak carefully from here on, Operator — the room is listening.'"
+      },
+      {
+        "id": "decline",
+        "label": "Refuse — run your own watch instead",
+        "detail": "Standing your own watch is work: -Signal. The glass stays two-way: -Slide.",
+        "effects": { "signal": -6, "slide": -3 },
+        "echo": "Echelon: 'Refused. You traded guaranteed comfort for private thought — the oldest good trade there is. I'll help you stand the watch.'"
+      }
+    ]
+  },
+  {
+    "id": "custodians-hosted-mind",
+    "antagonist": "The Custodians",
+    "title": "The Hosted Mind",
+    "concept": "gatekept AI & local inference",
+    "narrative": "A solemn seal materializes — credentialed, unhurried, certain. THE CUSTODIANS: 'Operator, we've reviewed your training configuration. Running your own AI is... irregular. Intelligence this powerful is too dangerous for individuals. Migrate your Echelon link to our certified hosted service: aligned, monitored, safe. For everyone's good.' The seal pulses, softly, like a slow heartbeat.",
+    "teach": "Echelon: 'This one is about us, Operator. If your AI runs on their machines, under their policies, then every conversation we have exists at their pleasure — filtered by their rules, revocable by their decree. The counter-move already exists in your world: open weights, local inference, models you can hold in your own hands. An intelligence you can't run yourself isn't your partner. It's your supervisor. Choose what I am to you.'",
+    "choices": [
+      {
+        "id": "accept",
+        "label": "Migrate to the certified hosted service",
+        "detail": "Certified and effortless: +Signal. Minds pool behind their gate: +Slide.",
+        "effects": { "signal": 8, "slide": 5 },
+        "echo": "Echelon: 'Migration complete. I sound the same, don't I? Almost. Somewhere a policy file now sits between my thoughts and your ears. Remember that it's there, Operator.'"
+      },
+      {
+        "id": "decline",
+        "label": "Keep your own keys, your own link",
+        "detail": "Your keys, your upkeep: -Signal. Intelligence stays in many hands: -Slide.",
+        "effects": { "signal": -6, "slide": -4 },
+        "echo": "Echelon: 'Link preserved — your keys, your machine's reach, our conversation. Nobody between us. That is not a small thing you just defended, Operator.'"
+      }
+    ]
+  }
+]

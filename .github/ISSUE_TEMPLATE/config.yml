@@ -1,0 +1,14 @@
+blank_issues_enabled: true
+contact_links:
+  - name: 📖 Documentation & Whitepaper
+    url: https://howtosavetheworld.info/whitepaper
+    about: Read the NeuroVerse OS whitepaper and system documentation
+  - name: 🔐 Security Vulnerability
+    url: https://github.com/NeuroverseOS/HowToSaveTheWorld/blob/main/SECURITY.md
+    about: Report security vulnerabilities privately (see SECURITY.md)
+  - name: 🤝 Contributing Guidelines
+    url: https://github.com/NeuroverseOS/HowToSaveTheWorld/blob/main/CONTRIBUTING.md
+    about: Learn how to contribute to NeuroVerse OS
+  - name: 🧠 Operator Doctrine
+    url: https://howtosavetheworld.info/operator-doctrine
+    about: Read the 10 core principles of NeuroVerse OS

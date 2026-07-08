@@ -1,0 +1,27 @@
+{
+  "id": "faq",
+  "category": "faq",
+  "title": "Frequently Asked Questions",
+  "entries": [
+    {
+      "q": "What is the NeuroVerse?",
+      "a": "A real-world system for building decentralized, human-AI coordination networks."
+    },
+    {
+      "q": "What is Echelon?",
+      "a": "Your operational intelligence layer. A structured, canon-bound co-pilot."
+    },
+    {
+      "q": "Why does Echelon use cinematic language?",
+      "a": "Because learning is emotional. Cinematics engage the deeper parts of your cognition."
+    },
+    {
+      "q": "Is my data stored anywhere?",
+      "a": "No. All learning state is stored locally on your device."
+    },
+    {
+      "q": "How does the system adapt to me?",
+      "a": "Through your archetype, loop type, decisions, missions, and upload performance."
+    }
+  ]
+}

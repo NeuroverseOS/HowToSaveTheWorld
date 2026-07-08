@@ -1,0 +1,579 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ========================================
+   NEUROVERSE HOME PAGE ANIMATIONS
+   ======================================== */
+
+/* Grid Pattern Background */
+.bg-grid-pattern {
+  background-image:
+    linear-gradient(hsl(var(--neuro-cyan) / 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, hsl(var(--neuro-cyan) / 0.05) 1px, transparent 1px);
+  background-size: 50px 50px;
+  animation: grid-drift 60s linear infinite;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, black 30%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, black 30%, transparent 100%);
+}
+
+@keyframes grid-drift {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(50px, 50px); }
+}
+
+/* Glitch Line Effect */
+.glitch-line {
+  position: absolute;
+  top: 50%;
+  left: -100%;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, hsl(var(--neuro-cyan) / 0.7), transparent);
+  animation: glitch-sweep 0.3s ease-out 0.2s forwards;
+  pointer-events: none;
+}
+
+@keyframes glitch-sweep {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+
+.glitch-text {
+  animation: text-glitch 0.15s ease-in 0.2s;
+}
+
+@keyframes text-glitch {
+  0%, 100% { transform: translate(0); filter: blur(0); }
+  25% { transform: translate(-3px, 2px); filter: blur(1px); }
+  50% { transform: translate(3px, -2px); filter: blur(1px); }
+  75% { transform: translate(-2px, -1px); filter: blur(0.5px); }
+}
+
+/* Army Section - Pulse and Pop */
+.army-pulse {
+  animation: radial-pulse 5s ease-in-out infinite;
+}
+
+@keyframes radial-pulse {
+  0%, 100% { opacity: 0.04; transform: scale(1); }
+  50% { opacity: 0.1; transform: scale(1.06); }
+}
+
+.pop-word {
+  opacity: 1;
+  transform: scale(1);
+  display: inline-block;
+}
+
+.animate-in .pop-word {
+  animation: pop-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes pop-in {
+  0% { opacity: 0; transform: scale(0.92) translateY(16px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* Sphere Background */
+.sphere-background {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+  height: 400px;
+  border: 1px solid hsl(var(--neuro-cyan) / 0.15);
+  border-radius: 50%;
+  animation: sphere-rotate 24s linear infinite;
+  pointer-events: none;
+}
+
+.sphere-background::before,
+.sphere-background::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 1px solid hsl(var(--neuro-cyan) / 0.1);
+  border-radius: 50%;
+}
+
+.sphere-background::before {
+  width: 300px;
+  height: 300px;
+  animation: sphere-rotate 18s linear infinite reverse;
+}
+
+.sphere-background::after {
+  width: 200px;
+  height: 200px;
+  animation: sphere-rotate 14s linear infinite;
+}
+
+@keyframes sphere-rotate {
+  0% { transform: translate(-50%, -50%) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* Circuit Overlay */
+.circuit-overlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 30% 50%, hsl(var(--neuro-cyan) / 0.05) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.echelon-glitch {
+  animation: echelon-flicker 0.06s ease-in 0.3s;
+}
+
+@keyframes echelon-flicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.synaptic-pulse {
+  position: absolute;
+  top: 50%;
+  left: 10%;
+  width: 80%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, hsl(var(--neuro-cyan) / 0.5), transparent);
+  animation: synaptic-fire 1.5s ease-in-out 0.5s;
+  pointer-events: none;
+}
+
+@keyframes synaptic-fire {
+  0% { opacity: 0; transform: translateX(-100%); }
+  50% { opacity: 1; }
+  100% { opacity: 0; transform: translateX(100%); }
+}
+
+/* Fog Overlay */
+.fog-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(45deg,
+    hsl(var(--neuro-cyan) / 0.03) 0%,
+    transparent 50%,
+    hsl(var(--neuro-purple) / 0.03) 100%);
+  animation: fog-drift 20s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+@keyframes fog-drift {
+  0% { transform: translateX(-10%) scale(1); }
+  100% { transform: translateX(10%) scale(1.05); }
+}
+
+.pulse-word {
+  opacity: 0.85;
+  transition: opacity 0.3s ease;
+}
+
+.animate-in .pulse-word {
+  animation: word-brighten 0.8s ease-out forwards;
+}
+
+@keyframes word-brighten {
+  0% { opacity: 0.85; transform: scale(0.97); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* Card Slide Up */
+.card-slide-up {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.animate-in .card-slide-up {
+  animation: slide-up-ease 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes slide-up-ease {
+  0% { opacity: 0; transform: translateY(40px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Step Slide */
+.step-slide {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.animate-in .step-slide {
+  animation: step-slide-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes step-slide-in {
+  0% { opacity: 0; transform: translateX(-32px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+
+.gear-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  border: 1px solid hsl(var(--neuro-purple) / 0.4);
+  border-radius: 50%;
+  background: hsl(var(--neuro-purple) / 0.06);
+  box-shadow: 0 0 20px hsl(var(--neuro-purple) / 0.12);
+}
+
+/* Final Pulse */
+.final-pulse {
+  animation: final-expand 2s ease-out 0.3s forwards;
+  background: radial-gradient(circle at center, hsl(var(--critical) / 0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+@keyframes final-expand {
+  0% { opacity: 0; transform: scale(0.5); }
+  50% { opacity: 1; transform: scale(1.2); }
+  100% { opacity: 0.3; transform: scale(1); }
+}
+
+.cta-glow {
+  animation: cta-flash 0.8s ease-out 1s;
+}
+
+@keyframes cta-flash {
+  0%, 100% { box-shadow: 0 0 0 hsl(var(--critical) / 0); }
+  50% { box-shadow: 0 0 40px hsl(var(--critical) / 0.5); }
+}
+
+/* Animation Delays */
+.animation-delay-200 { animation-delay: 200ms; }
+.animation-delay-400 { animation-delay: 400ms; }
+.animation-delay-600 { animation-delay: 600ms; }
+.animation-delay-800 { animation-delay: 800ms; }
+.animation-delay-2000 { animation-delay: 2s; }
+.animation-delay-3000 { animation-delay: 3s; }
+
+/* Pulse Once */
+@keyframes pulse-once {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.animate-pulse-once {
+  animation: pulse-once 1.5s ease-in-out 1;
+}
+
+/* Slow Pulse */
+@keyframes pulse-slow {
+  0%, 100% { opacity: 0.05; }
+  50% { opacity: 0.15; }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 6s ease-in-out infinite;
+}
+
+/* Slow Bounce for Scroll Indicator */
+@keyframes bounce-slow {
+  0%, 100% {
+    transform: translateY(0);
+    animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+  }
+  50% {
+    transform: translateY(25%);
+    animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+  }
+}
+
+.animate-bounce-slow {
+  animation: bounce-slow 2.4s infinite;
+}
+
+/* Scroll Trigger Base State */
+.scroll-trigger {
+  opacity: 1;
+  transform: translateY(30px);
+  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.scroll-trigger.animate-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Failsafe: Force all content visible if scroll animations fail */
+.no-scroll-animations .card-slide-up,
+.no-scroll-animations .step-slide,
+.no-scroll-animations .pop-word {
+  opacity: 1 !important;
+  transform: none !important;
+  animation: none !important;
+}
+
+/* Reduced motion: strip decorative animation while keeping content visible */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .scroll-trigger {
+    transform: none;
+  }
+}
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here.
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* NeuroVerse OS - Dark Cinematic Theme (Default)
+       Deep space neutrals · cyan signature · orange alert */
+    --background: 222 32% 5%;
+    --foreground: 206 30% 92%;
+
+    --card: 222 28% 8%;
+    --card-foreground: 206 30% 92%;
+
+    --popover: 222 30% 7%;
+    --popover-foreground: 206 30% 92%;
+
+    --primary: 190 90% 55%;
+    --primary-foreground: 222 32% 6%;
+
+    --secondary: 258 45% 60%;
+    --secondary-foreground: 210 30% 96%;
+
+    --muted: 220 20% 13%;
+    --muted-foreground: 205 16% 68%;
+
+    --accent: 219 24% 15%;
+    --accent-foreground: 206 30% 94%;
+
+    --destructive: 0 72% 54%;
+    --destructive-foreground: 0 0% 98%;
+
+    --critical: 24 92% 56%;
+    --critical-foreground: 24 60% 7%;
+
+    --border: 217 20% 18%;
+    --input: 220 22% 12%;
+    --ring: 190 90% 55%;
+
+    --radius: 0.75rem;
+
+    /* NeuroVerse Specific Colors */
+    --neuro-cyan: 190 90% 55%;
+    --neuro-purple: 258 48% 64%;
+    --neuro-magenta: 280 55% 64%;
+    --neuro-green: 152 55% 52%;
+    --neuro-void: 222 32% 5%;
+    --neuro-surface: 222 28% 8%;
+    --neuro-border: 214 24% 21%;
+    --neuro-glow: 190 95% 68%;
+    --neuro-orange: 24 92% 58%;
+
+    --sidebar-background: 222 30% 7%;
+    --sidebar-foreground: 206 30% 92%;
+    --sidebar-primary: 190 90% 55%;
+    --sidebar-primary-foreground: 222 32% 6%;
+    --sidebar-accent: 219 24% 14%;
+    --sidebar-accent-foreground: 206 30% 92%;
+    --sidebar-border: 217 20% 18%;
+    --sidebar-ring: 190 90% 55%;
+
+    /* Gradients */
+    --gradient-neuro: linear-gradient(135deg, hsl(190 90% 55% / 0.14), hsl(258 45% 60% / 0.14));
+    --gradient-surface: linear-gradient(180deg, hsl(222 28% 8%), hsl(222 32% 5%));
+
+    /* Shadows */
+    --shadow-glow: 0 0 24px hsl(190 90% 55% / 0.18);
+    --shadow-deep: 0 16px 48px -12px hsl(222 45% 2% / 0.7);
+    --shadow-card: inset 0 1px 0 hsl(206 40% 96% / 0.04), 0 8px 24px -12px hsl(222 45% 2% / 0.6);
+  }
+
+  .light {
+    /* NeuroVerse OS - Light Mode Theme */
+    --background: 0 0% 100%;
+    --foreground: 202 35% 13%;
+
+    --card: 0 0% 98%;
+    --card-foreground: 202 35% 13%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 202 35% 13%;
+
+    --primary: 180 80% 27%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 260 50% 52%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 200 20% 95%;
+    --muted-foreground: 202 22% 32%;
+
+    --accent: 200 25% 93%;
+    --accent-foreground: 202 35% 13%;
+
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --critical: 28 86% 48%;
+    --critical-foreground: 0 0% 100%;
+
+    --border: 200 20% 85%;
+    --input: 200 20% 90%;
+    --ring: 180 80% 27%;
+
+    /* NeuroVerse Specific Colors - Light Mode */
+    --neuro-cyan: 180 80% 27%;
+    --neuro-purple: 260 50% 52%;
+    --neuro-magenta: 280 60% 50%;
+    --neuro-green: 152 60% 30%;
+    --neuro-void: 0 0% 100%;
+    --neuro-surface: 0 0% 98%;
+    --neuro-border: 200 20% 85%;
+    --neuro-glow: 180 80% 35%;
+    --neuro-orange: 28 86% 48%;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 200 80% 20%;
+    --sidebar-primary: 180 80% 27%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 200 20% 95%;
+    --sidebar-accent-foreground: 200 80% 20%;
+    --sidebar-border: 200 20% 85%;
+    --sidebar-ring: 180 80% 27%;
+
+    /* Gradients - Light Mode */
+    --gradient-neuro: linear-gradient(135deg, hsl(180 80% 27% / 0.1), hsl(260 50% 52% / 0.1));
+    --gradient-surface: linear-gradient(180deg, hsl(0 0% 100%), hsl(0 0% 98%));
+
+    /* Shadows - Light Mode */
+    --shadow-glow: 0 0 20px hsl(180 80% 27% / 0.15);
+    --shadow-deep: 0 10px 40px hsl(200 20% 20% / 0.1);
+    --shadow-card: 0 1px 3px hsl(200 20% 20% / 0.08);
+  }
+
+  .dark {
+    --background: 222 32% 5%;
+    --foreground: 206 30% 92%;
+    --card: 222 28% 8%;
+    --card-foreground: 206 30% 92%;
+    --popover: 222 30% 7%;
+    --popover-foreground: 206 30% 92%;
+    --primary: 190 90% 55%;
+    --primary-foreground: 222 32% 6%;
+    --secondary: 258 45% 60%;
+    --secondary-foreground: 210 30% 96%;
+    --muted: 220 20% 13%;
+    --muted-foreground: 205 16% 68%;
+    --accent: 219 24% 15%;
+    --accent-foreground: 206 30% 94%;
+    --destructive: 0 72% 54%;
+    --destructive-foreground: 0 0% 98%;
+    --critical: 24 92% 56%;
+    --critical-foreground: 24 60% 7%;
+    --border: 217 20% 18%;
+    --input: 220 22% 12%;
+    --ring: 190 90% 55%;
+    --sidebar-background: 222 30% 7%;
+    --sidebar-foreground: 206 30% 92%;
+    --sidebar-primary: 190 90% 55%;
+    --sidebar-primary-foreground: 222 32% 6%;
+    --sidebar-accent: 219 24% 14%;
+    --sidebar-accent-foreground: 206 30% 92%;
+    --sidebar-border: 217 20% 18%;
+    --sidebar-ring: 190 90% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    @apply bg-background text-foreground overflow-x-hidden font-sans;
+    font-feature-settings: "cv02", "cv03", "ss01";
+  }
+
+  h1, h2, h3, h4 {
+    @apply tracking-tight;
+    text-wrap: balance;
+  }
+
+  ::selection {
+    background: hsl(var(--primary) / 0.25);
+    color: hsl(var(--foreground));
+  }
+
+  /* Consistent, visible keyboard focus everywhere */
+  :focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+    border-radius: calc(var(--radius) - 4px);
+  }
+
+  /* Subtle themed scrollbar */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--background));
+  }
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--border));
+    border-radius: 8px;
+    border: 2px solid hsl(var(--background));
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground) / 0.4);
+  }
+}
+
+@layer components {
+  /* Command-interface label: small mono caps */
+  .text-eyebrow {
+    @apply font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground;
+  }
+
+  /* Frosted panel used for elevated surfaces */
+  .glass-panel {
+    @apply bg-card/60 backdrop-blur-md border border-border/60;
+    box-shadow: var(--shadow-card);
+  }
+
+  /* Faint CRT scanlines - use sparingly (hero-scale surfaces only) */
+  .scanlines {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent 3px,
+      hsl(var(--neuro-cyan) / 0.012) 3px,
+      hsl(var(--neuro-cyan) / 0.012) 4px
+    );
+  }
+}
+
+/* Masked secret fields (AI/API keys): dots via CSS, not type="password",
+   so browser password managers never offer to save them as logins. */
+.secret-mask {
+  -webkit-text-security: disc;
+}

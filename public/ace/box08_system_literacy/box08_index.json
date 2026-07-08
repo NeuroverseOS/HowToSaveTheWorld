@@ -1,0 +1,29 @@
+{
+  "box": "ACE-08",
+  "title": "System Literacy",
+  "purpose": "Teach recruits how Echelon, the NeuroVerse, and the PWA operate through clear self-explanation.",
+  "files": [
+    "how_echelon_works.json",
+    "how_neuroverse_works.json",
+    "how_to_use.json",
+    "troubleshooting.json",
+    "faq.json"
+  ],
+  "triggers": {
+    "keywords": [
+      "how does this system",
+      "how does this work",
+      "explain this feature",
+      "why did you do that",
+      "what is echelon",
+      "how do I use",
+      "i'm confused",
+      "explain the neuroverse",
+      "help me understand",
+      "what does this mean",
+      "i don't get this",
+      "i'm lost"
+    ],
+    "context_type": "system_literacy"
+  }
+}
