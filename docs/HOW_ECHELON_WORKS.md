@@ -138,6 +138,7 @@ codebase.
 
 Everything above is remixable. If you want an Echelon-style intelligence teaching *your* curriculum in *your* world:
 
+- [Governed Course Builder (Claude skill)](../.claude/skills/governed-course-builder/SKILL.md) — the fastest path: open this repo in Claude Code and it walks the whole build with you, holding the Eight-Box governance pattern the entire time
 - [Build Your Own Course](./BUILD_YOUR_OWN_COURSE.md) — the full pipeline
 - [Model Builder Prompt](./MODEL_BUILDER_PROMPT.md) — define your buckets of thinking
 - [Story Builder Prompt](./STORY_BUILDER_PROMPT.md) — build your future scenario

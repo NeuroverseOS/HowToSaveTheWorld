@@ -512,6 +512,10 @@ ours is open — go read the eight boxes yourself.
 - [How Echelon Works](./HOW_ECHELON_WORKS.md) — the technical reference:
   file paths, the real stage-to-box table, hard law vs. soft law, and the
   probe suite that verifies these claims against running code.
+- [Governed Course Builder (Claude skill)](../.claude/skills/governed-course-builder/SKILL.md)
+  — this essay, turned into a tool. Use Claude Code in this repo and it
+  loads automatically: it teaches the pattern above, then walks the build
+  that turns your own material into a governed course.
 - [Operator Doctrine](../src/pages/OperatorDoctrine.tsx) — the same
   values, as the in-app promise made to every learner.
 - [Governance](./GOVERNANCE.md) — how this repository itself is governed
