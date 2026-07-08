@@ -123,6 +123,17 @@ Prompt engineering gives Echelon a soul. Information architecture gives it integ
 
 ---
 
+## Why It's Built This Way
+
+This document covers the *how*. For the argument behind the design —
+why architecture-as-governance beats prompt-as-governance, and what that
+implies for any AI placed in a teaching or evaluative role — see
+[Governing the Machine That Teaches](./KERNEL_ESSAY.md), which includes
+a plain-language and an L&D/leadership version for sharing outside the
+codebase.
+
+---
+
 ## Build Your Own
 
 Everything above is remixable. If you want an Echelon-style intelligence teaching *your* curriculum in *your* world:

@@ -147,6 +147,8 @@ This work is given freely. If it fuels yours, fuel it back — every contributio
 ## 📚 Documentation
 
 - [How Echelon Works](./docs/HOW_ECHELON_WORKS.md) — The AI teacher: BYOK relay, the 7-Box prompt system, and why it stays on mission
+- [Governing the Machine That Teaches](./docs/KERNEL_ESSAY.md) — The essay: hold an AI tutor to the same standards as a great human facilitator, and make those standards structural via the Eight-Box Kernel (includes CLO/leadership and plain-language versions for sharing)
+- [The Worked Example](./docs/example-curriculum/README.md) — all 96 missions in one spreadsheet: exactly what the AI is told, in a format anyone can open and audit
 - [Architecture](./docs/ARCHITECTURE.md) — What How to Save the World provides vs. NeuroVerse OS
 - [Installation](./docs/INSTALLATION.md) — Setup and deployment guide
 - [Configuration](./docs/CONFIGURATION.md) — Environment variables and settings
