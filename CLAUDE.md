@@ -37,9 +37,13 @@ done:
 ## Non-negotiables (violating these is never a valid trade-off)
 
 - **Sovereignty is the product.** Learner identity, state, memory, progress:
-  on-device first. No telemetry, no analytics, no silent data transmission.
-  AI provider keys stay in the learner's browser — sent per-request via
-  headers to the relay, never stored server-side, never logged.
+  on-device first. No learner telemetry, no silent data transmission — learner
+  data never leaves the device except to backup infrastructure the learner
+  owns. (The hosted deployment may use cookieless, first-party, aggregate
+  page-count analytics that touch no learner data and vanish in any fork or
+  off-Vercel self-host; disclose it, never claim "no analytics.") AI provider
+  keys stay in the learner's browser — sent per-request via headers to the
+  relay, never stored server-side, never logged.
 - **The learner owns the exit.** Export, reset, and self-hosted backend
   (Settings → Data Sovereignty) must keep working in every fork. Never build
   a lock-in.
